@@ -1,0 +1,55 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Mar 28, 2016, 6:58:31 PM
+    Author     : RaniSons
+*/
+
+// CSS CLASS FOR PANES TO FILL THEIR FULL REGION
+.max_pane 
+{
+    -fx-fit-to-height: true;
+    -fx-fit-to-width: true;
+    -fx-background-color:#ccccff;
+}
+
+// CSS CLASS FOR OUR BIG PANES
+.bordered_pane 
+{
+    -fx-background-color: #aaaaff;
+    -fx-background-radius: 5.0;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-border-width: 2px;
+    -fx-border-color: #7777dd;
+}
+
+// CSS CLASS FOR LABELS HEADING LARGE SECTIONS IN THE GUI
+.heading_label 
+{
+    -fx-font-size: 20pt;
+    -fx-font-weight: bold;
+}
+
+// CSS CLASS FOR LABELS HEADING SUBSECTIONS IN THE GUI
+.subheading_label 
+{
+    -fx-font-size: 14pt;
+    -fx-font-weight: bold;
+}
+
+// CSS CLASS FOR LABELS SERVING AS PROMPTS IN THE GUI
+.prompt_label 
+{
+    -fx-font-size: 13pt;
+    -fx-font-weight: bold;
+}
+
+// CSS CLASS FOR TEXT FIELDS AT UI PROMPTS
+.prompt_text_field 
+{
+    -fx-font-size: 13pt;
+}
