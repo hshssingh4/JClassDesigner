@@ -57,7 +57,8 @@ and open the template in the editor.
 .file_button
 {
     -fx-background-color: ghostwhite;
-    -fx-font-size: 18px;
+    -fx-font-size: 20px;
+    
 }
 
 .file_button:hover
