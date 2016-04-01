@@ -53,3 +53,14 @@ and open the template in the editor.
 {
     -fx-font-size: 13pt;
 }
+
+.file_button
+{
+    -fx-background-color: ghostwhite;
+    -fx-font-size: 18px;
+}
+
+.file_button:hover
+{
+    -fx-background-color: lightgreen;
+}
