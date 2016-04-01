@@ -6,10 +6,20 @@
 package jcd.gui;
 
 import java.io.IOException;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -49,6 +59,13 @@ public class Workspace extends AppWorkspaceComponent
     // IT KNOWS THE GUI IT IS PLACED INSIDE
     AppGUI gui;
     
+    // Center pane for the canvas that is placed inside the scroll pane
+    Pane canvas;
+    ScrollPane canvasScrollPane;
+    
+    // VBox for the component toolbar
+    VBox componentToolbar;
+    
     // Flow pane for edit toolbar buttons and view toolbar buttons
     FlowPane editToolbarPane;
     FlowPane viewToolbarPane;
@@ -61,8 +78,21 @@ public class Workspace extends AppWorkspaceComponent
     Button zoomInButton, zoomOutButton;
     CheckBox gridRenderCheckBox, gridSnapCheckBox;
     
+    // Controls for the component toolbar
+    // Grid Pane for first three elements
+    GridPane gridPane;
     
+    // First row
+    Label classNameLabel;
+    TextField classNameTextField;
     
+    // Second row
+    Label packageLabel;
+    TextField packageTextField;
+    
+    // Third row
+    Label parentLabel;
+    ComboBox<String> parentComboBox;
     
     public Workspace(AppTemplate initApp) throws IOException 
     {
@@ -74,7 +104,9 @@ public class Workspace extends AppWorkspaceComponent
         
         initEditToolbar();
         initViewToolbar();
-        
+        initComponentToolbar();
+        initCanvas();
+        initGUI();
     }
     
     private void initEditToolbar()
@@ -120,6 +152,58 @@ public class Workspace extends AppWorkspaceComponent
         topPane.getChildren().add(viewToolbarPane);
     }
     
+    private void initCanvas()
+    {
+        canvas = new Pane();
+        canvasScrollPane = new ScrollPane(canvas);
+        canvasScrollPane.setPrefSize(1000, 1000); // DELETE
+        canvasScrollPane.setStyle("-fx-background-color: red;"); // DELETE
+    }
+    
+    private void initComponentToolbar()
+    {
+        componentToolbar = new VBox(10);
+        
+        gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        
+        // First row
+        classNameLabel = new Label("Class Name:");
+        classNameTextField = new TextField();
+        classNameTextField.setAlignment(Pos.BOTTOM_RIGHT);
+        
+        // Second row
+        packageLabel = new Label("Package:");
+        packageTextField = new TextField();
+        packageTextField.setAlignment(Pos.BOTTOM_RIGHT);
+        
+        // Third row
+        parentLabel = new Label("Parent:");
+        parentComboBox = new ComboBox<>();
+        
+        // Now add these rows to the grid pane
+        gridPane.add(classNameLabel, 0, 0);
+        gridPane.add(classNameTextField, 1, 0);
+        gridPane.add(packageLabel, 0, 1);
+        gridPane.add(packageTextField, 1, 1);
+        gridPane.add(parentLabel, 0, 2);
+        gridPane.add(parentComboBox, 1, 2);
+        
+        // Align the combo box to the right of the grid pane
+        GridPane.setHalignment(parentComboBox, HPos.RIGHT);
+        
+        componentToolbar.getChildren().add(gridPane);
+    }
+    
+    private void initGUI()
+    {
+        // AND NOW SETUP THE WORKSPACE
+	workspace = new BorderPane();
+	((BorderPane)workspace).setCenter(canvasScrollPane);
+	((BorderPane)workspace).setRight(componentToolbar);
+    }
+    
     @Override
     public void initStyle() 
     {
@@ -128,7 +212,6 @@ public class Workspace extends AppWorkspaceComponent
         
         zoomInButton.getStyleClass().add(CLASS_FILE_BUTTON);
         zoomOutButton.getStyleClass().add(CLASS_FILE_BUTTON);
-        System.out.print((Font.getFamilies()));
         gridRenderCheckBox.setFont(Font.font("Helvetica Neue", FontWeight.BOLD, FontPosture.REGULAR, 12));
         gridSnapCheckBox.setFont(Font.font("Helvetica Neue", FontWeight.BOLD, FontPosture.REGULAR, 12));
     }
