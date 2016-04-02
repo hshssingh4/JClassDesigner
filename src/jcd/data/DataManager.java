@@ -23,6 +23,9 @@ public class DataManager implements AppDataComponent
     HashMap<String, ClassObject> hashClasses;
     ArrayList<ClassObject> classesList;
     
+    // CURRENT STATE OF THE APP
+    JClassDesignerState state;
+    
     public DataManager(AppTemplate initApp) throws Exception 
     {
 	// KEEP THE APP FOR LATER
@@ -54,6 +57,21 @@ public class DataManager implements AppDataComponent
             if (c.equals(obj))
                     return false;
         return true;
+    }
+    
+    public JClassDesignerState getState()
+    {
+	return state;
+    }
+
+    public void setState(JClassDesignerState initState) 
+    {
+	state = initState;
+    }
+
+    public boolean isInState(JClassDesignerState testState)
+    {
+	return state == testState;
     }
     
     @Override

@@ -19,6 +19,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -60,6 +62,7 @@ import static jcd.PropertyType.ZOOM_OUT_TOOLTIP;
 import jcd.controller.PageEditController;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.JClassDesignerState;
 import saf.AppTemplate;
 import saf.components.AppWorkspaceComponent;
 import saf.ui.AppGUI;
@@ -131,12 +134,12 @@ public class Workspace extends AppWorkspaceComponent
     Button removeMethodButton;
     TableView methodsTableView;
     
-    // Selection Stuff
-    Button selectedButton;
+    // Selected Object
     Object selectedObject;
     
     // HERE IS THE CONTROLLER
     PageEditController pageEditController;
+    DataManager dataManager;
     
     public Workspace(AppTemplate initApp) throws IOException 
     {
@@ -146,6 +149,7 @@ public class Workspace extends AppWorkspaceComponent
 	// KEEP THE GUI FOR LATER
 	gui = app.getGUI();
         pageEditController = new PageEditController((JClassDesigner) app);
+        dataManager = (DataManager) app.getDataComponent();
         
         initEditToolbar();
         initViewToolbar();
@@ -232,11 +236,13 @@ public class Workspace extends AppWorkspaceComponent
         classNameLabel.setMaxWidth(Region.USE_PREF_SIZE);
         classNameTextField = new TextField();
         classNameTextField.setAlignment(Pos.BOTTOM_RIGHT);
+        classNameTextField.setPromptText("Enter Class Name");
         
         // Second row
         packageLabel = new Label("Package:");
         packageTextField = new TextField();
         packageTextField.setAlignment(Pos.BOTTOM_RIGHT);
+        packageTextField.setPromptText("Enter Package Name");
         
         // Third row
         parentLabel = new Label("Parent:");
@@ -264,8 +270,10 @@ public class Workspace extends AppWorkspaceComponent
         variablesHBox.setAlignment(Pos.CENTER_LEFT);
         variablesLabel = new Label("Variables:");
         variablesHBox.getChildren().add(variablesLabel);
-        addVariableButton = gui.initChildButton(variablesHBox, PLUS_ICON.toString(), ADD_VARIABLE_TOOLTIP.toString(), false);
-        removeVariableButton = gui.initChildButton(variablesHBox, MINUS_ICON.toString(), REMOVE_VARIABLE_TOOLTIP.toString(), false);
+        addVariableButton = gui.initChildButton(variablesHBox, PLUS_ICON.toString(),
+                ADD_VARIABLE_TOOLTIP.toString(), false);
+        removeVariableButton = gui.initChildButton(variablesHBox, MINUS_ICON.toString(),
+                REMOVE_VARIABLE_TOOLTIP.toString(), false);
         
         variablesTableView = new TableView();
         variablesTableView.setPrefHeight(200);
@@ -300,7 +308,8 @@ public class Workspace extends AppWorkspaceComponent
         TableColumn variableStaticCol = new TableColumn("Static");
         TableColumn variableAccessCol = new TableColumn("Access");
         
-        methodsTableView.getColumns().addAll(variableNameCol, variableReturnCol, variableTypeCol, variableAbstractCol, variableStaticCol, variableAccessCol);
+        methodsTableView.getColumns().addAll(variableNameCol, variableReturnCol,
+                variableTypeCol, variableAbstractCol, variableStaticCol, variableAccessCol);
         
         methodsVBox.getChildren().addAll(methodsHBox, methodsTableView);
     }
@@ -315,21 +324,14 @@ public class Workspace extends AppWorkspaceComponent
     
     private void initHandlers()
     {
-        selectionToolButton.setOnAction(e -> 
-        {
-            selectedButton = selectionToolButton;
-            workspace.setCursor(Cursor.DEFAULT);
-            reloadWorkspace();     
+        selectionToolButton.setOnAction(e -> {
+            pageEditController.handleSelectionToolButtonRequest();
         });
-        resizeButton.setOnAction(e ->
-        {
-            selectedButton = resizeButton;
-            workspace.setCursor(Cursor.SE_RESIZE);
-            reloadWorkspace();
+        resizeButton.setOnAction(e -> {
+            pageEditController.handleResizeButtonRequest();
         });
-        addClassButton.setOnAction(e -> 
-        {
-            DataManager dataManager = (DataManager) app.getDataComponent();
+        addClassButton.setOnAction(e -> {
+            /*//selectedButton = addClassButton;
             int randomOffset = (int) ((Math.random() * 300) - 150);
             int x = (int) ((canvas.getLayoutBounds().getMinX() + canvas.getLayoutBounds().getMaxX())/2) - (int)(DEFAULT_WIDTH / 2);
             int y = (int) ((canvas.getLayoutBounds().getMinY() + canvas.getLayoutBounds().getMaxY())/2) + randomOffset - (int)(DEFAULT_HEIGHT / 2);
@@ -342,10 +344,22 @@ public class Workspace extends AppWorkspaceComponent
             
             ClassObject obj = new ClassObject(randomString, "", rect);
             selectedObject = obj;
-            System.out.println(dataManager.checkIfUnique(obj));
             
-            if (dataManager.checkIfUnique(obj))
-                pageEditController.handleAddClassRequest(obj);
+            if (dataManager.checkIfUnique(obj))*/
+            
+            pageEditController.handleAddClassRequest();
+        });
+        canvas.setOnMousePressed((MouseEvent e) -> 
+        {
+            if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
+            {
+                if(e.getTarget() instanceof VBox)
+                    for (ClassObject obj: dataManager.getClassesList())
+                        if (obj.getRectanglesBox().getStackPanesVBox() == ((VBox)e.getTarget()))
+                                pageEditController.handleSelectionRequest(obj); 
+                else
+                    pageEditController.handleUnselectRequest();
+            }
         });
     }
     
@@ -380,16 +394,11 @@ public class Workspace extends AppWorkspaceComponent
         methodsVBox.getStyleClass().add(CLASS_COMPONENT_CHILD_ELEMENT);
         
         componentToolbar.getStyleClass().add(CLASS_COMPONENT_TOOLBAR);
-        
     }
     
     @Override
     public void reloadWorkspace() 
     {
-        DataManager dataManager = (DataManager) app.getDataComponent();
-        
-        //canvas.getChildren().clear();
-        
         enforceLegalButtons();
     }
     
@@ -406,6 +415,14 @@ public class Workspace extends AppWorkspaceComponent
     {
         return canvas;
     }
-    
-    
+
+    public Object getSelectedObject()
+    {
+        return selectedObject;
+    }
+
+    public void setSelectedObject(Object selectedObject) 
+    {
+        this.selectedObject = selectedObject;
+    }
 }

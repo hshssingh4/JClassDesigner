@@ -15,13 +15,13 @@ public class ClassObject
 {
     private String className;
     private String packageName;
-    private Rectangle rectangle;
+    private RectanglesBox rectanglesBox;
     
-    public ClassObject(String className, String packageName, Rectangle rect)
+    public ClassObject(String className, String packageName, RectanglesBox box)
     {
         this.className = className;
         this.packageName = packageName;
-        this.rectangle = rect;
+        this.rectanglesBox = box;
     }
     
     public boolean equals(ClassObject obj)
@@ -49,15 +49,13 @@ public class ClassObject
         this.packageName = packageName;
     }
 
-    public Rectangle getRectangle() 
+    public RectanglesBox getRectanglesBox()
     {
-        return rectangle;
+        return rectanglesBox;
     }
 
-    public void setRectangle(Rectangle rectangle) 
+    public void setRectanglesBox(RectanglesBox rectanglesBox) 
     {
-        this.rectangle = rectangle;
+        this.rectanglesBox = rectanglesBox;
     }
-
-    
 }

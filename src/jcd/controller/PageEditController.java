@@ -6,10 +6,16 @@
 package jcd.controller;
 
 import javafx.scene.Cursor;
+import javafx.scene.Scene;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import jcd.JClassDesigner;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.JClassDesignerState;
+import jcd.data.RectanglesBox;
 import jcd.gui.Workspace;
 
 /**
@@ -34,27 +40,105 @@ public class PageEditController
         dataManager = (DataManager)app.getDataComponent();
     }
     
+    // Button Requests
+    public void handleSelectionToolButtonRequest() 
+    {
+	// CHANGE THE CURSOR
+	Scene scene = app.getGUI().getPrimaryScene();
+	scene.setCursor(Cursor.DEFAULT);
+	
+	// CHANGE THE STATE
+	dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
+	
+	// ENABLE/DISABLE THE PROPER BUTTONS
+	Workspace workspace = (Workspace)app.getWorkspaceComponent();
+	workspace.reloadWorkspace();
+    }
+    
+    public void handleResizeButtonRequest()
+    {
+        // CHANGE THE CURSOR
+	Scene scene = app.getGUI().getPrimaryScene();
+	scene.setCursor(Cursor.SE_RESIZE);
+	
+	// CHANGE THE STATE
+	dataManager.setState(JClassDesignerState.RESIZING_SHAPE);	
+	
+	// ENABLE/DISABLE THE PROPER BUTTONS
+	Workspace workspace = (Workspace)app.getWorkspaceComponent();
+	workspace.reloadWorkspace();
+    }
+    
     // Page Edit Requests
     
-    public void handleSelectionRequest()
+    public void handleSelectionRequest(Object obj)
     {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
         
+        if(workspace.getSelectedObject() != null)
+        {
+            workspace.setSelectedObject(null);
+            unhighlight(workspace.getSelectedObject());
+        }
+
+        workspace.setSelectedObject(obj);
+        highlight(obj);
+        
+        workspace.reloadWorkspace();
     }
     
     public void handleUnselectRequest()
     {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
         
+        if(workspace.getSelectedObject() != null)
+        {
+            workspace.setSelectedObject(null);
+            unhighlight(workspace.getSelectedObject());
+        }
+        workspace.reloadWorkspace();
     }
     
-    public void handleAddClassRequest(ClassObject obj) 
+    private void unhighlight(Object obj)
+    {
+        if (obj instanceof ClassObject)
+            ((ClassObject)obj).getRectanglesBox().getStackPanesVBox().setEffect(null);
+    }
+    
+    private void highlight(Object obj)
+    {
+        // THIS IS FOR THE SELECTED SHAPE
+	DropShadow dropShadowEffect = new DropShadow();
+	dropShadowEffect.setOffsetX(0.0f);
+	dropShadowEffect.setOffsetY(0.0f);
+	dropShadowEffect.setSpread(1.0);
+	dropShadowEffect.setColor(Color.YELLOW);
+	dropShadowEffect.setBlurType(BlurType.GAUSSIAN);
+	dropShadowEffect.setRadius(5);
+        
+        if (obj instanceof ClassObject)
+            ((ClassObject)obj).getRectanglesBox().getStackPanesVBox().setEffect(dropShadowEffect);
+    }
+    
+    public void handleAddClassRequest() 
     {
          Workspace workspace = (Workspace) app.getWorkspaceComponent();
          Pane canvas = workspace.getCanvas();
-         canvas.getChildren().add(obj.getRectangle());
+         
+         RectanglesBox box = new RectanglesBox();
+         int randomInt = (int) (Math.random() * 100);
+         String randomClassNameString = "Dummy" + randomInt;
+         
+         ClassObject obj = new ClassObject(randomClassNameString, "", box);
+         
+         // CHANGE THE STATE AND SELECT THE SHAPE
+	 dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
+         handleSelectionRequest(obj);
+         
+         canvas.getChildren().add(obj.getRectanglesBox().getStackPanesVBox());
          dataManager.addClassObject(obj);
-         System.out.println(dataManager.getClassesList().size());
+         
          app.getGUI().updateToolbarControls(false);
          workspace.reloadWorkspace();
     }
-    
 }
