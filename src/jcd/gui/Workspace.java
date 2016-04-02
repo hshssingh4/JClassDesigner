@@ -17,6 +17,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -219,6 +220,8 @@ public class Workspace extends AppWorkspaceComponent
         // Third row
         parentLabel = new Label("Parent:");
         parentComboBox = new ComboBox<>();
+        parentComboBox.setMaxWidth(Double.MAX_VALUE);
+        parentComboBox.setTooltip(new Tooltip("Choose Parent"));
         
         // Now add these rows to the grid pane
         gridPane.add(classNameLabel, 0, 0);
@@ -326,6 +329,12 @@ public class Workspace extends AppWorkspaceComponent
     @Override
     public void reloadWorkspace() 
     {
+        canvas.getChildren().clear();
+        classNameTextField.setText(null); // CHANGE TO SELECTED SHAPE'S CLASS
+        packageTextField.setText(null); // CHANGE TO SELECTED SHAPE'S PACKAGE
+        
+        // HERE ADD THE CHILDRENS OF THE CANVAS
+        
         enforceLegalButtons();
     }
     

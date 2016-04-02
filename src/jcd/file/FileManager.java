@@ -24,11 +24,13 @@ public class FileManager implements AppFileComponent
     @Override
     public void saveData(AppDataComponent data, String filePath) throws IOException 
     {
+        System.out.println("Save Data");
     }
 
     @Override
     public void loadData(AppDataComponent data, String filePath) throws IOException
     {
+        System.out.println("Load Data");
     }
 
     // HELPER METHOD FOR LOADING DATA FROM A JSON FORMAT
@@ -45,11 +47,13 @@ public class FileManager implements AppFileComponent
     @Override
     public void exportData(AppDataComponent data, String filePath) throws IOException 
     {
+        System.out.println("Export Data");
     }
 
     @Override
     public void importData(AppDataComponent data, String filePath) throws IOException
     {
+        System.out.println("Import Data");
     }
     
 }

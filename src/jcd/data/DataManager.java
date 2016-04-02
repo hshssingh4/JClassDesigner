@@ -5,6 +5,7 @@
  */
 package jcd.data;
 
+import jcd.gui.Workspace;
 import saf.AppTemplate;
 import saf.components.AppDataComponent;
 
@@ -26,6 +27,6 @@ public class DataManager implements AppDataComponent
     @Override
     public void reset()
     {
-        
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
     }
 }

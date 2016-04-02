@@ -93,7 +93,7 @@ and open the template in the editor.
 .component_button
 {
     -fx-background-color: ghostwhite;
-    -fx-font-size: 10px;
+    -fx-font-size: 15px;
 }
 
 .component_button:hover
