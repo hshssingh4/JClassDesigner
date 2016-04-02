@@ -8,6 +8,7 @@ package jcd.gui;
 import java.io.IOException;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -18,6 +19,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -25,9 +27,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import jcd.JClassDesigner;
 import static jcd.PropertyType.ADD_CLASS_ICON;
 import static jcd.PropertyType.ADD_CLASS_TOOLTIP;
 import static jcd.PropertyType.ADD_INTERFACE_ICON;
@@ -52,6 +57,9 @@ import static jcd.PropertyType.ZOOM_IN_ICON;
 import static jcd.PropertyType.ZOOM_IN_TOOLTIP;
 import static jcd.PropertyType.ZOOM_OUT_ICON;
 import static jcd.PropertyType.ZOOM_OUT_TOOLTIP;
+import jcd.controller.PageEditController;
+import jcd.data.ClassObject;
+import jcd.data.DataManager;
 import saf.AppTemplate;
 import saf.components.AppWorkspaceComponent;
 import saf.ui.AppGUI;
@@ -62,6 +70,10 @@ import saf.ui.AppGUI;
  */
 public class Workspace extends AppWorkspaceComponent
 {
+    private static final double DEFAULT_WIDTH = 400.0;
+    private static final double DEFAULT_HEIGHT = 200.0;
+    private static final double DEFAULT_STROKE_WIDTH = 2.0;
+    
     // HERE'S THE APP
     AppTemplate app;
     
@@ -119,6 +131,13 @@ public class Workspace extends AppWorkspaceComponent
     Button removeMethodButton;
     TableView methodsTableView;
     
+    // Selection Stuff
+    Button selectedButton;
+    Object selectedObject;
+    
+    // HERE IS THE CONTROLLER
+    PageEditController pageEditController;
+    
     public Workspace(AppTemplate initApp) throws IOException 
     {
 	// KEEP THIS FOR LATER
@@ -126,12 +145,14 @@ public class Workspace extends AppWorkspaceComponent
 
 	// KEEP THE GUI FOR LATER
 	gui = app.getGUI();
+        pageEditController = new PageEditController((JClassDesigner) app);
         
         initEditToolbar();
         initViewToolbar();
         initComponentToolbar();
         initCanvas();
         initGUI();
+        initHandlers();
     }
     
     private void initEditToolbar()
@@ -183,7 +204,7 @@ public class Workspace extends AppWorkspaceComponent
         canvasScrollPane = new ScrollPane(canvas);
         canvasScrollPane.setFitToHeight(true);
         canvasScrollPane.setFitToWidth(true);
-        canvas.setStyle("-fx-background-color: ghostwhite;"); // DELETE
+        canvas.setStyle("-fx-background-color: skyblue;"); // DELETE
     }
     
     private void initComponentToolbar()
@@ -279,7 +300,7 @@ public class Workspace extends AppWorkspaceComponent
         TableColumn variableStaticCol = new TableColumn("Static");
         TableColumn variableAccessCol = new TableColumn("Access");
         
-        methodsTableView.getColumns().addAll(variableNameCol, variableReturnCol, variableTypeCol, variableStaticCol, variableAccessCol);
+        methodsTableView.getColumns().addAll(variableNameCol, variableReturnCol, variableTypeCol, variableAbstractCol, variableStaticCol, variableAccessCol);
         
         methodsVBox.getChildren().addAll(methodsHBox, methodsTableView);
     }
@@ -290,6 +311,42 @@ public class Workspace extends AppWorkspaceComponent
 	workspace = new BorderPane();
 	((BorderPane)workspace).setCenter(canvasScrollPane);
 	((BorderPane)workspace).setRight(componentToolbar);
+    }
+    
+    private void initHandlers()
+    {
+        selectionToolButton.setOnAction(e -> 
+        {
+            selectedButton = selectionToolButton;
+            workspace.setCursor(Cursor.DEFAULT);
+            reloadWorkspace();     
+        });
+        resizeButton.setOnAction(e ->
+        {
+            selectedButton = resizeButton;
+            workspace.setCursor(Cursor.SE_RESIZE);
+            reloadWorkspace();
+        });
+        addClassButton.setOnAction(e -> 
+        {
+            DataManager dataManager = (DataManager) app.getDataComponent();
+            int randomOffset = (int) ((Math.random() * 300) - 150);
+            int x = (int) ((canvas.getLayoutBounds().getMinX() + canvas.getLayoutBounds().getMaxX())/2) - (int)(DEFAULT_WIDTH / 2);
+            int y = (int) ((canvas.getLayoutBounds().getMinY() + canvas.getLayoutBounds().getMaxY())/2) + randomOffset - (int)(DEFAULT_HEIGHT / 2);
+            Rectangle rect = new Rectangle(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+            rect.setFill(Color.WHITE);
+            rect.setStroke(Color.BLACK);
+            rect.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+            int randomInt = (int) (Math.random() * 100);
+            String randomString = "Dummy" + randomInt;
+            
+            ClassObject obj = new ClassObject(randomString, "", rect);
+            selectedObject = obj;
+            System.out.println(dataManager.checkIfUnique(obj));
+            
+            if (dataManager.checkIfUnique(obj))
+                pageEditController.handleAddClassRequest(obj);
+        });
     }
     
     @Override
@@ -329,11 +386,9 @@ public class Workspace extends AppWorkspaceComponent
     @Override
     public void reloadWorkspace() 
     {
-        canvas.getChildren().clear();
-        classNameTextField.setText(null); // CHANGE TO SELECTED SHAPE'S CLASS
-        packageTextField.setText(null); // CHANGE TO SELECTED SHAPE'S PACKAGE
+        DataManager dataManager = (DataManager) app.getDataComponent();
         
-        // HERE ADD THE CHILDRENS OF THE CANVAS
+        //canvas.getChildren().clear();
         
         enforceLegalButtons();
     }
@@ -346,4 +401,11 @@ public class Workspace extends AppWorkspaceComponent
         for (Node b: viewToolbarPane.getChildren())
             b.setDisable(false);
     }
+
+    public Pane getCanvas() 
+    {
+        return canvas;
+    }
+    
+    
 }
