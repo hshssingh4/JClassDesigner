@@ -13,7 +13,7 @@ and open the template in the editor.
 {
     -fx-fit-to-height: true;
     -fx-fit-to-width: true;
-    -fx-background-color:#ccccff;
+    -fx-background-color: white;
 }
 
 // CSS CLASS FOR OUR BIG PANES
@@ -37,7 +37,8 @@ and open the template in the editor.
 // CSS CLASS FOR LABELS HEADING SUBSECTIONS IN THE GUI
 .subheading_label 
 {
-    -fx-font-size: 14pt;
+    -fx-font-family: "Helvetica";
+    -fx-font-size: 12pt;
     -fx-font-weight: bold;
 }
 
@@ -64,4 +65,43 @@ and open the template in the editor.
 .file_button:hover
 {
     -fx-background-color: lightgreen;
+}
+
+.file_button:pressed
+{
+    -fx-opacity: 0.5px;
+}
+
+.component_toolbar
+{
+    -fx-padding: 15 0 15 0;
+    -fx-background-color: #aaaaff;
+    -fx-background-radius: 5.0;
+    -fx-border-width: 2px;
+    -fx-border-color: #7777dd;
+}
+
+.component_child_element
+{
+    -fx-background-color: #ccccff;
+    -fx-background-radius: 5.0;
+    -fx-padding: 15;
+    -fx-border-width: 2px;
+    -fx-border-color: #7777dd;
+}
+
+.component_button
+{
+    -fx-background-color: ghostwhite;
+    -fx-font-size: 10px;
+}
+
+.component_button:hover
+{
+    -fx-background-color: lightgreen;
+}
+
+.component_button:pressed
+{
+    -fx-opacity: 0.5px;
 }

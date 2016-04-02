@@ -14,14 +14,16 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -29,10 +31,16 @@ import static jcd.PropertyType.ADD_CLASS_ICON;
 import static jcd.PropertyType.ADD_CLASS_TOOLTIP;
 import static jcd.PropertyType.ADD_INTERFACE_ICON;
 import static jcd.PropertyType.ADD_INTERFACE_TOOLTIP;
+import static jcd.PropertyType.ADD_METHOD_TOOLTIP;
+import static jcd.PropertyType.ADD_VARIABLE_TOOLTIP;
+import static jcd.PropertyType.MINUS_ICON;
+import static jcd.PropertyType.PLUS_ICON;
 import static jcd.PropertyType.REDO_ICON;
 import static jcd.PropertyType.REDO_TOOLTIP;
 import static jcd.PropertyType.REMOVE_ICON;
+import static jcd.PropertyType.REMOVE_METHOD_TOOLTIP;
 import static jcd.PropertyType.REMOVE_TOOLTIP;
+import static jcd.PropertyType.REMOVE_VARIABLE_TOOLTIP;
 import static jcd.PropertyType.RESIZE_ICON;
 import static jcd.PropertyType.RESIZE_TOOLTIP;
 import static jcd.PropertyType.SELECTION_TOOL_ICON;
@@ -93,6 +101,22 @@ public class Workspace extends AppWorkspaceComponent
     // Third row
     Label parentLabel;
     ComboBox<String> parentComboBox;
+    
+    // Fourth row
+    VBox variablesVBox;
+    HBox variablesHBox;
+    Label variablesLabel;
+    Button addVariableButton;
+    Button removeVariableButton;
+    TableView variablesTableView;
+    
+    // Fifth row
+    VBox methodsVBox;
+    HBox methodsHBox;
+    Label methodsLabel;
+    Button addMethodButton;
+    Button removeMethodButton;
+    TableView methodsTableView;
     
     public Workspace(AppTemplate initApp) throws IOException 
     {
@@ -156,20 +180,34 @@ public class Workspace extends AppWorkspaceComponent
     {
         canvas = new Pane();
         canvasScrollPane = new ScrollPane(canvas);
-        canvasScrollPane.setPrefSize(1000, 1000); // DELETE
-        canvasScrollPane.setStyle("-fx-background-color: red;"); // DELETE
+        canvasScrollPane.setFitToHeight(true);
+        canvasScrollPane.setFitToWidth(true);
+        canvas.setStyle("-fx-background-color: ghostwhite;"); // DELETE
     }
     
     private void initComponentToolbar()
     {
-        componentToolbar = new VBox(10);
+        componentToolbar = new VBox(20);
+        componentToolbar.setMaxWidth(300);
+        initGridPane();
+        initVariablesRow();
+        initMethodsRow();
         
+        componentToolbar.getChildren().add(gridPane);
+        componentToolbar.getChildren().add(variablesVBox);
+        componentToolbar.getChildren().add(methodsVBox);
+    }
+    
+    private void initGridPane()
+    {
         gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         
         // First row
         classNameLabel = new Label("Class Name:");
+        classNameLabel.setMinWidth(Region.USE_PREF_SIZE);
+        classNameLabel.setMaxWidth(Region.USE_PREF_SIZE);
         classNameTextField = new TextField();
         classNameTextField.setAlignment(Pos.BOTTOM_RIGHT);
         
@@ -192,8 +230,55 @@ public class Workspace extends AppWorkspaceComponent
         
         // Align the combo box to the right of the grid pane
         GridPane.setHalignment(parentComboBox, HPos.RIGHT);
+    }
+    
+    private void initVariablesRow()
+    {
+        variablesVBox = new VBox(5);
         
-        componentToolbar.getChildren().add(gridPane);
+        variablesHBox = new HBox(10);
+        variablesHBox.setAlignment(Pos.CENTER_LEFT);
+        variablesLabel = new Label("Variables:");
+        variablesHBox.getChildren().add(variablesLabel);
+        addVariableButton = gui.initChildButton(variablesHBox, PLUS_ICON.toString(), ADD_VARIABLE_TOOLTIP.toString(), false);
+        removeVariableButton = gui.initChildButton(variablesHBox, MINUS_ICON.toString(), REMOVE_VARIABLE_TOOLTIP.toString(), false);
+        
+        variablesTableView = new TableView();
+        variablesTableView.setPrefHeight(200);
+
+        TableColumn variableNameCol = new TableColumn("Name");
+        TableColumn variableTypeCol = new TableColumn("Type");
+        TableColumn variableStaticCol = new TableColumn("Static");
+        TableColumn variableAccessCol = new TableColumn("Access");
+        
+        variablesTableView.getColumns().addAll(variableNameCol, variableTypeCol, variableStaticCol, variableAccessCol);
+        
+        variablesVBox.getChildren().addAll(variablesHBox, variablesTableView);
+    }
+    
+    private void initMethodsRow()
+    {
+        methodsVBox = new VBox(5);
+        
+        methodsHBox = new HBox(10);
+        methodsHBox.setAlignment(Pos.CENTER_LEFT);
+        methodsLabel = new Label("Methods:");
+        methodsHBox.getChildren().add(methodsLabel);
+        addMethodButton = gui.initChildButton(methodsHBox, PLUS_ICON.toString(), ADD_METHOD_TOOLTIP.toString(), false);
+        removeMethodButton = gui.initChildButton(methodsHBox, MINUS_ICON.toString(), REMOVE_METHOD_TOOLTIP.toString(), false);
+        
+        methodsTableView = new TableView();
+        methodsTableView.setPrefHeight(200);
+        TableColumn variableNameCol = new TableColumn("Name");
+        TableColumn variableReturnCol = new TableColumn("Return");
+        TableColumn variableTypeCol = new TableColumn("Type");
+        TableColumn variableAbstractCol = new TableColumn("Abstract");
+        TableColumn variableStaticCol = new TableColumn("Static");
+        TableColumn variableAccessCol = new TableColumn("Access");
+        
+        methodsTableView.getColumns().addAll(variableNameCol, variableReturnCol, variableTypeCol, variableStaticCol, variableAccessCol);
+        
+        methodsVBox.getChildren().addAll(methodsHBox, methodsTableView);
     }
     
     private void initGUI()
@@ -207,13 +292,35 @@ public class Workspace extends AppWorkspaceComponent
     @Override
     public void initStyle() 
     {
+        // For Edit Toolbar
         for (Node b: editToolbarPane.getChildren())
             ((Button)b).getStyleClass().add(CLASS_FILE_BUTTON);
         
+        // For View Toolbar
         zoomInButton.getStyleClass().add(CLASS_FILE_BUTTON);
         zoomOutButton.getStyleClass().add(CLASS_FILE_BUTTON);
         gridRenderCheckBox.setFont(Font.font("Helvetica Neue", FontWeight.BOLD, FontPosture.REGULAR, 12));
         gridSnapCheckBox.setFont(Font.font("Helvetica Neue", FontWeight.BOLD, FontPosture.REGULAR, 12));
+        
+        // For Component Toolbar
+        classNameLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        packageLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        parentLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        parentComboBox.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        gridPane.getStyleClass().add(CLASS_COMPONENT_CHILD_ELEMENT);
+        
+        variablesLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        addVariableButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        removeVariableButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        variablesVBox.getStyleClass().add(CLASS_COMPONENT_CHILD_ELEMENT);
+        
+        methodsLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        addMethodButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        removeMethodButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        methodsVBox.getStyleClass().add(CLASS_COMPONENT_CHILD_ELEMENT);
+        
+        componentToolbar.getStyleClass().add(CLASS_COMPONENT_TOOLBAR);
+        
     }
     
     @Override
