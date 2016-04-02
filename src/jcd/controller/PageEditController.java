@@ -9,7 +9,9 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import jcd.JClassDesigner;
 import jcd.data.ClassObject;
@@ -24,6 +26,9 @@ import jcd.gui.Workspace;
  */
 public class PageEditController 
 {
+    private static final double DEFAULT_WIDTH = 300.0;
+    private static final double DEFAULT_HEIGHT = 100.0;
+    
     // HERE'S THE FULL APP, WHICH GIVES US ACCESS TO OTHER STUFF
     JClassDesigner app;
     DataManager dataManager;
@@ -69,76 +74,59 @@ public class PageEditController
 	workspace.reloadWorkspace();
     }
     
-    // Page Edit Requests
-    
-    public void handleSelectionRequest(Object obj)
-    {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        
-        if(workspace.getSelectedObject() != null)
-        {
-            workspace.setSelectedObject(null);
-            unhighlight(workspace.getSelectedObject());
-        }
-
-        workspace.setSelectedObject(obj);
-        highlight(obj);
-        
-        workspace.reloadWorkspace();
-    }
-    
-    public void handleUnselectRequest()
-    {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        
-        if(workspace.getSelectedObject() != null)
-        {
-            workspace.setSelectedObject(null);
-            unhighlight(workspace.getSelectedObject());
-        }
-        workspace.reloadWorkspace();
-    }
-    
-    private void unhighlight(Object obj)
-    {
-        if (obj instanceof ClassObject)
-            ((ClassObject)obj).getRectanglesBox().getStackPanesVBox().setEffect(null);
-    }
-    
-    private void highlight(Object obj)
-    {
-        // THIS IS FOR THE SELECTED SHAPE
-	DropShadow dropShadowEffect = new DropShadow();
-	dropShadowEffect.setOffsetX(0.0f);
-	dropShadowEffect.setOffsetY(0.0f);
-	dropShadowEffect.setSpread(1.0);
-	dropShadowEffect.setColor(Color.YELLOW);
-	dropShadowEffect.setBlurType(BlurType.GAUSSIAN);
-	dropShadowEffect.setRadius(5);
-        
-        if (obj instanceof ClassObject)
-            ((ClassObject)obj).getRectanglesBox().getStackPanesVBox().setEffect(dropShadowEffect);
-    }
-    
     public void handleAddClassRequest() 
     {
-         Workspace workspace = (Workspace) app.getWorkspaceComponent();
-         Pane canvas = workspace.getCanvas();
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
          
-         RectanglesBox box = new RectanglesBox();
-         int randomInt = (int) (Math.random() * 100);
-         String randomClassNameString = "Dummy" + randomInt;
+        int x = (int)(Math.random() * (canvas.getWidth() - (int)(DEFAULT_WIDTH)));
+        int y = (int) ((canvas.getLayoutBounds().getMinY() + canvas.getLayoutBounds().getMaxY())/2) - (int)((DEFAULT_HEIGHT)/2);
          
-         ClassObject obj = new ClassObject(randomClassNameString, "", box);
+        RectanglesBox box = new RectanglesBox();
+        box.getStackPanesVBox().setTranslateX(x);
+        box.getStackPanesVBox().setTranslateY(y);
+        int randomInt = (int) (Math.random() * 100);
+        String randomClassNameString = "Dummy" + randomInt;
          
-         // CHANGE THE STATE AND SELECT THE SHAPE
-	 dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
-         handleSelectionRequest(obj);
+        ClassObject obj = new ClassObject(randomClassNameString, "", box);
          
-         canvas.getChildren().add(obj.getRectanglesBox().getStackPanesVBox());
-         dataManager.addClassObject(obj);
+        if (dataManager.checkIfUnique(obj))
+        {
+            canvas.getChildren().add(obj.getRectanglesBox().getStackPanesVBox());
+            dataManager.addClassObject(obj);
+            // AND SELECT IT
+            workspace.getCanvasEditController().handleSelectionRequest(obj);
+        }
          
-         app.getGUI().updateToolbarControls(false);
-         workspace.reloadWorkspace();
+        // Maybe show a message here that adding wasn't successful?
+         
+        app.getGUI().updateToolbarControls(false);
+        workspace.reloadWorkspace();
+    }
+    
+    public void handleClassNameChangeRequest(Object obj, String className)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        if (obj instanceof ClassObject)
+        {
+            ClassObject object = ((ClassObject)obj);
+            object.setClassName(className);
+            workspace.getClassNameTextField().setText(((ClassObject) obj).getClassName());
+        }
+        
+        workspace.reloadWorkspace();
+    }
+    
+    public void handlePackageNameChangeRequest(Object obj, String packageName)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        if (obj instanceof ClassObject)
+        {
+            ClassObject object = ((ClassObject)obj);
+            object.setPackageName(packageName);
+            workspace.getPackageTextField().setText(((ClassObject) obj).getPackageName());
+        }
+        
+        workspace.reloadWorkspace();
     }
 }

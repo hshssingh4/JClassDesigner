@@ -5,8 +5,10 @@
  */
 package jcd.data;
 
+import java.util.ArrayList;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -16,6 +18,10 @@ import javafx.scene.text.Text;
  */
 public class RectanglesBox 
 {
+    private static final double DEFAULT_WIDTH = 300.0;
+    private static final double DEFAULT_HEIGHT = 50.0;
+    private static final double DEFAULT_STROKE_WIDTH = 2.0;
+    
     // VBox to contain all stackpanes
     private VBox stackPanesVBox;
     
@@ -28,23 +34,90 @@ public class RectanglesBox
     private Rectangle classRectangle;
     private Rectangle variablesRectangle;
     private Rectangle methodsRectangle;
-    private Text classNameText;
+    
+    // Box to put classes in
+    private VBox classNameTextVBox;
+    private ArrayList<Text> classesTextList;
     
     // Box to put all variables in
     private VBox variablesTextVBox;
-    private Text[] variablesText;
+    private ArrayList<Text> variablesTextList;
     
     // Box to put all methods in
     private VBox methodsTextVBox;
-    private Text[] methodsText;
+    private ArrayList<Text> methodsTextList;
 
     public RectanglesBox()
     {
-        
+        stackPanesVBox = new VBox();
+        initClassStackPane();
+        initVariablesStackPane();
+        initMethodsStackPane();
+        stackPanesVBox.getChildren().addAll(classRectangleStackPane, 
+                variablesRectangleStackPane, methodsRectangleStackPane);
+    }
+    
+    private void initClassStackPane()
+    {
+        classRectangleStackPane = new StackPane();
+        classRectangle = new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        classRectangle.setFill(Color.WHITE);
+        classRectangle.setStroke(Color.BLACK);
+        classRectangle.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+        classNameTextVBox = new VBox();
+        classesTextList = new ArrayList();
+        classNameTextVBox.getChildren().addAll(classesTextList);
+        classRectangleStackPane.getChildren().addAll(classRectangle, classNameTextVBox);
+    }
+    
+    private void initVariablesStackPane()
+    {
+        variablesRectangleStackPane = new StackPane();
+        variablesRectangle = new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        variablesRectangle.setFill(Color.WHITE);
+        variablesRectangle.setStroke(Color.BLACK);
+        variablesRectangle.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+        variablesTextVBox = new VBox();
+        variablesTextList = new ArrayList();
+        variablesTextVBox.getChildren().addAll(variablesTextList);
+        variablesRectangleStackPane.getChildren().addAll(variablesRectangle, variablesTextVBox);
+    }
+    
+    private void initMethodsStackPane()
+    {
+        methodsRectangleStackPane = new StackPane();
+        methodsRectangle = new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        methodsRectangle.setFill(Color.WHITE);
+        methodsRectangle.setStroke(Color.BLACK);
+        methodsRectangle.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+        methodsTextVBox = new VBox();
+        methodsTextList = new ArrayList();
+        methodsTextVBox.getChildren().addAll(methodsTextList);
+        methodsRectangleStackPane.getChildren().addAll(methodsRectangle, methodsTextVBox);
     }
 
     public VBox getStackPanesVBox() 
     {
         return stackPanesVBox;
+    }
+
+    public Rectangle getClassRectangle() 
+    {
+        return classRectangle;
+    }
+
+    public VBox getClassNameTextVBox()
+    {
+        return classNameTextVBox;
+    }
+    
+    public VBox getVariablesTextVBox() 
+    {
+        return variablesTextVBox;
+    }
+
+    public VBox getMethodsTextVBox() 
+    {
+        return methodsTextVBox;
     }
 }

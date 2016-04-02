@@ -59,6 +59,7 @@ import static jcd.PropertyType.ZOOM_IN_ICON;
 import static jcd.PropertyType.ZOOM_IN_TOOLTIP;
 import static jcd.PropertyType.ZOOM_OUT_ICON;
 import static jcd.PropertyType.ZOOM_OUT_TOOLTIP;
+import jcd.controller.CanvasEditController;
 import jcd.controller.PageEditController;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
@@ -73,10 +74,6 @@ import saf.ui.AppGUI;
  */
 public class Workspace extends AppWorkspaceComponent
 {
-    private static final double DEFAULT_WIDTH = 400.0;
-    private static final double DEFAULT_HEIGHT = 200.0;
-    private static final double DEFAULT_STROKE_WIDTH = 2.0;
-    
     // HERE'S THE APP
     AppTemplate app;
     
@@ -139,6 +136,7 @@ public class Workspace extends AppWorkspaceComponent
     
     // HERE IS THE CONTROLLER
     PageEditController pageEditController;
+    CanvasEditController canvasEditController;
     DataManager dataManager;
     
     public Workspace(AppTemplate initApp) throws IOException 
@@ -149,6 +147,7 @@ public class Workspace extends AppWorkspaceComponent
 	// KEEP THE GUI FOR LATER
 	gui = app.getGUI();
         pageEditController = new PageEditController((JClassDesigner) app);
+        canvasEditController = new CanvasEditController((JClassDesigner) app);
         dataManager = (DataManager) app.getDataComponent();
         
         initEditToolbar();
@@ -331,35 +330,33 @@ public class Workspace extends AppWorkspaceComponent
             pageEditController.handleResizeButtonRequest();
         });
         addClassButton.setOnAction(e -> {
-            /*//selectedButton = addClassButton;
-            int randomOffset = (int) ((Math.random() * 300) - 150);
-            int x = (int) ((canvas.getLayoutBounds().getMinX() + canvas.getLayoutBounds().getMaxX())/2) - (int)(DEFAULT_WIDTH / 2);
-            int y = (int) ((canvas.getLayoutBounds().getMinY() + canvas.getLayoutBounds().getMaxY())/2) + randomOffset - (int)(DEFAULT_HEIGHT / 2);
-            Rectangle rect = new Rectangle(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-            rect.setFill(Color.WHITE);
-            rect.setStroke(Color.BLACK);
-            rect.setStrokeWidth(DEFAULT_STROKE_WIDTH);
-            int randomInt = (int) (Math.random() * 100);
-            String randomString = "Dummy" + randomInt;
-            
-            ClassObject obj = new ClassObject(randomString, "", rect);
-            selectedObject = obj;
-            
-            if (dataManager.checkIfUnique(obj))*/
-            
             pageEditController.handleAddClassRequest();
         });
-        canvas.setOnMousePressed((MouseEvent e) -> 
-        {
+        canvas.setOnMousePressed((MouseEvent e) -> {
             if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
             {
                 if(e.getTarget() instanceof VBox)
+                {
                     for (ClassObject obj: dataManager.getClassesList())
-                        if (obj.getRectanglesBox().getStackPanesVBox() == ((VBox)e.getTarget()))
-                                pageEditController.handleSelectionRequest(obj); 
+                        if ( obj.getRectanglesBox().getClassNameTextVBox() == (VBox)e.getTarget()
+                                || obj.getRectanglesBox().getVariablesTextVBox() == ((VBox)e.getTarget())
+                                || obj.getRectanglesBox().getMethodsTextVBox() == ((VBox) e.getTarget()))
+                                canvasEditController.handleSelectionRequest(obj);
+                    double initialX = ((ClassObject)selectedObject).getRectanglesBox().getStackPanesVBox().getTranslateX();
+                    double initialY = ((ClassObject)selectedObject).getRectanglesBox().getStackPanesVBox().getTranslateY();
+                    canvas.setOnMouseDragged((MouseEvent e1) -> {
+                        canvasEditController.handlePositionChangeRequest(selectedObject, e1, e, initialX, initialY);
+                    });
+                }
                 else
-                    pageEditController.handleUnselectRequest();
+                    canvasEditController.handleUnselectRequest();
             }
+        });
+        classNameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            pageEditController.handleClassNameChangeRequest(getSelectedObject(), newValue);
+        });
+        packageTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            pageEditController.handlePackageNameChangeRequest(getSelectedObject(), newValue);
         });
     }
     
@@ -399,10 +396,10 @@ public class Workspace extends AppWorkspaceComponent
     @Override
     public void reloadWorkspace() 
     {
-        enforceLegalButtons();
+        enableLegalButtons();
     }
     
-    private void enforceLegalButtons()
+    private void enableLegalButtons()
     {
         for (Node b: editToolbarPane.getChildren())
             b.setDisable(false);
@@ -416,6 +413,11 @@ public class Workspace extends AppWorkspaceComponent
         return canvas;
     }
 
+    public ScrollPane getCanvasScrollPane() 
+    {
+        return canvasScrollPane;
+    }
+
     public Object getSelectedObject()
     {
         return selectedObject;
@@ -424,5 +426,20 @@ public class Workspace extends AppWorkspaceComponent
     public void setSelectedObject(Object selectedObject) 
     {
         this.selectedObject = selectedObject;
+    }
+
+    public TextField getClassNameTextField() 
+    {
+        return classNameTextField;
+    }
+
+    public TextField getPackageTextField() 
+    {
+        return packageTextField;
+    }
+
+    public CanvasEditController getCanvasEditController() 
+    {
+        return canvasEditController;
     }
 }
