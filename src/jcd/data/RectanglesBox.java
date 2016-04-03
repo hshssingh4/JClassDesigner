@@ -53,8 +53,6 @@ public class RectanglesBox
         initClassStackPane();
         initVariablesStackPane();
         initMethodsStackPane();
-        stackPanesVBox.getChildren().addAll(classRectangleStackPane, 
-                variablesRectangleStackPane, methodsRectangleStackPane);
     }
     
     private void initClassStackPane()
@@ -66,8 +64,6 @@ public class RectanglesBox
         classRectangle.setStrokeWidth(DEFAULT_STROKE_WIDTH);
         classNameTextVBox = new VBox();
         classesTextList = new ArrayList();
-        classNameTextVBox.getChildren().addAll(classesTextList);
-        classRectangleStackPane.getChildren().addAll(classRectangle, classNameTextVBox);
     }
     
     private void initVariablesStackPane()
@@ -120,4 +116,24 @@ public class RectanglesBox
     {
         return methodsTextVBox;
     }
+
+    public ArrayList<Text> getClassesTextList()
+    {
+        return classesTextList;
+    }
+
+    public StackPane getClassRectangleStackPane() 
+    {
+        return classRectangleStackPane;
+    }
+
+    public StackPane getVariablesRectangleStackPane() {
+        return variablesRectangleStackPane;
+    }
+
+    public StackPane getMethodsRectangleStackPane() {
+        return methodsRectangleStackPane;
+    }
+    
+    
 }

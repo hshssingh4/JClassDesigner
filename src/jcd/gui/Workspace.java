@@ -234,12 +234,14 @@ public class Workspace extends AppWorkspaceComponent
         classNameLabel.setMinWidth(Region.USE_PREF_SIZE);
         classNameLabel.setMaxWidth(Region.USE_PREF_SIZE);
         classNameTextField = new TextField();
+        classNameTextField.setDisable(true);
         classNameTextField.setAlignment(Pos.BOTTOM_RIGHT);
         classNameTextField.setPromptText("Enter Class Name");
         
         // Second row
         packageLabel = new Label("Package:");
         packageTextField = new TextField();
+        packageTextField.setDisable(true);
         packageTextField.setAlignment(Pos.BOTTOM_RIGHT);
         packageTextField.setPromptText("Enter Package Name");
         
@@ -342,8 +344,10 @@ public class Workspace extends AppWorkspaceComponent
                                 || obj.getRectanglesBox().getVariablesTextVBox() == ((VBox)e.getTarget())
                                 || obj.getRectanglesBox().getMethodsTextVBox() == ((VBox) e.getTarget()))
                                 canvasEditController.handleSelectionRequest(obj);
-                    double initialX = ((ClassObject)selectedObject).getRectanglesBox().getStackPanesVBox().getTranslateX();
-                    double initialY = ((ClassObject)selectedObject).getRectanglesBox().getStackPanesVBox().getTranslateY();
+                    
+                    
+                    double initialX = ((ClassObject)selectedObject).getRectanglesBox().getStackPanesVBox().getTranslateX(); /* This code only works for now*/
+                    double initialY = ((ClassObject)selectedObject).getRectanglesBox().getStackPanesVBox().getTranslateY(); /* This code only works for now*/
                     canvas.setOnMouseDragged((MouseEvent e1) -> {
                         canvasEditController.handlePositionChangeRequest(selectedObject, e1, e, initialX, initialY);
                     });
@@ -352,11 +356,13 @@ public class Workspace extends AppWorkspaceComponent
                     canvasEditController.handleUnselectRequest();
             }
         });
-        classNameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            pageEditController.handleClassNameChangeRequest(getSelectedObject(), newValue);
+        classNameTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {
+            if (selectedObject != null)
+                pageEditController.handleClassNameChangeRequest(selectedObject, newClassName);
         });
-        packageTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            pageEditController.handlePackageNameChangeRequest(getSelectedObject(), newValue);
+        packageTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {
+            if (selectedObject != null) 
+                pageEditController.handlePackageNameChangeRequest(selectedObject, newClassName);
         });
     }
     
@@ -396,6 +402,24 @@ public class Workspace extends AppWorkspaceComponent
     @Override
     public void reloadWorkspace() 
     {
+        if (selectedObject != null)
+        {
+            if (selectedObject instanceof ClassObject)
+            {
+                ClassObject obj = (ClassObject) selectedObject;
+                classNameTextField.setText(obj.getClassName());
+                packageTextField.setText(obj.getPackageName());
+            }
+        }
+        else
+        {
+            classNameTextField.clear();
+            packageTextField.clear();
+        }
+        
+        // Now load all the childrens again
+        //ArrayList
+        
         enableLegalButtons();
     }
     
@@ -406,6 +430,17 @@ public class Workspace extends AppWorkspaceComponent
         
         for (Node b: viewToolbarPane.getChildren())
             b.setDisable(false);
+        
+        if (selectedObject != null)
+        {
+            classNameTextField.setDisable(false);
+            packageTextField.setDisable(false);
+        }
+        else
+        {
+            classNameTextField.setDisable(true);
+            packageTextField.setDisable(true);      
+        }
     }
 
     public Pane getCanvas() 

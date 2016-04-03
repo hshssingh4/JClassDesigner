@@ -5,6 +5,9 @@
  */
 package jcd.controller;
 
+import java.awt.Font;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.effect.BlurType;
@@ -13,12 +16,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextBoundsType;
 import jcd.JClassDesigner;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
 import jcd.data.RectanglesBox;
 import jcd.gui.Workspace;
+import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 
 /**
  *
@@ -87,14 +94,21 @@ public class PageEditController
         box.getStackPanesVBox().setTranslateY(y);
         int randomInt = (int) (Math.random() * 100);
         String randomClassNameString = "Dummy" + randomInt;
-         
+        box.getClassesTextList().add(new Text(randomClassNameString));
+        box.getClassesTextList().get(0).getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        box.getClassNameTextVBox().getChildren().addAll(box.getClassesTextList());
+        box.getClassNameTextVBox().setAlignment(Pos.CENTER);
+        box.getClassRectangleStackPane().getChildren().addAll(box.getClassRectangle(), box.getClassNameTextVBox());
+        box.getStackPanesVBox().getChildren().addAll(box.getClassRectangleStackPane(),
+                box.getVariablesRectangleStackPane(), box.getMethodsRectangleStackPane());
+
         ClassObject obj = new ClassObject(randomClassNameString, "", box);
-         
         if (dataManager.checkIfUnique(obj))
         {
             canvas.getChildren().add(obj.getRectanglesBox().getStackPanesVBox());
             dataManager.addClassObject(obj);
             // AND SELECT IT
+            dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
             workspace.getCanvasEditController().handleSelectionRequest(obj);
         }
          
@@ -110,8 +124,20 @@ public class PageEditController
         if (obj instanceof ClassObject)
         {
             ClassObject object = ((ClassObject)obj);
-            object.setClassName(className);
-            workspace.getClassNameTextField().setText(((ClassObject) obj).getClassName());
+            boolean unique = true;
+            
+            for (ClassObject classObj: dataManager.getClassesList())
+            {
+                if (classObj.getClassName().equalsIgnoreCase(className) &&
+                        classObj.getPackageName().equalsIgnoreCase(object.getPackageName()))
+                    unique = false;
+            }
+            
+            if (unique)
+            {
+                object.setClassName(className);
+                object.getRectanglesBox().getClassesTextList().get(0).setText(className);
+            }
         }
         
         workspace.reloadWorkspace();
@@ -123,8 +149,19 @@ public class PageEditController
         if (obj instanceof ClassObject)
         {
             ClassObject object = ((ClassObject)obj);
-            object.setPackageName(packageName);
-            workspace.getPackageTextField().setText(((ClassObject) obj).getPackageName());
+            boolean unique = true;
+            
+            for (ClassObject classObj: dataManager.getClassesList())
+            {
+                if (classObj.getClassName().equalsIgnoreCase(object.getClassName()) &&
+                        classObj.getPackageName().equalsIgnoreCase(packageName))
+                    unique = false;
+            }
+            
+            if (unique)
+            {
+                object.setPackageName(packageName);
+            }            
         }
         
         workspace.reloadWorkspace();

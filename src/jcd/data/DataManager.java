@@ -78,5 +78,10 @@ public class DataManager implements AppDataComponent
     public void reset()
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        hashClasses.clear();
+        classesList.clear();
+        state = null;
+        workspace.setSelectedObject(null);
+        workspace.getCanvas().getChildren().clear();
     }
 }

@@ -26,7 +26,8 @@ public class ClassObject
     
     public boolean equals(ClassObject obj)
     {
-        return this.className.equalsIgnoreCase(obj.className);
+        return (this.className.equalsIgnoreCase(obj.className) && 
+                this.packageName.equalsIgnoreCase(obj.packageName));
     }
 
     public String getClassName() 
