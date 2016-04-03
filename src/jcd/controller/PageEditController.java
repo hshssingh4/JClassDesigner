@@ -5,20 +5,11 @@
  */
 package jcd.controller;
 
-import java.awt.Font;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextBoundsType;
 import jcd.JClassDesigner;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
@@ -28,11 +19,13 @@ import jcd.gui.Workspace;
 import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 
 /**
- *
+ * This class serves as a controller to handle all the user actions except the ones
+ * related directly to the canvas. 
  * @author RaniSons
  */
 public class PageEditController 
 {
+    // These define the default height and width values for the rectangles inside vbox
     private static final double DEFAULT_WIDTH = 300.0;
     private static final double DEFAULT_HEIGHT = 100.0;
     
@@ -53,6 +46,11 @@ public class PageEditController
     }
     
     // Button Requests
+    
+    /**
+     * Handles the case when the user clicks on the selection tool button
+     * that is present in the edit toolbar.
+     */
     public void handleSelectionToolButtonRequest() 
     {
 	// CHANGE THE CURSOR
@@ -67,6 +65,10 @@ public class PageEditController
 	workspace.reloadWorkspace();
     }
     
+    /**
+     * Handles the case when the user clicks on the selection tool button
+     * that is present in the edit toolbar.
+     */
     public void handleResizeButtonRequest()
     {
         // CHANGE THE CURSOR
@@ -81,14 +83,20 @@ public class PageEditController
 	workspace.reloadWorkspace();
     }
     
+    /**
+     * Handles the request for adding the class object. It first initializes a class
+     * object and then puts it on the canvas.
+     */
     public void handleAddClassRequest() 
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         Pane canvas = workspace.getCanvas();
          
+        // x and y values where the box will be origined
         int x = (int)(Math.random() * (canvas.getWidth() - (int)(DEFAULT_WIDTH)));
         int y = (int) ((canvas.getLayoutBounds().getMinY() + canvas.getLayoutBounds().getMaxY())/2) - (int)((DEFAULT_HEIGHT)/2);
          
+        // Initialize the box
         RectanglesBox box = new RectanglesBox();
         box.getStackPanesVBox().setTranslateX(x);
         box.getStackPanesVBox().setTranslateY(y);
@@ -102,6 +110,7 @@ public class PageEditController
         box.getStackPanesVBox().getChildren().addAll(box.getClassRectangleStackPane(),
                 box.getVariablesRectangleStackPane(), box.getMethodsRectangleStackPane());
 
+        // Now initialize the class object
         ClassObject obj = new ClassObject(randomClassNameString, "", box);
         if (dataManager.checkIfUnique(obj))
         {
@@ -118,9 +127,20 @@ public class PageEditController
         workspace.reloadWorkspace();
     }
     
+    /**
+     * Handles the request where the user changes the name of a class.
+     * It makes sure that the name is not changed such that the classes
+     * always stay unique.
+     * @param obj
+     * the object for which the name is to be changed
+     * @param className 
+     * the name to change it to
+     */
     public void handleClassNameChangeRequest(Object obj, String className)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        
+        // Case where the object is a class object
         if (obj instanceof ClassObject)
         {
             ClassObject object = ((ClassObject)obj);
@@ -133,6 +153,7 @@ public class PageEditController
                     unique = false;
             }
             
+            // Only change the name of the class to such if name is unique
             if (unique)
             {
                 object.setClassName(className);
@@ -143,9 +164,18 @@ public class PageEditController
         workspace.reloadWorkspace();
     }
     
+    /**
+     * Handles the case where the user tries to change the name of the package.
+     * @param obj
+     * the object whose package name is to be changed
+     * @param packageName 
+     * the name to be changed to
+     */
     public void handlePackageNameChangeRequest(Object obj, String packageName)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        
+        // Case where the object is a class object.
         if (obj instanceof ClassObject)
         {
             ClassObject object = ((ClassObject)obj);
@@ -158,10 +188,9 @@ public class PageEditController
                     unique = false;
             }
             
+            // Only change if it is unique.
             if (unique)
-            {
-                object.setPackageName(packageName);
-            }            
+                object.setPackageName(packageName);           
         }
         
         workspace.reloadWorkspace();

@@ -17,13 +17,16 @@ import jcd.data.DataManager;
 import jcd.gui.Workspace;
 
 /**
- *
+ * This class handles all the activity (user interactions) with the
+ * canvas itself. 
  * @author RaniSons
  */
 public class CanvasEditController 
 {
+    /* This offset if for the extra space that we need to show for the
+    scroll pane */
     private static final double DEFAULT_OFFSET = 20;
-    DropShadow dropShadowEffect = new DropShadow();
+    DropShadow dropShadowEffect; // Effect for highlighting the shape
     
     // HERE'S THE FULL APP, WHICH GIVES US ACCESS TO OTHER STUFF
     JClassDesigner app;
@@ -39,6 +42,9 @@ public class CanvasEditController
 	// KEEP IT FOR LATER
 	app = initApp;
         dataManager = (DataManager)app.getDataComponent();
+        
+        // Now initialize the highlighting effect.
+        dropShadowEffect = new DropShadow();
         dropShadowEffect.setOffsetX(0.0f);
 	dropShadowEffect.setOffsetY(0.0f);
 	dropShadowEffect.setSpread(1.0);
@@ -49,26 +55,37 @@ public class CanvasEditController
     
     // Page Edit Requests
     
+    /**
+     * Handles the selection request. Highlights the object that is selected.
+     * @param obj 
+     * the object to be selected
+     */
     public void handleSelectionRequest(Object obj)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         
+        // Unhighlight any previously selected objects
         if(workspace.getSelectedObject() != null)
         {
             unhighlight(workspace.getSelectedObject());
             workspace.setSelectedObject(null);
         }
 
+        // And now select the object
         workspace.setSelectedObject(obj);
         highlight(obj);
        
         workspace.reloadWorkspace();
     }
     
-    public void handleUnselectRequest()
+    /**
+     * Method to handle the deselect request by unhighlighting the object. 
+     */
+    public void handleDeselectRequest()
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         
+        // Only if there is a selected object.
         if(workspace.getSelectedObject() != null)
         {
             unhighlight(workspace.getSelectedObject());
@@ -77,24 +94,49 @@ public class CanvasEditController
         workspace.reloadWorkspace();
     }
     
+    /**
+     * Helper method to unhighlight the object by setting the effect to null.
+     * @param obj 
+     * the object whose effect is to be set to null
+     */
     private void unhighlight(Object obj)
     {
         if (obj instanceof ClassObject)
             ((ClassObject)obj).getRectanglesBox().getStackPanesVBox().setEffect(null);
     }
     
+    /**
+     * Helper method to highlight the object by setting the effect property.
+     * @param obj 
+     * the object whose effect is to be set
+     */
     private void highlight(Object obj)
     {
         if (obj instanceof ClassObject)
             ((ClassObject)obj).getRectanglesBox().getStackPanesVBox().setEffect(dropShadowEffect);
     }
     
+    /**
+     * This method handles the request where the user tries to relocate or
+     * reposition the selected object.
+     * @param obj
+     * the object that is to be moved
+     * @param e1
+     * the dragging event
+     * @param e
+     * the pressing event
+     * @param initialX
+     * initial X value of the vbox that keeps the stack panes
+     * @param initialY 
+     * the initial Y value of the vbox that keeps the stack panes
+     */
     public void handlePositionChangeRequest(Object obj, MouseEvent e1, MouseEvent e,
             double initialX, double initialY)
     {
         double xDiff;
         double yDiff;
         
+        // Handles the case for the ClassObject
         if (obj instanceof ClassObject)
         {
             VBox box = ((ClassObject)obj).getRectanglesBox().getStackPanesVBox();
@@ -109,6 +151,10 @@ public class CanvasEditController
         app.getGUI().updateToolbarControls(false);
     }
     
+    /**
+     * Helper method to resize the canvas so that the user can scroll to see
+     * where the objects are placed if required.
+     */
     private void resizeCanvasIfNeeded()
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();

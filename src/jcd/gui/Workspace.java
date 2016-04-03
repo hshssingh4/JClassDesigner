@@ -353,7 +353,7 @@ public class Workspace extends AppWorkspaceComponent
                     });
                 }
                 else
-                    canvasEditController.handleUnselectRequest();
+                    canvasEditController.handleDeselectRequest();
             }
         });
         classNameTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {

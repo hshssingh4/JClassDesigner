@@ -5,10 +5,9 @@
  */
 package jcd.data;
 
-import javafx.scene.shape.Rectangle;
-
 /**
- *
+ * This class manages the class objects for our application. It contains all 
+ * the properties that a Java class usually has.
  * @author RaniSons
  */
 public class ClassObject
@@ -17,6 +16,15 @@ public class ClassObject
     private String packageName;
     private RectanglesBox rectanglesBox;
     
+    /**
+     * Constructor to initialize the class object.
+     * @param className
+     * the name of this class
+     * @param packageName
+     * the name of the package for this class
+     * @param box 
+     * the box that displays this class
+     */
     public ClassObject(String className, String packageName, RectanglesBox box)
     {
         this.className = className;
@@ -24,6 +32,13 @@ public class ClassObject
         this.rectanglesBox = box;
     }
     
+    /**
+     * This checks if whether the two class objects are equal or not.
+     * @param obj
+     * the object to check if equal to
+     * @return 
+     * true if equal, false otherwise
+     */
     public boolean equals(ClassObject obj)
     {
         return (this.className.equalsIgnoreCase(obj.className) && 

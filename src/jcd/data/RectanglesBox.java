@@ -13,7 +13,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 /**
- *
+ * This class defines the rectangle box that contains all the properties
+ * of the class and interface object.
  * @author RaniSons
  */
 public class RectanglesBox 
@@ -47,6 +48,9 @@ public class RectanglesBox
     private VBox methodsTextVBox;
     private ArrayList<Text> methodsTextList;
 
+    /**
+     * Constructor to initialize this box.
+     */
     public RectanglesBox()
     {
         stackPanesVBox = new VBox();
@@ -55,6 +59,9 @@ public class RectanglesBox
         initMethodsStackPane();
     }
     
+    /**
+     * Helper method to initialize the class stack pane.
+     */
     private void initClassStackPane()
     {
         classRectangleStackPane = new StackPane();
@@ -66,6 +73,9 @@ public class RectanglesBox
         classesTextList = new ArrayList();
     }
     
+    /**
+     * Helper method to initialize the variables stack pane.
+     */
     private void initVariablesStackPane()
     {
         variablesRectangleStackPane = new StackPane();
@@ -79,6 +89,9 @@ public class RectanglesBox
         variablesRectangleStackPane.getChildren().addAll(variablesRectangle, variablesTextVBox);
     }
     
+    /**
+     * Helper method to initialize the methods stack pane.
+     */
     private void initMethodsStackPane()
     {
         methodsRectangleStackPane = new StackPane();
@@ -134,6 +147,4 @@ public class RectanglesBox
     public StackPane getMethodsRectangleStackPane() {
         return methodsRectangleStackPane;
     }
-    
-    
 }

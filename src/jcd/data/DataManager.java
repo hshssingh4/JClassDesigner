@@ -12,7 +12,7 @@ import saf.AppTemplate;
 import saf.components.AppDataComponent;
 
 /**
- *
+ * This class manages all the data related to this application.
  * @author RaniSons
  */
 public class DataManager implements AppDataComponent
@@ -26,6 +26,13 @@ public class DataManager implements AppDataComponent
     // CURRENT STATE OF THE APP
     JClassDesignerState state;
     
+    /**
+     * Constructor to initialize the data manager.
+     * @param initApp
+     * the current application
+     * @throws Exception 
+     * Indicates that there was an error constructing it
+     */
     public DataManager(AppTemplate initApp) throws Exception 
     {
 	// KEEP THE APP FOR LATER
@@ -35,6 +42,11 @@ public class DataManager implements AppDataComponent
         classesList = new ArrayList();
     }
     
+    /**
+     * This method adds the class object to the data manager.
+     * @param obj 
+     * the object to be added
+     */
     public void addClassObject(ClassObject obj)
     {
         hashClasses.put(obj.getClassName(), obj);
@@ -74,6 +86,9 @@ public class DataManager implements AppDataComponent
 	return state == testState;
     }
     
+    /**
+     * This method resets the whole workspace for a complete new application.
+     */
     @Override
     public void reset()
     {

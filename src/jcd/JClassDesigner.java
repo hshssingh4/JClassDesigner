@@ -28,7 +28,7 @@ import saf.components.AppWorkspaceComponent;
  */
 public class JClassDesigner extends AppTemplate
 {
-/**
+    /**
      * This builder provides methods for properly setting up all
      * the custom objects needed to run this application. Note that
      * by swapping out these components we could have a very different
