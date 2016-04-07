@@ -14,5 +14,5 @@ public enum JClassDesignerState
 {
     SELECTING_SHAPE,
     RESIZING_SHAPE,
-    NOT_SELECTING_SHAPE
+    DRAGGING_SHAPE
 }

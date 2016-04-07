@@ -435,11 +435,21 @@ public class Workspace extends AppWorkspaceComponent
         {
             classNameTextField.setDisable(false);
             packageTextField.setDisable(false);
+            parentComboBox.setDisable(false);
+            addVariableButton.setDisable(false);
+            removeVariableButton.setDisable(false);
+            addMethodButton.setDisable(false);
+            removeMethodButton.setDisable(false);
         }
         else
         {
             classNameTextField.setDisable(true);
-            packageTextField.setDisable(true);      
+            packageTextField.setDisable(true);
+            parentComboBox.setDisable(true);
+            addVariableButton.setDisable(true);
+            removeVariableButton.setDisable(true);
+            addMethodButton.setDisable(true);
+            removeMethodButton.setDisable(true);
         }
     }
 

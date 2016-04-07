@@ -105,6 +105,7 @@ public class PageEditController
         box.getClassesTextList().add(new Text(randomClassNameString));
         box.getClassesTextList().get(0).getStyleClass().add(CLASS_SUBHEADING_LABEL);
         box.getClassNameTextVBox().getChildren().addAll(box.getClassesTextList());
+        //box.getClassRectangle().heightProperty().bind(box.getClassRectangleStackPane().heightProperty().add(25));
         box.getClassNameTextVBox().setAlignment(Pos.CENTER);
         box.getClassRectangleStackPane().getChildren().addAll(box.getClassRectangle(), box.getClassNameTextVBox());
         box.getStackPanesVBox().getChildren().addAll(box.getClassRectangleStackPane(),
