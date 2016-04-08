@@ -71,6 +71,14 @@ public class DataManager implements AppDataComponent
         return true;
     }
     
+    public boolean checkIfUnique(String className, String packageName)
+    {
+        for (ClassObject c: classesList)
+            if (c.equals(className, packageName))
+                    return false;
+        return true;
+    }
+    
     public JClassDesignerState getState()
     {
 	return state;

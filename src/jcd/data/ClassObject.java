@@ -14,7 +14,7 @@ public class ClassObject
 {
     private String className;
     private String packageName;
-    private RectanglesBox rectanglesBox;
+    private Box box;
     
     /**
      * Constructor to initialize the class object.
@@ -25,11 +25,11 @@ public class ClassObject
      * @param box 
      * the box that displays this class
      */
-    public ClassObject(String className, String packageName, RectanglesBox box)
+    public ClassObject(String className, String packageName, Box box)
     {
         this.className = className;
         this.packageName = packageName;
-        this.rectanglesBox = box;
+        this.box = box;
     }
     
     /**
@@ -43,6 +43,12 @@ public class ClassObject
     {
         return (this.className.equalsIgnoreCase(obj.className) && 
                 this.packageName.equalsIgnoreCase(obj.packageName));
+    }
+    
+    public boolean equals(String className, String packageName)
+    {
+        return (this.className.equalsIgnoreCase(className) && 
+                this.packageName.equalsIgnoreCase(packageName));
     }
 
     public String getClassName() 
@@ -65,13 +71,8 @@ public class ClassObject
         this.packageName = packageName;
     }
 
-    public RectanglesBox getRectanglesBox()
+    public Box getBox()
     {
-        return rectanglesBox;
-    }
-
-    public void setRectanglesBox(RectanglesBox rectanglesBox) 
-    {
-        this.rectanglesBox = rectanglesBox;
+        return box;
     }
 }

@@ -48,7 +48,7 @@ public class CanvasEditController
         dropShadowEffect.setOffsetX(0.0f);
 	dropShadowEffect.setOffsetY(0.0f);
 	dropShadowEffect.setSpread(1.0);
-	dropShadowEffect.setColor(Color.YELLOW);
+	dropShadowEffect.setColor(Color.LIGHTGREEN);
 	dropShadowEffect.setBlurType(BlurType.GAUSSIAN);
 	dropShadowEffect.setRadius(5);
     }
@@ -102,7 +102,7 @@ public class CanvasEditController
     private void unhighlight(Object obj)
     {
         if (obj instanceof ClassObject)
-            ((ClassObject)obj).getRectanglesBox().getStackPanesVBox().setEffect(null);
+            ((ClassObject)obj).getBox().getMainVBox().setEffect(null);
     }
     
     /**
@@ -113,7 +113,7 @@ public class CanvasEditController
     private void highlight(Object obj)
     {
         if (obj instanceof ClassObject)
-            ((ClassObject)obj).getRectanglesBox().getStackPanesVBox().setEffect(dropShadowEffect);
+            ((ClassObject)obj).getBox().getMainVBox().setEffect(dropShadowEffect);
     }
     
     /**
@@ -130,16 +130,19 @@ public class CanvasEditController
      * @param initialY 
      * the initial Y value of the vbox that keeps the stack panes
      */
-    public void handlePositionChangeRequest(Object obj, MouseEvent e1, MouseEvent e,
+    public void handlePositionChangeRequest(MouseEvent e1, MouseEvent e,
             double initialX, double initialY)
     {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Object selectedObject = workspace.getSelectedObject();
+        
         double xDiff;
         double yDiff;
         
         // Handles the case for the ClassObject
-        if (obj instanceof ClassObject)
+        if (selectedObject instanceof ClassObject)
         {
-            VBox box = ((ClassObject)obj).getRectanglesBox().getStackPanesVBox();
+            VBox box = ((ClassObject)selectedObject).getBox().getMainVBox();
             xDiff = e1.getX() - e.getX();
             yDiff = e1.getY() - e.getY();
             box.setTranslateX(initialX + xDiff);
@@ -164,7 +167,7 @@ public class CanvasEditController
         
         for (ClassObject obj: dataManager.getClassesList())
         {
-            VBox stackPanesVBox = obj.getRectanglesBox().getStackPanesVBox();
+            VBox stackPanesVBox = obj.getBox().getMainVBox();
             maxX = Math.max(maxX, stackPanesVBox.getTranslateX() + stackPanesVBox.getWidth() + DEFAULT_OFFSET);
             maxY = Math.max(maxY, stackPanesVBox.getTranslateY() + stackPanesVBox.getHeight() + DEFAULT_OFFSET);
         }

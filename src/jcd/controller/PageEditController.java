@@ -5,18 +5,21 @@
  */
 package jcd.controller;
 
-import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import jcd.JClassDesigner;
+import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
-import jcd.data.RectanglesBox;
 import jcd.gui.Workspace;
+import properties_manager.PropertiesManager;
 import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
+import static saf.settings.AppPropertyType.LOAD_ERROR_MESSAGE;
+import static saf.settings.AppPropertyType.LOAD_ERROR_TITLE;
+import saf.ui.AppMessageDialogSingleton;
 
 /**
  * This class serves as a controller to handle all the user actions except the ones
@@ -27,7 +30,7 @@ public class PageEditController
 {
     // These define the default height and width values for the rectangles inside vbox
     private static final double DEFAULT_WIDTH = 300.0;
-    private static final double DEFAULT_HEIGHT = 100.0;
+    private static final double DEFAULT_HEIGHT = 150.0;
     
     // HERE'S THE FULL APP, WHICH GIVES US ACCESS TO OTHER STUFF
     JClassDesigner app;
@@ -72,8 +75,8 @@ public class PageEditController
     public void handleResizeButtonRequest()
     {
         // CHANGE THE CURSOR
-	Scene scene = app.getGUI().getPrimaryScene();
-	scene.setCursor(Cursor.SE_RESIZE);
+	//Scene scene = app.getGUI().getPrimaryScene();
+	//scene.setCursor(Cursor.SE_RESIZE);
 	
 	// CHANGE THE STATE
 	dataManager.setState(JClassDesignerState.RESIZING_SHAPE);	
@@ -92,73 +95,74 @@ public class PageEditController
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         Pane canvas = workspace.getCanvas();
          
-        // x and y values where the box will be origined
-        int x = (int)(Math.random() * (canvas.getWidth() - (int)(DEFAULT_WIDTH)));
-        int y = (int) ((canvas.getLayoutBounds().getMinY() + canvas.getLayoutBounds().getMaxY())/2) - (int)((DEFAULT_HEIGHT)/2);
-         
-        // Initialize the box
-        RectanglesBox box = new RectanglesBox();
-        box.getStackPanesVBox().setTranslateX(x);
-        box.getStackPanesVBox().setTranslateY(y);
         int randomInt = (int) (Math.random() * 100);
-        String randomClassNameString = "Dummy" + randomInt;
-        box.getClassesTextList().add(new Text(randomClassNameString));
-        box.getClassesTextList().get(0).getStyleClass().add(CLASS_SUBHEADING_LABEL);
-        box.getClassNameTextVBox().getChildren().addAll(box.getClassesTextList());
-        //box.getClassRectangle().heightProperty().bind(box.getClassRectangleStackPane().heightProperty().add(25));
-        box.getClassNameTextVBox().setAlignment(Pos.CENTER);
-        box.getClassRectangleStackPane().getChildren().addAll(box.getClassRectangle(), box.getClassNameTextVBox());
-        box.getStackPanesVBox().getChildren().addAll(box.getClassRectangleStackPane(),
-                box.getVariablesRectangleStackPane(), box.getMethodsRectangleStackPane());
-
+        String randomClassNameString = "DummyClass" + randomInt;
+        
+        // Initialize the box
+        Box box = initializeNewBox(randomClassNameString);
+        
         // Now initialize the class object
         ClassObject obj = new ClassObject(randomClassNameString, "", box);
+        
         if (dataManager.checkIfUnique(obj))
         {
-            canvas.getChildren().add(obj.getRectanglesBox().getStackPanesVBox());
+            canvas.getChildren().add(obj.getBox().getMainVBox());
             dataManager.addClassObject(obj);
             // AND SELECT IT
             dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
             workspace.getCanvasEditController().handleSelectionRequest(obj);
         }
          
-        // Maybe show a message here that adding wasn't successful?
-         
         app.getGUI().updateToolbarControls(false);
         workspace.reloadWorkspace();
+    }
+    
+    /**
+     * Helper method to initialize a new box.
+     */
+    private Box initializeNewBox(String name)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+        
+        // x and y values where the box will be origined
+        int x = (int)(Math.random() * (canvas.getWidth() - (int)(DEFAULT_WIDTH)));
+        int y = (int) ((canvas.getHeight()/2) - (DEFAULT_HEIGHT/2));
+        
+        Box box = new Box();
+        box.getMainVBox().setTranslateX(x);
+        box.getMainVBox().setTranslateY(y);
+        
+        Text text = new Text(name);
+        text.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        box.getClassVBox().getChildren().add(text);
+        
+        return box;
     }
     
     /**
      * Handles the request where the user changes the name of a class.
      * It makes sure that the name is not changed such that the classes
      * always stay unique.
-     * @param obj
-     * the object for which the name is to be changed
      * @param className 
      * the name to change it to
      */
-    public void handleClassNameChangeRequest(Object obj, String className)
+    public void handleClassNameChangeRequest(String className)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Object selectedObject = workspace.getSelectedObject();
         
         // Case where the object is a class object
-        if (obj instanceof ClassObject)
+        if (selectedObject != null && selectedObject instanceof ClassObject)
         {
-            ClassObject object = ((ClassObject)obj);
-            boolean unique = true;
-            
-            for (ClassObject classObj: dataManager.getClassesList())
-            {
-                if (classObj.getClassName().equalsIgnoreCase(className) &&
-                        classObj.getPackageName().equalsIgnoreCase(object.getPackageName()))
-                    unique = false;
-            }
+            ClassObject object = ((ClassObject)selectedObject);
+            boolean unique = dataManager.checkIfUnique(className, object.getPackageName());
             
             // Only change the name of the class to such if name is unique
             if (unique)
             {
                 object.setClassName(className);
-                object.getRectanglesBox().getClassesTextList().get(0).setText(className);
+                ((Text)object.getBox().getClassVBox().getChildren().get(0)).setText(className);
             }
         }
         
@@ -167,31 +171,23 @@ public class PageEditController
     
     /**
      * Handles the case where the user tries to change the name of the package.
-     * @param obj
-     * the object whose package name is to be changed
      * @param packageName 
      * the name to be changed to
      */
-    public void handlePackageNameChangeRequest(Object obj, String packageName)
+    public void handlePackageNameChangeRequest(String packageName)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Object selectedObject = workspace.getSelectedObject();
         
         // Case where the object is a class object.
-        if (obj instanceof ClassObject)
+        if (selectedObject instanceof ClassObject)
         {
-            ClassObject object = ((ClassObject)obj);
-            boolean unique = true;
-            
-            for (ClassObject classObj: dataManager.getClassesList())
-            {
-                if (classObj.getClassName().equalsIgnoreCase(object.getClassName()) &&
-                        classObj.getPackageName().equalsIgnoreCase(packageName))
-                    unique = false;
-            }
+            ClassObject object = ((ClassObject)selectedObject);
+            boolean unique = dataManager.checkIfUnique(object.getClassName(), packageName);
             
             // Only change if it is unique.
             if (unique)
-                object.setPackageName(packageName);           
+                object.setPackageName(packageName);
         }
         
         workspace.reloadWorkspace();

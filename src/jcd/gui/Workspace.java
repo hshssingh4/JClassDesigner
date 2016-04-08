@@ -8,7 +8,6 @@ package jcd.gui;
 import java.io.IOException;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -19,8 +18,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -29,11 +26,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import jcd.JClassDesigner;
 import static jcd.PropertyType.ADD_CLASS_ICON;
 import static jcd.PropertyType.ADD_CLASS_TOOLTIP;
@@ -109,7 +105,7 @@ public class Workspace extends AppWorkspaceComponent
     
     // Second row
     Label packageLabel;
-    TextField packageTextField;
+    TextField packageNameTextField;
     
     // Third row
     Label parentLabel;
@@ -207,7 +203,8 @@ public class Workspace extends AppWorkspaceComponent
         canvasScrollPane = new ScrollPane(canvas);
         canvasScrollPane.setFitToHeight(true);
         canvasScrollPane.setFitToWidth(true);
-        canvas.setStyle("-fx-background-color: skyblue;"); // DELETE
+        final String CLASS_CANVAS = "canvas_class";
+        canvas.getStyleClass().add(CLASS_CANVAS);
     }
     
     private void initComponentToolbar()
@@ -240,10 +237,10 @@ public class Workspace extends AppWorkspaceComponent
         
         // Second row
         packageLabel = new Label("Package:");
-        packageTextField = new TextField();
-        packageTextField.setDisable(true);
-        packageTextField.setAlignment(Pos.BOTTOM_RIGHT);
-        packageTextField.setPromptText("Enter Package Name");
+        packageNameTextField = new TextField();
+        packageNameTextField.setDisable(true);
+        packageNameTextField.setAlignment(Pos.BOTTOM_RIGHT);
+        packageNameTextField.setPromptText("Enter Package Name");
         
         // Third row
         parentLabel = new Label("Parent:");
@@ -255,7 +252,7 @@ public class Workspace extends AppWorkspaceComponent
         gridPane.add(classNameLabel, 0, 0);
         gridPane.add(classNameTextField, 1, 0);
         gridPane.add(packageLabel, 0, 1);
-        gridPane.add(packageTextField, 1, 1);
+        gridPane.add(packageNameTextField, 1, 1);
         gridPane.add(parentLabel, 0, 2);
         gridPane.add(parentComboBox, 1, 2);
         
@@ -325,6 +322,7 @@ public class Workspace extends AppWorkspaceComponent
     
     private void initHandlers()
     {
+        // HANDLER FOR THE CONTROLS ON THE TOP
         selectionToolButton.setOnAction(e -> {
             pageEditController.handleSelectionToolButtonRequest();
         });
@@ -334,35 +332,50 @@ public class Workspace extends AppWorkspaceComponent
         addClassButton.setOnAction(e -> {
             pageEditController.handleAddClassRequest();
         });
+        
+        // HANDLERS FOR CONTROLS ON THE RIGHT
+        classNameTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {
+                pageEditController.handleClassNameChangeRequest(newClassName);
+        });
+        packageNameTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {
+                pageEditController.handlePackageNameChangeRequest(newClassName);
+        });
+        
+        // HANDLES FOR CANVAS EVENTS
+        // THIS METHOD NEEDS IMPROVEMENT
         canvas.setOnMousePressed((MouseEvent e) -> {
             if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
             {
                 if(e.getTarget() instanceof VBox)
                 {
                     for (ClassObject obj: dataManager.getClassesList())
-                        if ( obj.getRectanglesBox().getClassNameTextVBox() == (VBox)e.getTarget()
-                                || obj.getRectanglesBox().getVariablesTextVBox() == ((VBox)e.getTarget())
-                                || obj.getRectanglesBox().getMethodsTextVBox() == ((VBox) e.getTarget()))
+                        if ( obj.getBox().getClassVBox() == (VBox)e.getTarget()
+                                || obj.getBox().getVariablesVBox() == ((VBox)e.getTarget())
+                                || obj.getBox().getMethodsVBox() == ((VBox) e.getTarget()))
                                 canvasEditController.handleSelectionRequest(obj);
                     
                     
-                    double initialX = ((ClassObject)selectedObject).getRectanglesBox().getStackPanesVBox().getTranslateX(); /* This code only works for now*/
-                    double initialY = ((ClassObject)selectedObject).getRectanglesBox().getStackPanesVBox().getTranslateY(); /* This code only works for now*/
+                    double initialX = ((ClassObject)selectedObject).getBox().getMainVBox().getTranslateX();
+                    double initialY = ((ClassObject)selectedObject).getBox().getMainVBox().getTranslateY();
                     canvas.setOnMouseDragged((MouseEvent e1) -> {
-                        canvasEditController.handlePositionChangeRequest(selectedObject, e1, e, initialX, initialY);
+                        canvasEditController.handlePositionChangeRequest(e1, e, initialX, initialY);
+                    });
+                }
+                else if (e.getTarget() instanceof Text)
+                {
+                    for (ClassObject obj: dataManager.getClassesList())
+                        if ( obj.getBox().getClassVBox().getChildren().get(0) == (Text)e.getTarget())
+                                canvasEditController.handleSelectionRequest(obj);
+                    
+                    double initialX = ((ClassObject)selectedObject).getBox().getMainVBox().getTranslateX();
+                    double initialY = ((ClassObject)selectedObject).getBox().getMainVBox().getTranslateY();
+                    canvas.setOnMouseDragged((MouseEvent e1) -> {
+                        canvasEditController.handlePositionChangeRequest(e1, e, initialX, initialY);
                     });
                 }
                 else
                     canvasEditController.handleDeselectRequest();
             }
-        });
-        classNameTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {
-            if (selectedObject != null)
-                pageEditController.handleClassNameChangeRequest(selectedObject, newClassName);
-        });
-        packageTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {
-            if (selectedObject != null) 
-                pageEditController.handlePackageNameChangeRequest(selectedObject, newClassName);
         });
     }
     
@@ -408,13 +421,13 @@ public class Workspace extends AppWorkspaceComponent
             {
                 ClassObject obj = (ClassObject) selectedObject;
                 classNameTextField.setText(obj.getClassName());
-                packageTextField.setText(obj.getPackageName());
+                packageNameTextField.setText(obj.getPackageName());
             }
         }
         else
         {
             classNameTextField.clear();
-            packageTextField.clear();
+            packageNameTextField.clear();
         }
         
         // Now load all the childrens again
@@ -434,22 +447,24 @@ public class Workspace extends AppWorkspaceComponent
         if (selectedObject != null)
         {
             classNameTextField.setDisable(false);
-            packageTextField.setDisable(false);
+            packageNameTextField.setDisable(false);
             parentComboBox.setDisable(false);
             addVariableButton.setDisable(false);
             removeVariableButton.setDisable(false);
             addMethodButton.setDisable(false);
             removeMethodButton.setDisable(false);
+            removeButton.setDisable(false);
         }
         else
         {
             classNameTextField.setDisable(true);
-            packageTextField.setDisable(true);
+            packageNameTextField.setDisable(true);
             parentComboBox.setDisable(true);
             addVariableButton.setDisable(true);
             removeVariableButton.setDisable(true);
             addMethodButton.setDisable(true);
             removeMethodButton.setDisable(true);
+            removeButton.setDisable(true);
         }
     }
 
@@ -471,16 +486,6 @@ public class Workspace extends AppWorkspaceComponent
     public void setSelectedObject(Object selectedObject) 
     {
         this.selectedObject = selectedObject;
-    }
-
-    public TextField getClassNameTextField() 
-    {
-        return classNameTextField;
-    }
-
-    public TextField getPackageTextField() 
-    {
-        return packageTextField;
     }
 
     public CanvasEditController getCanvasEditController() 
