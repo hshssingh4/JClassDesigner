@@ -20,8 +20,11 @@ import javax.json.JsonObject;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
+import jcd.data.ArgumentObject;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.MethodObject;
+import jcd.data.VariableObject;
 import saf.components.AppDataComponent;
 
 /**
@@ -35,6 +38,15 @@ public class TestSave
     public static final String JSON_PARENT_NAME = "parent_name";
     public static final String JSON_INTERFACE_NAME = "interface_name";
     public static final String JSON_CLASSES_ARRAY = "classes";
+    public static final String JSON_VARIABLES_ARRAY = "variables";
+    public static final String JSON_METHODS_ARRAY = "methods";
+    public static final String JSON_ARGUMENTS_ARRAY = "arguments";
+    public static final String JSON_NAME = "name";
+    public static final String JSON_TYPE = "type";
+    public static final String JSON_SCOPE = "scope";
+    public static final String JSON_IS_STATIC = "is_static";
+    public static final String JSON_IS_FINAL = "is_final";
+    
     
     public void saveTestData(AppDataComponent data, String filePath) throws IOException 
     {
@@ -92,7 +104,70 @@ public class TestSave
                 .add(JSON_PACKAGE_NAME, classObject.getPackageName())
                 .add(JSON_PARENT_NAME, parentName)
                 .add(JSON_INTERFACE_NAME, interfaceName)
+                .add(JSON_VARIABLES_ARRAY, buildVariablesJsonArray(classObject.getVariables()))
+                .add(JSON_METHODS_ARRAY, buildMethodsJsonArray(classObject.getMethods()))
 		.build();
 	return jso;
+    }
+    
+    private JsonArray buildVariablesJsonArray(ArrayList<VariableObject> variables)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        for (VariableObject variable: variables)
+        {
+            JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_NAME, variable.getName())
+                .add(JSON_TYPE, variable.getType())
+                .add(JSON_SCOPE, variable.getScope())
+                .add(JSON_IS_STATIC, variable.isStaticType())
+                .add(JSON_IS_FINAL, variable.isFinalType())
+		.build();
+            arrayBuilder.add(jso);
+        }
+        
+        JsonArray jA = arrayBuilder.build();
+	return jA;
+    }
+    
+    private JsonArray buildMethodsJsonArray(ArrayList<MethodObject> methods)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        for (MethodObject method: methods)
+        {
+            ArrayList<ArgumentObject> arguments = method.getArguments();
+            
+            JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_NAME, method.getName())
+                .add(JSON_TYPE, method.getType())
+                .add(JSON_SCOPE, method.getScope())
+                .add(JSON_IS_STATIC, method.isStaticType())
+                .add(JSON_IS_FINAL, method.isFinalType())
+                .add(JSON_ARGUMENTS_ARRAY, (arguments != null) ? 
+                        buildArgumentsJsonArray(method.getArguments()) : JsonObject.NULL)
+		.build();
+            arrayBuilder.add(jso);
+        }
+        
+        JsonArray jA = arrayBuilder.build();
+	return jA;
+    }
+    
+    private JsonArray buildArgumentsJsonArray(ArrayList<ArgumentObject> arguments)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        for (ArgumentObject argument: arguments)
+        {
+            JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_NAME, argument.getName())
+                .add(JSON_TYPE, argument.getType())
+		.build();
+            arrayBuilder.add(jso);
+        }
+        
+        JsonArray jA = arrayBuilder.build();
+	return jA;
     }
 }

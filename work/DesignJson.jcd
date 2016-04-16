@@ -5,7 +5,33 @@
             "class_name":"CounterTask",
             "package_name":"",
             "parent_name":"Task<Void>",
-            "interface_name":"null"
+            "interface_name":"null",
+            "variables":[
+                {
+                    "name":"app",
+                    "type":"ThreadExample",
+                    "scope":"private",
+                    "is_static":false,
+                    "is_final":false
+                },
+                {
+                    "name":"counter",
+                    "type":"int",
+                    "scope":"private",
+                    "is_static":false,
+                    "is_final":false
+                }
+            ],
+            "methods":[
+                {
+                    "name":"call",
+                    "type":"Void",
+                    "scope":"protected",
+                    "is_static":false,
+                    "is_final":false,
+                    "arguments":null
+                }
+            ]
         }
     ]
 }
