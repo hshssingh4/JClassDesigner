@@ -5,16 +5,24 @@
  */
 package jcd.test_bed;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
-import javafx.scene.text.Text;
-import jcd.data.Box;
+import java.util.HashMap;
+import java.util.Map;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonWriter;
+import javax.json.JsonWriterFactory;
+import javax.json.stream.JsonGenerator;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
-import jcd.data.MethodObject;
-import jcd.data.VariableObject;
 import saf.components.AppDataComponent;
-import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 
 /**
  *
@@ -22,117 +30,69 @@ import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
  */
 public class TestSave 
 {
-    ClassObject counterTaskClass;
-    
-    public static final String PRIVATE = "private";
-    public static final String PUBLIC = "public";
-    public static final String PROTECTED = "protected";
-    
-    public static final String INT = "int";
-    public static final String DOUBLE = "double";
-    public static final String BOOLEAN = "boolean";
-    public static final String CHAR = "char";
-    public static final String ARRAY_LIST = "ArrayList";    
-    
-    public static final String COUNTER_TASK = "CounterTask";
-    public static final String DATE_TASK = "DateTask";
-    public static final String PAUSE_HANDLER = "PauseHandler";
-    public static final String START_HANDLER = "StartHandler";
-    public static final String THREAD_EXAMPLE = "ThreadExample";
+    public static final String JSON_CLASS_NAME = "class_name";
+    public static final String JSON_PACKAGE_NAME = "package_name";
+    public static final String JSON_PARENT_NAME = "parent_name";
+    public static final String JSON_INTERFACE_NAME = "interface_name";
+    public static final String JSON_CLASSES_ARRAY = "classes";
     
     public void saveTestData(AppDataComponent data, String filePath) throws IOException 
     {
-        System.out.println("Save Test Data");
-        hardCodeClasses(data);
+        // First create the string writer
+        StringWriter sw = new StringWriter();
         
-        
-    }
-    
-    public void hardCodeClasses(AppDataComponent data)
-    {
+        // Then case the data component to a data manager
         DataManager dataManager = (DataManager) data;
         
-        createCounterTaskClass();
+        // Now create the array builder from the class objects
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        ArrayList<ClassObject> classesList = dataManager.getClassesList();
         
-        dataManager.addClassObject(counterTaskClass);
+        // Now loop through the class objects and add them to the array builder
+        for(ClassObject classObject: classesList)
+            arrayBuilder.add(makeClassJsonObject(classObject));
+        
+        // Now put all the classes in a json array
+        JsonArray nodesArray = arrayBuilder.build();
+        // THEN PUT IT ALL TOGETHER IN A JsonObject
+	JsonObject dataManagerJSO = Json.createObjectBuilder()
+		.add(JSON_CLASSES_ARRAY, nodesArray)
+		.build();
+        
+        // AND NOW OUTPUT IT TO A JSON FILE WITH PRETTY PRINTING
+	Map<String, Object> properties = new HashMap<>(1);
+	properties.put(JsonGenerator.PRETTY_PRINTING, true);
+	JsonWriterFactory writerFactory = Json.createWriterFactory(properties);
+	JsonWriter jsonWriter = writerFactory.createWriter(sw);
+	jsonWriter.writeObject(dataManagerJSO);
+	jsonWriter.close();
+
+	// INIT THE WRITER
+	OutputStream os = new FileOutputStream(filePath);
+	JsonWriter jsonFileWriter = Json.createWriter(os);
+	jsonFileWriter.writeObject(dataManagerJSO);
+	String prettyPrinted = sw.toString();
+	PrintWriter pw = new PrintWriter(filePath);
+	pw.write(prettyPrinted);
+	pw.close();
     }
     
-    private void createCounterTaskClass()
+    public JsonObject makeClassJsonObject(ClassObject classObject)
     {
-        Box box = initializeNewBox();
-        addClassNameText(COUNTER_TASK, box);
+        // First initialize all the objects that can possibly be null
+        String parentName, interfaceName;
         
-        counterTaskClass = new ClassObject(COUNTER_TASK, "", box);
+        parentName = ((classObject.getParentName() == null)? 
+                JsonObject.NULL.toString(): classObject.getParentName());
+        interfaceName = ((classObject.getInterfaceName() == null)? 
+                JsonObject.NULL.toString(): classObject.getInterfaceName());
         
-        counterTaskClass.setParentName("Task<Void>");
-        counterTaskClass.setInterfaceName(null);
-        ArrayList<VariableObject> variables = addCounterTaskClassVariables();
-        counterTaskClass.setVariables(variables);
-        ArrayList<MethodObject> methods = addCounterTaskClassMethods();
-        counterTaskClass.setMethods(methods);
-        
-        
-    }
-    
-    private ArrayList<VariableObject> addCounterTaskClassVariables()
-    {
-        VariableObject app = new VariableObject();
-        app.setName("app");
-        app.setScope(PRIVATE);
-        app.setType("ThreadExample");
-        app.setStaticType(false);
-        app.setFinalType(false);
-        
-        VariableObject counter = new VariableObject();
-        counter.setName("counter");
-        counter.setScope(PRIVATE);
-        counter.setType(INT);
-        counter.setStaticType(false);
-        counter.setFinalType(false);
-        
-        ArrayList<VariableObject> variables = new ArrayList<VariableObject>();
-        variables.add(app);
-        variables.add(counter);
-        
-        return variables;
-    }
-    
-    private ArrayList<MethodObject> addCounterTaskClassMethods()
-    {
-        MethodObject call = new MethodObject();
-        call.setName("call");
-        call.setScope(PROTECTED);
-        call.setType("Void");
-        call.setStaticType(false);
-        call.setFinalType(false);
-        call.setArguments(null);
-        
-        ArrayList<MethodObject> methods = new ArrayList<MethodObject>();
-        methods.add(call);
-        
-        return methods;
-    }
-    
-    /**
-     * Helper method to initialize a new box.
-     */
-    private Box initializeNewBox()
-    {
-        // x and y values where the box will be origined
-        int x = 300;
-        int y = 300;
-        
-        Box box = new Box();
-        box.getMainVBox().setTranslateX(x);
-        box.getMainVBox().setTranslateY(y);
-        
-        return box;
-    }
-    
-    private void addClassNameText(String className, Box box)
-    {
-        Text text = new Text(className);
-        text.getStyleClass().add(CLASS_SUBHEADING_LABEL);
-        box.getClassVBox().getChildren().add(text);
+        JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_CLASS_NAME, classObject.getClassName())
+                .add(JSON_PACKAGE_NAME, classObject.getPackageName())
+                .add(JSON_PARENT_NAME, parentName)
+                .add(JSON_INTERFACE_NAME, interfaceName)
+		.build();
+	return jso;
     }
 }

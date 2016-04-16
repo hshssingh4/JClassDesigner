@@ -11,6 +11,8 @@ import java.io.InputStream;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import jcd.data.DataManager;
+import jcd.test_bed.ClassBuilder;
 import jcd.test_bed.TestSave;
 import saf.components.AppDataComponent;
 import saf.components.AppFileComponent;
@@ -26,6 +28,11 @@ public class FileManager implements AppFileComponent
     public void saveData(AppDataComponent data, String filePath) throws IOException 
     {
         System.out.println("Save Data");
+        
+        // FIRST BUILD ALL THE 5 CLASSES
+        ClassBuilder build = new ClassBuilder();
+        build.hardCodeClasses((DataManager) data);
+        // NOW SAVE THOSE CLASSES
         TestSave testSave = new TestSave();
         testSave.saveTestData(data, filePath);
     }
