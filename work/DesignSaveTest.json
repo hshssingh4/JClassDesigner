@@ -33,6 +33,12 @@
                     "arguments":[
                     ]
                 }
+            ],
+            "box":[
+                {
+                    "translate_x":509.0,
+                    "translate_y":300.0
+                }
             ]
         },
         {
@@ -67,6 +73,12 @@
                     "arguments":[
                     ]
                 }
+            ],
+            "box":[
+                {
+                    "translate_x":659.0,
+                    "translate_y":300.0
+                }
             ]
         },
         {
@@ -99,6 +111,12 @@
                         }
                     ]
                 }
+            ],
+            "box":[
+                {
+                    "translate_x":448.0,
+                    "translate_y":300.0
+                }
             ]
         },
         {
@@ -130,6 +148,12 @@
                             "type":"Event"
                         }
                     ]
+                }
+            ],
+            "box":[
+                {
+                    "translate_x":794.0,
+                    "translate_y":300.0
                 }
             ]
         },
@@ -358,6 +382,12 @@
                             "type":"String[]"
                         }
                     ]
+                }
+            ],
+            "box":[
+                {
+                    "translate_x":444.0,
+                    "translate_y":300.0
                 }
             ]
         }

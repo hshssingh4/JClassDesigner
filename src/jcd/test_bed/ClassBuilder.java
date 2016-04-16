@@ -605,7 +605,7 @@ public class ClassBuilder
     private Box initializeNewBox()
     {
         // x and y values where the box will be origined
-        int x = 300;
+        int x = (int) ((Math.random() * 500) + 300);
         int y = 300;
         
         Box box = new Box();

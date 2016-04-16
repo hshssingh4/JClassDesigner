@@ -22,6 +22,7 @@ import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
 import jcd.data.ArgumentObject;
+import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.MethodObject;
@@ -47,7 +48,9 @@ public class TestSave
     public static final String JSON_SCOPE = "scope";
     public static final String JSON_IS_STATIC = "is_static";
     public static final String JSON_IS_FINAL = "is_final";
-    
+    public static final String JSON_BOX_ARRAY = "box";
+    public static final String JSON_TRANSLATE_X = "translate_x";
+    public static final String JSON_TRANSLATE_Y = "translate_y";
     
     public void saveTestData(AppDataComponent data, String filePath) throws IOException 
     {
@@ -105,6 +108,7 @@ public class TestSave
                 .add(JSON_INTERFACE_NAME, buildInterfaceNamesJsonArray(classObject.getInterfaceNames()))
                 .add(JSON_VARIABLES_ARRAY, buildVariablesJsonArray(classObject.getVariables()))
                 .add(JSON_METHODS_ARRAY, buildMethodsJsonArray(classObject.getMethods()))
+                .add(JSON_BOX_ARRAY, buildBoxJsonArray(classObject.getBox()))
 		.build();
 	return jso;
     }
@@ -177,6 +181,21 @@ public class TestSave
             arrayBuilder.add(jso);
         }
         
+        JsonArray jA = arrayBuilder.build();
+	return jA;
+    }
+    
+    private JsonArray buildBoxJsonArray(Box box)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_TRANSLATE_X, box.getMainVBox().getTranslateX())
+                .add(JSON_TRANSLATE_Y, box.getMainVBox().getTranslateY())
+		.build();
+        
+        arrayBuilder.add(jso);
+            
         JsonArray jA = arrayBuilder.build();
 	return jA;
     }
