@@ -15,11 +15,7 @@ import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
 import jcd.gui.Workspace;
-import properties_manager.PropertiesManager;
 import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
-import static saf.settings.AppPropertyType.LOAD_ERROR_MESSAGE;
-import static saf.settings.AppPropertyType.LOAD_ERROR_TITLE;
-import saf.ui.AppMessageDialogSingleton;
 
 /**
  * This class serves as a controller to handle all the user actions except the ones

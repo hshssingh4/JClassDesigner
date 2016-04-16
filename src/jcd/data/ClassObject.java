@@ -5,6 +5,8 @@
  */
 package jcd.data;
 
+import java.util.ArrayList;
+
 /**
  * This class manages the class objects for our application. It contains all 
  * the properties that a Java class usually has.
@@ -14,6 +16,10 @@ public class ClassObject
 {
     private String className;
     private String packageName;
+    private String parentName;
+    private String interfaceName;
+    private ArrayList<VariableObject> variables;
+    private ArrayList<MethodObject> methods;
     private Box box;
     
     /**
@@ -74,5 +80,45 @@ public class ClassObject
     public Box getBox()
     {
         return box;
+    }
+    
+    public String getParentName() 
+    {
+        return parentName;
+    }
+
+    public void setParentName(String parentName)
+    {
+        this.parentName = parentName;
+    }
+
+    public String getInterfaceName()
+    {
+        return interfaceName;
+    }
+
+    public void setInterfaceName(String interfaceName) 
+    {
+        this.interfaceName = interfaceName;
+    }
+
+    public ArrayList<VariableObject> getVariables() 
+    {
+        return variables;
+    }
+
+    public void setVariables(ArrayList<VariableObject> variables) 
+    {
+        this.variables = variables;
+    }
+
+    public ArrayList<MethodObject> getMethods() 
+    {
+        return methods;
+    }
+
+    public void setMethods(ArrayList<MethodObject> methods) 
+    {
+        this.methods = methods;
     }
 }

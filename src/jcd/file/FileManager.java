@@ -11,6 +11,7 @@ import java.io.InputStream;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import jcd.test_bed.TestSave;
 import saf.components.AppDataComponent;
 import saf.components.AppFileComponent;
 
@@ -25,6 +26,8 @@ public class FileManager implements AppFileComponent
     public void saveData(AppDataComponent data, String filePath) throws IOException 
     {
         System.out.println("Save Data");
+        TestSave testSave = new TestSave();
+        testSave.saveTestData(data, filePath);
     }
 
     @Override
