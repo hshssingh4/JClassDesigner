@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class TestSave
     public static final String JSON_CLASS_NAME = "class_name";
     public static final String JSON_PACKAGE_NAME = "package_name";
     public static final String JSON_PARENT_NAME = "parent_name";
-    public static final String JSON_INTERFACE_NAME = "interface_name";
+    public static final String JSON_INTERFACE_NAME = "interface_names";
     public static final String JSON_CLASSES_ARRAY = "classes";
     public static final String JSON_VARIABLES_ARRAY = "variables";
     public static final String JSON_METHODS_ARRAY = "methods";
@@ -92,28 +93,37 @@ public class TestSave
     public JsonObject makeClassJsonObject(ClassObject classObject)
     {
         // First initialize all the objects that can possibly be null
-        String parentName, interfaceName;
+        String parentName;
         
         parentName = ((classObject.getParentName() == null)? 
                 JsonObject.NULL.toString(): classObject.getParentName());
-        interfaceName = ((classObject.getInterfaceName() == null)? 
-                JsonObject.NULL.toString(): classObject.getInterfaceName());
         
         JsonObject jso = Json.createObjectBuilder()
                 .add(JSON_CLASS_NAME, classObject.getClassName())
                 .add(JSON_PACKAGE_NAME, classObject.getPackageName())
                 .add(JSON_PARENT_NAME, parentName)
-                .add(JSON_INTERFACE_NAME, interfaceName)
+                .add(JSON_INTERFACE_NAME, buildInterfaceNamesJsonArray(classObject.getInterfaceNames()))
                 .add(JSON_VARIABLES_ARRAY, buildVariablesJsonArray(classObject.getVariables()))
                 .add(JSON_METHODS_ARRAY, buildMethodsJsonArray(classObject.getMethods()))
 		.build();
 	return jso;
     }
     
-    private JsonArray buildVariablesJsonArray(ArrayList<VariableObject> variables)
+    private JsonArray buildInterfaceNamesJsonArray(ArrayList<String> interfaceNames)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         
+        for (String name: interfaceNames)
+            arrayBuilder.add(name);
+        
+        JsonArray jA = arrayBuilder.build();
+        return jA;
+    }
+    
+    private JsonArray buildVariablesJsonArray(ArrayList<VariableObject> variables)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+
         for (VariableObject variable: variables)
         {
             JsonObject jso = Json.createObjectBuilder()

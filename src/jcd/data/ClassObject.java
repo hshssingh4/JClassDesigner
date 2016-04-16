@@ -17,7 +17,7 @@ public class ClassObject
     private String className;
     private String packageName;
     private String parentName;
-    private String interfaceName;
+    private ArrayList<String> interfaceNames;
     private ArrayList<VariableObject> variables;
     private ArrayList<MethodObject> methods;
     private Box box;
@@ -92,14 +92,14 @@ public class ClassObject
         this.parentName = parentName;
     }
 
-    public String getInterfaceName()
+    public ArrayList<String> getInterfaceNames() 
     {
-        return interfaceName;
+        return interfaceNames;
     }
 
-    public void setInterfaceName(String interfaceName) 
+    public void setInterfaceNames(ArrayList<String> interfaceNames)
     {
-        this.interfaceName = interfaceName;
+        this.interfaceNames = interfaceNames;
     }
 
     public ArrayList<VariableObject> getVariables() 
