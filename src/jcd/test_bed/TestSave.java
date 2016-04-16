@@ -38,7 +38,7 @@ public class TestSave
     public static final String JSON_CLASS_NAME = "class_name";
     public static final String JSON_PACKAGE_NAME = "package_name";
     public static final String JSON_PARENT_NAME = "parent_name";
-    public static final String JSON_INTERFACE_NAME = "interface_names";
+    public static final String JSON_INTERFACE_NAMES = "interface_names";
     public static final String JSON_CLASSES_ARRAY = "classes";
     public static final String JSON_VARIABLES_ARRAY = "variables";
     public static final String JSON_METHODS_ARRAY = "methods";
@@ -48,7 +48,7 @@ public class TestSave
     public static final String JSON_SCOPE = "scope";
     public static final String JSON_IS_STATIC = "is_static";
     public static final String JSON_IS_FINAL = "is_final";
-    public static final String JSON_BOX_ARRAY = "box";
+    public static final String JSON_BOX_OBJECT = "box";
     public static final String JSON_TRANSLATE_X = "translate_x";
     public static final String JSON_TRANSLATE_Y = "translate_y";
     
@@ -105,10 +105,10 @@ public class TestSave
                 .add(JSON_CLASS_NAME, classObject.getClassName())
                 .add(JSON_PACKAGE_NAME, classObject.getPackageName())
                 .add(JSON_PARENT_NAME, parentName)
-                .add(JSON_INTERFACE_NAME, buildInterfaceNamesJsonArray(classObject.getInterfaceNames()))
+                .add(JSON_INTERFACE_NAMES, buildInterfaceNamesJsonArray(classObject.getInterfaceNames()))
                 .add(JSON_VARIABLES_ARRAY, buildVariablesJsonArray(classObject.getVariables()))
                 .add(JSON_METHODS_ARRAY, buildMethodsJsonArray(classObject.getMethods()))
-                .add(JSON_BOX_ARRAY, buildBoxJsonArray(classObject.getBox()))
+                .add(JSON_BOX_OBJECT, buildBoxJsonObject(classObject.getBox()))
 		.build();
 	return jso;
     }
@@ -185,18 +185,13 @@ public class TestSave
 	return jA;
     }
     
-    private JsonArray buildBoxJsonArray(Box box)
+    private JsonObject buildBoxJsonObject(Box box)
     {
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        
         JsonObject jso = Json.createObjectBuilder()
                 .add(JSON_TRANSLATE_X, box.getMainVBox().getTranslateX())
                 .add(JSON_TRANSLATE_Y, box.getMainVBox().getTranslateY())
 		.build();
         
-        arrayBuilder.add(jso);
-            
-        JsonArray jA = arrayBuilder.build();
-	return jA;
+        return jso;
     }
 }

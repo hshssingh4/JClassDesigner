@@ -5,6 +5,7 @@
  */
 package jcd.controller;
 
+import java.util.ArrayList;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -99,6 +100,9 @@ public class PageEditController
         
         // Now initialize the class object
         ClassObject obj = new ClassObject(randomClassNameString, "", box);
+        obj.setInterfaceNames(new ArrayList<>());
+        obj.setVariables(new ArrayList<>());
+        obj.setMethods(new ArrayList<>());
         
         if (dataManager.checkIfUnique(obj))
         {

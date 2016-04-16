@@ -13,6 +13,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import jcd.data.DataManager;
 import jcd.test_bed.ClassBuilder;
+import jcd.test_bed.TestLoad;
 import jcd.test_bed.TestSave;
 import saf.components.AppDataComponent;
 import saf.components.AppFileComponent;
@@ -41,6 +42,10 @@ public class FileManager implements AppFileComponent
     public void loadData(AppDataComponent data, String filePath) throws IOException
     {
         System.out.println("Load Data");
+        
+        // LOAD THE FILE USING THE TEST LOAD CLASS
+        TestLoad testLoad = new TestLoad();
+        testLoad.loadTestData(data, filePath);
     }
 
     // HELPER METHOD FOR LOADING DATA FROM A JSON FORMAT

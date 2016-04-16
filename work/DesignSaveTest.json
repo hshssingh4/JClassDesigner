@@ -34,12 +34,10 @@
                     ]
                 }
             ],
-            "box":[
-                {
-                    "translate_x":509.0,
-                    "translate_y":300.0
-                }
-            ]
+            "box":{
+                "translate_x":717.0,
+                "translate_y":300.0
+            }
         },
         {
             "class_name":"DateTask",
@@ -74,12 +72,10 @@
                     ]
                 }
             ],
-            "box":[
-                {
-                    "translate_x":659.0,
-                    "translate_y":300.0
-                }
-            ]
+            "box":{
+                "translate_x":779.0,
+                "translate_y":300.0
+            }
         },
         {
             "class_name":"PauseHandler",
@@ -112,12 +108,10 @@
                     ]
                 }
             ],
-            "box":[
-                {
-                    "translate_x":448.0,
-                    "translate_y":300.0
-                }
-            ]
+            "box":{
+                "translate_x":424.0,
+                "translate_y":300.0
+            }
         },
         {
             "class_name":"StartHandler",
@@ -150,12 +144,10 @@
                     ]
                 }
             ],
-            "box":[
-                {
-                    "translate_x":794.0,
-                    "translate_y":300.0
-                }
-            ]
+            "box":{
+                "translate_x":707.0,
+                "translate_y":300.0
+            }
         },
         {
             "class_name":"ThreadExample",
@@ -384,12 +376,10 @@
                     ]
                 }
             ],
-            "box":[
-                {
-                    "translate_x":444.0,
-                    "translate_y":300.0
-                }
-            ]
+            "box":{
+                "translate_x":496.0,
+                "translate_y":300.0
+            }
         }
     ]
 }
