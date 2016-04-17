@@ -96,7 +96,13 @@ public class PageEditController
         String randomClassNameString = "DummyClass" + randomInt;
         
         // Initialize the box
-        Box box = initializeNewBox(randomClassNameString);
+        // x and y values where the box will be origined
+        int x = (int)(Math.random() * (canvas.getWidth() - (int)(DEFAULT_WIDTH)));
+        int y = (int) ((canvas.getHeight()/2) - (DEFAULT_HEIGHT/2));
+        
+        Box box = new Box();
+        box.getMainVBox().setTranslateX(x);
+        box.getMainVBox().setTranslateY(y);
         
         // Now initialize the class object
         ClassObject obj = new ClassObject(randomClassNameString, "", box);
@@ -115,29 +121,6 @@ public class PageEditController
          
         app.getGUI().updateToolbarControls(false);
         workspace.reloadWorkspace();
-    }
-    
-    /**
-     * Helper method to initialize a new box.
-     */
-    private Box initializeNewBox(String name)
-    {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        Pane canvas = workspace.getCanvas();
-        
-        // x and y values where the box will be origined
-        int x = (int)(Math.random() * (canvas.getWidth() - (int)(DEFAULT_WIDTH)));
-        int y = (int) ((canvas.getHeight()/2) - (DEFAULT_HEIGHT/2));
-        
-        Box box = new Box();
-        box.getMainVBox().setTranslateX(x);
-        box.getMainVBox().setTranslateY(y);
-        
-        Text text = new Text(name);
-        text.getStyleClass().add(CLASS_SUBHEADING_LABEL);
-        box.getClassVBox().getChildren().add(text);
-        
-        return box;
     }
     
     /**

@@ -6,6 +6,7 @@
 package jcd.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -57,9 +58,13 @@ import static jcd.PropertyType.ZOOM_OUT_ICON;
 import static jcd.PropertyType.ZOOM_OUT_TOOLTIP;
 import jcd.controller.CanvasEditController;
 import jcd.controller.PageEditController;
+import jcd.data.ArgumentObject;
+import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
+import jcd.data.MethodObject;
+import jcd.data.VariableObject;
 import saf.AppTemplate;
 import saf.components.AppWorkspaceComponent;
 import saf.ui.AppGUI;
@@ -70,6 +75,22 @@ import saf.ui.AppGUI;
  */
 public class Workspace extends AppWorkspaceComponent
 {
+    public static final String PRIVATE = "private";
+    public static final String PUBLIC = "public";
+    public static final String PROTECTED = "protected";
+    
+    public static final String INT = "int";
+    public static final String DOUBLE = "double";
+    public static final String BOOLEAN = "boolean";
+    public static final String CHAR = "char";
+    public static final String STRING = "String";
+    public static final String ARRAY_LIST = "ArrayList"; 
+    public static final String PLUS = "+";
+    public static final String MINUS = "-";
+    public static final String HASHTAG = "#";
+    public static final String COLON = ":";
+    public static final String SPACE = " ";
+    
     // HERE'S THE APP
     AppTemplate app;
     
@@ -415,6 +436,18 @@ public class Workspace extends AppWorkspaceComponent
     @Override
     public void reloadWorkspace() 
     {
+        DataManager dataManager = (DataManager) app.getDataComponent();
+        
+        canvas.getChildren().clear();
+        
+        for (ClassObject classObject: dataManager.getClassesList())
+        {
+            canvas.getChildren().add(classObject.getBox().getMainVBox());
+            reloadClassTextFields(classObject);
+            reloadVariablesTextFields(classObject);
+            reloadMethodsTextFields(classObject);
+        }
+        
         if (selectedObject != null)
         {
             if (selectedObject instanceof ClassObject)
@@ -434,6 +467,126 @@ public class Workspace extends AppWorkspaceComponent
         //ArrayList
         
         enableLegalButtons();
+    }
+    
+    private void reloadClassTextFields(ClassObject classObject)
+    {
+        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
+        Box box = classObject.getBox();
+        // THEN CLEAR ITS CONTENTS
+        box.getClassVBox().getChildren().clear();
+        
+        // NOW ADD IT AGAIN
+        Text text = new Text(classObject.getClassName());
+        text.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        box.getClassVBox().getChildren().add(text);
+    }
+    
+    private void reloadVariablesTextFields(ClassObject classObject)
+    {
+        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
+        Box box = classObject.getBox();
+        // THEN CLEAR ITS CONTENTS
+        box.getVariablesVBox().getChildren().clear();
+        
+        // NOW ADD IT AGAIN
+        for (VariableObject variable: classObject.getVariables())
+        {
+            Text text = getVariableTextField(variable);
+            text.getStyleClass().add(CLASS_TEXT_LABEL);
+            box.getVariablesVBox().getChildren().add(text);
+        }
+    }
+    
+    private Text getVariableTextField(VariableObject variable)
+    {
+        Text text = new Text();
+        String textString = new String();
+        
+        String name = variable.getName();
+        String type = variable.getType();
+        String scope = variable.getScope();
+        
+        switch (scope)
+        {
+            case PUBLIC:
+                textString += PLUS;
+                break;
+            case PRIVATE:
+                textString += MINUS;
+                break;
+            case PROTECTED:
+                textString += HASHTAG;
+                break;
+        }
+        
+        textString += SPACE + name + COLON + SPACE + type;
+        text.setText(textString);
+        
+        return text;
+    }
+    
+    private void reloadMethodsTextFields(ClassObject classObject)
+    {
+        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
+        Box box = classObject.getBox();
+        // THEN CLEAR ITS CONTENTS
+        box.getMethodsVBox().getChildren().clear();
+        
+        // NOW ADD IT AGAIN
+        for (MethodObject method: classObject.getMethods())
+        {
+            Text text = getMethodTextField(method);
+            text.getStyleClass().add(CLASS_TEXT_LABEL);
+            box.getMethodsVBox().getChildren().add(text);
+        }
+    }
+    
+    private Text getMethodTextField(MethodObject method)
+    {
+        Text text = new Text();
+        String textString = new String();
+        
+        String name = method.getName();
+        String type = method.getType();
+        String scope = method.getScope();
+        
+        switch (scope)
+        {
+            case PUBLIC:
+                textString += PLUS;
+                break;
+            case PRIVATE:
+                textString += MINUS;
+                break;
+            case PROTECTED:
+                textString += HASHTAG;
+                break;
+        }
+        
+        textString += SPACE + name + "(" + methodArgumentsString(method) + ")" 
+                + COLON + SPACE + type;
+        text.setText(textString);
+        
+        return text;
+    }
+    
+    private String methodArgumentsString(MethodObject method)
+    {
+        String answer = "";
+        ArrayList<ArgumentObject> arguments = method.getArguments();
+        
+        for (int i = 0; i < arguments.size(); i++)
+        {
+            ArgumentObject argument = arguments.get(i);
+            
+            if (i == arguments.size() - 1)
+                answer += argument.getName() + COLON + SPACE + argument.getType();
+            else
+                answer += argument.getName() + COLON + SPACE + argument.getType() + ", ";
+        }
+        
+        return answer;
     }
     
     private void enableLegalButtons()
