@@ -18,6 +18,7 @@ public class MethodObject
     private String scope;
     private boolean staticType;
     private boolean finalType;
+    private boolean abstractType;
     private ArrayList<ArgumentObject> arguments;
 
     public MethodObject() {}
@@ -84,5 +85,14 @@ public class MethodObject
     public void setArguments(ArrayList<ArgumentObject> arguments)
     {
         this.arguments = arguments;
+    }
+
+    public boolean isAbstractType() {
+        return abstractType;
+    }
+
+    public void setAbstractType(boolean abstractType) 
+    {
+        this.abstractType = abstractType;
     }
 }

@@ -2,42 +2,43 @@
 {
     "classes":[
         {
-            "class_name":"StartHandler",
-            "package_name":"",
+            "class_name":"AppStyleArbiter",
+            "package_name":"null",
             "parent_name":"null",
+            "is_interface":true,
             "interface_names":[
-                "EventHandler"
             ],
             "variables":[
                 {
-                    "name":"app",
-                    "type":"ThreadExample",
-                    "scope":"private",
-                    "is_static":false,
-                    "is_final":false
+                    "name":"CLASS_BORDERED_PANE",
+                    "type":"String",
+                    "scope":"public",
+                    "is_static":true,
+                    "is_final":true
                 }
             ],
             "methods":[
                 {
-                    "name":"handle",
+                    "name":"initStyle",
                     "type":"void",
                     "scope":"public",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                         {
-                            "name":"event",
-                            "type":"Event"
+                            "name":"object",
+                            "type":"String"
                         },
                         {
-                            "name":"arg1",
+                            "name":"style",
                             "type":"String"
                         }
                     ]
                 }
             ],
             "box":{
-                "translate_x":550.0,
+                "translate_x":720.0,
                 "translate_y":300.0
             }
         }

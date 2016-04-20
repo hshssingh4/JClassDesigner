@@ -30,7 +30,7 @@ public class ThreadExampleClassTest
         String filePath = "./work/ThreadExampleClass.json";
         
         // BUILD THE CLASS
-        ClassBuilder build = new ClassBuilder();
+        ThreadExampleClassBuilder build = new ThreadExampleClassBuilder();
         build.hardCodeThreadExampleClass(dataManager);
         
         ClassObject savedThreadExample = dataManager.getHashClasses().get("ThreadExample");
@@ -40,8 +40,8 @@ public class ThreadExampleClassTest
         String savedVariableType = savedThreadExample.getVariables().get(0).getType();
         String savedMethodArgumentOneName = savedThreadExample.getMethods().get(0).getArguments().get(0).getName();
         String savedMethodArgumentOneType = savedThreadExample.getMethods().get(0).getArguments().get(0).getType();
-        String savedMethodArgumentTwoName = savedThreadExample.getMethods().get(4).getArguments().get(0).getName();
-        String savedMethodArgumentTwoType = savedThreadExample.getMethods().get(4).getArguments().get(0).getType();
+        String savedMethodArgumentTwoName = savedThreadExample.getMethods().get(0).getArguments().get(1).getName();
+        String savedMethodArgumentTwoType = savedThreadExample.getMethods().get(0).getArguments().get(1).getType();
         // ****************Line Segment Points Left*********************
         
         
@@ -60,8 +60,8 @@ public class ThreadExampleClassTest
         String loadedVariableType = loadedThreadExample.getVariables().get(0).getType();
         String loadedMethodArgumentOneName = loadedThreadExample.getMethods().get(0).getArguments().get(0).getName();
         String loadedMethodArgumentOneType = loadedThreadExample.getMethods().get(0).getArguments().get(0).getType();
-        String loadedMethodArgumentTwoName = loadedThreadExample.getMethods().get(4).getArguments().get(0).getName();
-        String loadedMethodArgumentTwoType = loadedThreadExample.getMethods().get(4).getArguments().get(0).getType();
+        String loadedMethodArgumentTwoName = loadedThreadExample.getMethods().get(0).getArguments().get(1).getName();
+        String loadedMethodArgumentTwoType = loadedThreadExample.getMethods().get(0).getArguments().get(1).getType();
         
         // AND NOW CHECK WHAT HAS BEEN LOADED
         assertEquals(savedXLocation, loadedXLocation);

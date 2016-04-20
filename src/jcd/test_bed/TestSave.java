@@ -48,6 +48,7 @@ public class TestSave
     public static final String JSON_SCOPE = "scope";
     public static final String JSON_IS_STATIC = "is_static";
     public static final String JSON_IS_FINAL = "is_final";
+    public static final String JSON_IS_ABSTRACT = "is_abstract";
     public static final String JSON_BOX_OBJECT = "box";
     public static final String JSON_TRANSLATE_X = "translate_x";
     public static final String JSON_TRANSLATE_Y = "translate_y";
@@ -161,6 +162,7 @@ public class TestSave
                 .add(JSON_SCOPE, method.getScope())
                 .add(JSON_IS_STATIC, method.isStaticType())
                 .add(JSON_IS_FINAL, method.isFinalType())
+                .add(JSON_IS_ABSTRACT, method.isAbstractType())
                 .add(JSON_ARGUMENTS_ARRAY, (arguments != null) ? 
                         buildArgumentsJsonArray(method.getArguments()) : JsonObject.NULL)
 		.build();

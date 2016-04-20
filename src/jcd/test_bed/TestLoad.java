@@ -41,6 +41,7 @@ public class TestLoad
     public static final String JSON_SCOPE = "scope";
     public static final String JSON_IS_STATIC = "is_static";
     public static final String JSON_IS_FINAL = "is_final";
+    public static final String JSON_IS_ABSTRACT = "is_abstract";
     public static final String JSON_BOX_OBJECT = "box";
     public static final String JSON_TRANSLATE_X = "translate_x";
     public static final String JSON_TRANSLATE_Y = "translate_y";
@@ -188,6 +189,7 @@ public class TestLoad
             method.setScope(jsoMethod.getString(JSON_SCOPE));
             method.setStaticType(jsoMethod.getBoolean(JSON_IS_STATIC));
             method.setFinalType(jsoMethod.getBoolean(JSON_IS_FINAL));
+            method.setAbstractType(jsoMethod.getBoolean(JSON_IS_ABSTRACT));
             
             ArrayList<ArgumentObject> arguments = loadMethodArguments(jsoMethod);
             method.setArguments(arguments);

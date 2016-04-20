@@ -31,12 +31,13 @@
                     "scope":"protected",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                     ]
                 }
             ],
             "box":{
-                "translate_x":667.0,
+                "translate_x":247.0,
                 "translate_y":300.0
             }
         },
@@ -70,12 +71,13 @@
                     "scope":"protected",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                     ]
                 }
             ],
             "box":{
-                "translate_x":196.0,
+                "translate_x":497.0,
                 "translate_y":300.0
             }
         },
@@ -103,6 +105,7 @@
                     "scope":"public",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                         {
                             "name":"event",
@@ -112,7 +115,7 @@
                 }
             ],
             "box":{
-                "translate_x":321.0,
+                "translate_x":130.0,
                 "translate_y":300.0
             }
         },
@@ -140,6 +143,7 @@
                     "scope":"public",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                         {
                             "name":"event",
@@ -149,7 +153,7 @@
                 }
             ],
             "box":{
-                "translate_x":259.0,
+                "translate_x":613.0,
                 "translate_y":300.0
             }
         },
@@ -267,6 +271,7 @@
                     "scope":"public",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                         {
                             "name":"primaryStage",
@@ -280,6 +285,7 @@
                     "scope":"public",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                     ]
                 },
@@ -289,6 +295,7 @@
                     "scope":"public",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                     ]
                 },
@@ -298,6 +305,7 @@
                     "scope":"public",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                     ]
                 },
@@ -307,6 +315,7 @@
                     "scope":"public",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                         {
                             "name":"textToAppend",
@@ -320,6 +329,7 @@
                     "scope":"public",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                         {
                             "name":"timeToSleep",
@@ -333,6 +343,7 @@
                     "scope":"private",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                     ]
                 },
@@ -342,6 +353,7 @@
                     "scope":"private",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                     ]
                 },
@@ -351,6 +363,7 @@
                     "scope":"private",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                         {
                             "name":"initPrimaryStage",
@@ -364,6 +377,7 @@
                     "scope":"private",
                     "is_static":false,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                     ]
                 },
@@ -373,6 +387,7 @@
                     "scope":"public",
                     "is_static":true,
                     "is_final":false,
+                    "is_abstract":false,
                     "arguments":[
                         {
                             "name":"args",
@@ -382,7 +397,7 @@
                 }
             ],
             "box":{
-                "translate_x":207.0,
+                "translate_x":81.0,
                 "translate_y":300.0
             }
         }

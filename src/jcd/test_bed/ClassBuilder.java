@@ -50,21 +50,6 @@ public class ClassBuilder
         dataManager.addClassObject(createThreadExampleClass());
     }
     
-    public void hardCodeThreadExampleClass(DataManager dataManager)
-    {
-        dataManager.addClassObject(createThreadExampleClass());
-    }
-    
-    public void hardCodeCounterTaskClass(DataManager dataManager)
-    {
-        dataManager.addClassObject(createCounterTaskClass());
-    }
-    
-    public void hardCodeStartHandlerClass(DataManager dataManager)
-    {
-        dataManager.addClassObject(createStartHandlerClass());
-    }
-    
     // HERE IS THE FIRST HARD CODED CLASS
     
     private ClassObject createCounterTaskClass()
@@ -119,6 +104,7 @@ public class ClassBuilder
         call.setType("Void");
         call.setStaticType(false);
         call.setFinalType(false);
+        call.setAbstractType(false);
         call.setArguments(new ArrayList<>());
         
         ArrayList<MethodObject> methods = new ArrayList<>();
@@ -181,6 +167,7 @@ public class ClassBuilder
         call.setType("Void");
         call.setStaticType(false);
         call.setFinalType(false);
+        call.setAbstractType(false);
         call.setArguments(new ArrayList<>());
         
         ArrayList<MethodObject> methods = new ArrayList<>();
@@ -243,6 +230,7 @@ public class ClassBuilder
         handle.setType("void");
         handle.setStaticType(false);
         handle.setFinalType(false);
+        handle.setAbstractType(false);
         
         ArrayList<ArgumentObject> arguments = new ArrayList<>();
         ArgumentObject event = new ArgumentObject();
@@ -312,6 +300,7 @@ public class ClassBuilder
         handle.setType("void");
         handle.setStaticType(false);
         handle.setFinalType(false);
+        handle.setAbstractType(false);
         
         ArrayList<ArgumentObject> arguments = new ArrayList<>();
         ArgumentObject event = new ArgumentObject();
@@ -477,6 +466,7 @@ public class ClassBuilder
         start.setType("void");
         start.setStaticType(false);
         start.setFinalType(false);
+        start.setAbstractType(false);
         
         ArrayList<ArgumentObject> startArguments = new ArrayList<>();
         ArgumentObject primaryStage = new ArgumentObject();
@@ -493,6 +483,7 @@ public class ClassBuilder
         startWork.setType("void");
         startWork.setStaticType(false);
         startWork.setFinalType(false);
+        startWork.setAbstractType(false);
         startWork.setArguments(new ArrayList<>());
         
         // THIRD METHOD
@@ -502,6 +493,7 @@ public class ClassBuilder
         pauseWork.setType("void");
         pauseWork.setStaticType(false);
         pauseWork.setFinalType(false);
+        pauseWork.setAbstractType(false);
         pauseWork.setArguments(new ArrayList<>());
         
         // FOURTH METHOD
@@ -511,6 +503,7 @@ public class ClassBuilder
         doWork.setType(BOOLEAN);
         doWork.setStaticType(false);
         doWork.setFinalType(false);
+        doWork.setAbstractType(false);
         doWork.setArguments(new ArrayList<>());
         
         // FIFTH METHOD
@@ -520,6 +513,7 @@ public class ClassBuilder
         appendText.setType("void");
         appendText.setStaticType(false);
         appendText.setFinalType(false);
+        appendText.setAbstractType(false);
         
         ArrayList<ArgumentObject> appendTextArguments = new ArrayList<>();
         ArgumentObject textToAppend = new ArgumentObject();
@@ -536,6 +530,7 @@ public class ClassBuilder
         sleep.setType("void");
         sleep.setStaticType(false);
         sleep.setFinalType(false);
+        sleep.setAbstractType(false);
         
         ArrayList<ArgumentObject> sleepArguments = new ArrayList<>();
         ArgumentObject timeToSleep = new ArgumentObject();
@@ -553,6 +548,7 @@ public class ClassBuilder
         initLayout.setType("void");
         initLayout.setStaticType(false);
         initLayout.setFinalType(false);
+        initLayout.setAbstractType(false);
         initLayout.setArguments(new ArrayList<>());
         
         // EIGHTH METHOD
@@ -562,6 +558,7 @@ public class ClassBuilder
         initHandlers.setType("void");
         initHandlers.setStaticType(false);
         initHandlers.setFinalType(false);
+        initHandlers.setAbstractType(false);
         initHandlers.setArguments(new ArrayList<>());
         
         // NINTH METHOD
@@ -571,6 +568,7 @@ public class ClassBuilder
         initWindow.setType("void");
         initWindow.setStaticType(false);
         initWindow.setFinalType(false);
+        initWindow.setAbstractType(false);
         
         ArrayList<ArgumentObject> initWindowArguments = new ArrayList<>();
         ArgumentObject initPrimaryStage = new ArgumentObject();
@@ -587,6 +585,7 @@ public class ClassBuilder
         initThreads.setType("void");
         initThreads.setStaticType(false);
         initThreads.setFinalType(false);
+        initThreads.setAbstractType(false);
         initThreads.setArguments(new ArrayList<>());
         
         // ELEVENTH METHOD
@@ -596,6 +595,7 @@ public class ClassBuilder
         main.setScope(PUBLIC);
         main.setStaticType(true);
         main.setFinalType(false);
+        main.setAbstractType(false);
         
         ArrayList<ArgumentObject> mainArguments = new ArrayList<>();
         ArgumentObject args = new ArgumentObject();

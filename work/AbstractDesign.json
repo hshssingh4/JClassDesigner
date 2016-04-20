@@ -2,7 +2,7 @@
 {
     "classes":[
         {
-            "class_name":"ThreadExample",
+            "class_name":"GraphicObject",
             "package_name":"null",
             "parent_name":"null",
             "is_interface":false,
@@ -10,49 +10,52 @@
             ],
             "variables":[
                 {
-                    "name":"work",
-                    "type":"boolean",
-                    "scope":"private",
+                    "name":"x",
+                    "type":"int",
+                    "scope":"protected",
+                    "is_static":false,
+                    "is_final":false
+                },
+                {
+                    "name":"y",
+                    "type":"int",
+                    "scope":"protected",
                     "is_static":false,
                     "is_final":false
                 }
             ],
             "methods":[
                 {
-                    "name":"addVariables",
-                    "type":"int",
-                    "scope":"public",
+                    "name":"moveTo",
+                    "type":"void",
+                    "scope":"protected",
                     "is_static":false,
                     "is_final":false,
                     "is_abstract":false,
                     "arguments":[
                         {
-                            "name":"arg1",
+                            "name":"newX",
                             "type":"int"
                         },
                         {
-                            "name":"arg2",
+                            "name":"newY",
                             "type":"int"
                         }
                     ]
                 },
                 {
-                    "name":"main",
+                    "name":"draw",
                     "type":"void",
-                    "scope":"public",
-                    "is_static":true,
+                    "scope":"protected",
+                    "is_static":false,
                     "is_final":false,
-                    "is_abstract":false,
+                    "is_abstract":true,
                     "arguments":[
-                        {
-                            "name":"args",
-                            "type":"String[]"
-                        }
                     ]
                 }
             ],
             "box":{
-                "translate_x":559.0,
+                "translate_x":637.0,
                 "translate_y":300.0
             }
         }
