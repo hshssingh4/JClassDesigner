@@ -11,6 +11,9 @@ import java.io.InputStream;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import jcd.data.DataManager;
+import jcd.test_bed.TestLoad;
+import jcd.test_bed.TestSave;
 import saf.components.AppDataComponent;
 import saf.components.AppFileComponent;
 
@@ -25,12 +28,18 @@ public class FileManager implements AppFileComponent
     public void saveData(AppDataComponent data, String filePath) throws IOException 
     {
         System.out.println("Save Data");
+        TestSave testSave = new TestSave();
+        testSave.saveTestData((DataManager) data, filePath);
     }
 
     @Override
     public void loadData(AppDataComponent data, String filePath) throws IOException
     {
         System.out.println("Load Data");
+        
+        // NOW LOAD IT
+        TestLoad testLoad = new TestLoad();
+        testLoad.loadTestData((DataManager) data, filePath);
     }
 
     // HELPER METHOD FOR LOADING DATA FROM A JSON FORMAT

@@ -17,6 +17,7 @@ public class ClassObject
     private String className;
     private String packageName;
     private String parentName;
+    private boolean interfaceType;
     private ArrayList<String> interfaceNames;
     private ArrayList<VariableObject> variables;
     private ArrayList<MethodObject> methods;
@@ -75,6 +76,16 @@ public class ClassObject
     public void setPackageName(String packageName)
     {
         this.packageName = packageName;
+    }
+
+    public boolean isInterfaceType()
+    {
+        return interfaceType;
+    }
+
+    public void setInterfaceType(boolean interfaceType) 
+    {
+        this.interfaceType = interfaceType;
     }
 
     public Box getBox()

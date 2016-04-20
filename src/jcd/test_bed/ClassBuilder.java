@@ -75,6 +75,7 @@ public class ClassBuilder
         ClassObject counterTaskClass = new ClassObject(COUNTER_TASK, "", box);
         
         counterTaskClass.setParentName("Task<Void>");
+        counterTaskClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();
         counterTaskClass.setInterfaceNames(interfaceNames);
@@ -135,6 +136,7 @@ public class ClassBuilder
         ClassObject dateTaskClass = new ClassObject(DATE_TASK, "", box);
         
         dateTaskClass.setParentName("Task<Void>");
+        dateTaskClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();
         dateTaskClass.setInterfaceNames(interfaceNames);
@@ -195,6 +197,7 @@ public class ClassBuilder
         ClassObject pauseHandlerClass = new ClassObject(PAUSE_HANDLER, "", box);
         
         pauseHandlerClass.setParentName(null);
+        pauseHandlerClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = addPauseHandlerInterfaceNames();
         pauseHandlerClass.setInterfaceNames(interfaceNames);
@@ -262,6 +265,7 @@ public class ClassBuilder
         ClassObject startHandlerClass = new ClassObject(START_HANDLER, "", box);
         
         startHandlerClass.setParentName(null);
+        startHandlerClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = addStartHandlerInterfaceNames();
         startHandlerClass.setInterfaceNames(interfaceNames);
@@ -328,6 +332,7 @@ public class ClassBuilder
         ClassObject threadExampleClass = new ClassObject(THREAD_EXAMPLE, "", box);
         
         threadExampleClass.setParentName("Application");
+        threadExampleClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();
         threadExampleClass.setInterfaceNames(interfaceNames);

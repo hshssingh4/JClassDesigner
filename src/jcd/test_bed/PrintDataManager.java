@@ -12,6 +12,7 @@ import jcd.data.DataManager;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import static jcd.test_bed.TestLoad.JSON_CLASS_NAME;
+import static jcd.test_bed.TestLoad.JSON_IS_INTERFACE;
 import static jcd.test_bed.TestLoad.JSON_NAME;
 import static jcd.test_bed.TestLoad.JSON_PACKAGE_NAME;
 import static jcd.test_bed.TestLoad.JSON_PARENT_NAME;
@@ -45,6 +46,7 @@ public class PrintDataManager
         printKeyValuePair(JSON_CLASS_NAME, classObject.getClassName());
         printKeyValuePair(JSON_PACKAGE_NAME, classObject.getPackageName());
         printKeyValuePair(JSON_PARENT_NAME, classObject.getParentName());
+        printKeyValuePair(JSON_IS_INTERFACE, Boolean.toString(classObject.isInterfaceType()));
         printInterfaceNames(classObject.getInterfaceNames());
         printVariables(classObject.getVariables());
         printMethods(classObject.getMethods());

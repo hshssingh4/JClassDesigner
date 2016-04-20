@@ -37,6 +37,7 @@ public class TestSave
     public static final String JSON_CLASS_NAME = "class_name";
     public static final String JSON_PACKAGE_NAME = "package_name";
     public static final String JSON_PARENT_NAME = "parent_name";
+    public static final String JSON_IS_INTERFACE = "is_interface";
     public static final String JSON_INTERFACE_NAMES = "interface_names";
     public static final String JSON_CLASSES_ARRAY = "classes";
     public static final String JSON_VARIABLES_ARRAY = "variables";
@@ -104,6 +105,7 @@ public class TestSave
                 .add(JSON_CLASS_NAME, classObject.getClassName())
                 .add(JSON_PACKAGE_NAME, classObject.getPackageName())
                 .add(JSON_PARENT_NAME, parentName)
+                .add(JSON_IS_INTERFACE, classObject.isInterfaceType())
                 .add(JSON_INTERFACE_NAMES, buildInterfaceNamesJsonArray(classObject.getInterfaceNames()))
                 .add(JSON_VARIABLES_ARRAY, buildVariablesJsonArray(classObject.getVariables()))
                 .add(JSON_METHODS_ARRAY, buildMethodsJsonArray(classObject.getMethods()))

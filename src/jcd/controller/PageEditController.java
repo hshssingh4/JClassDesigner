@@ -16,7 +16,6 @@ import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
 import jcd.gui.Workspace;
-import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 
 /**
  * This class serves as a controller to handle all the user actions except the ones
@@ -106,6 +105,7 @@ public class PageEditController
         
         // Now initialize the class object
         ClassObject obj = new ClassObject(randomClassNameString, "", box);
+        obj.setInterfaceType(false);
         obj.setInterfaceNames(new ArrayList<>());
         obj.setVariables(new ArrayList<>());
         obj.setMethods(new ArrayList<>());
@@ -133,19 +133,18 @@ public class PageEditController
     public void handleClassNameChangeRequest(String className)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        Object selectedObject = workspace.getSelectedObject();
+        ClassObject selectedObject = workspace.getSelectedObject();
         
         // Case where the object is a class object
-        if (selectedObject != null && selectedObject instanceof ClassObject)
+        if (selectedObject != null)
         {
-            ClassObject object = ((ClassObject)selectedObject);
-            boolean unique = dataManager.checkIfUnique(className, object.getPackageName());
+            boolean unique = dataManager.checkIfUnique(className, selectedObject.getPackageName());
             
             // Only change the name of the class to such if name is unique
             if (unique)
             {
-                object.setClassName(className);
-                ((Text)object.getBox().getClassVBox().getChildren().get(0)).setText(className);
+                selectedObject.setClassName(className);
+                ((Text)selectedObject.getBox().getClassVBox().getChildren().get(0)).setText(className);
             }
         }
         
@@ -160,18 +159,13 @@ public class PageEditController
     public void handlePackageNameChangeRequest(String packageName)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        Object selectedObject = workspace.getSelectedObject();
+        ClassObject selectedObject = workspace.getSelectedObject();
         
-        // Case where the object is a class object.
-        if (selectedObject instanceof ClassObject)
-        {
-            ClassObject object = ((ClassObject)selectedObject);
-            boolean unique = dataManager.checkIfUnique(object.getClassName(), packageName);
+        boolean unique = dataManager.checkIfUnique(selectedObject.getClassName(), packageName);
             
-            // Only change if it is unique.
-            if (unique)
-                object.setPackageName(packageName);
-        }
+        // Only change if it is unique.
+        if (unique)
+            selectedObject.setPackageName(packageName);
         
         workspace.reloadWorkspace();
     }

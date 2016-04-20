@@ -30,6 +30,7 @@ public class TestLoad
     public static final String JSON_CLASS_NAME = "class_name";
     public static final String JSON_PACKAGE_NAME = "package_name";
     public static final String JSON_PARENT_NAME = "parent_name";
+    public static final String JSON_IS_INTERFACE = "is_interface";
     public static final String JSON_INTERFACE_NAMES = "interface_names";
     public static final String JSON_CLASSES_ARRAY = "classes";
     public static final String JSON_VARIABLES_ARRAY = "variables";
@@ -111,6 +112,7 @@ public class TestLoad
         String parentName = jsoClass.getString(JSON_PARENT_NAME);
         if (parentName.equals("null"))
             parentName = null;
+        boolean interfaceType = jsoClass.getBoolean(JSON_IS_INTERFACE);
         ArrayList<String> interfaceNames = loadInterfaceNames(jsoClass);
         ArrayList<VariableObject> variables = loadVariables(jsoClass);
         ArrayList<MethodObject> methods = loadMethods(jsoClass);
@@ -126,6 +128,7 @@ public class TestLoad
         
         classObject = new ClassObject(className, packageName, box);
         classObject.setParentName(parentName);
+        classObject.setInterfaceType(interfaceType);
         classObject.setInterfaceNames(interfaceNames);
         classObject.setVariables(variables);
         classObject.setMethods(methods);

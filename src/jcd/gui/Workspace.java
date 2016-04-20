@@ -149,7 +149,7 @@ public class Workspace extends AppWorkspaceComponent
     TableView methodsTableView;
     
     // Selected Object
-    Object selectedObject;
+    ClassObject selectedObject;
     
     // HERE IS THE CONTROLLER
     PageEditController pageEditController;
@@ -369,6 +369,7 @@ public class Workspace extends AppWorkspaceComponent
             {
                 if(e.getTarget() instanceof VBox)
                 {
+                    System.out.println("yes");
                     for (ClassObject obj: dataManager.getClassesList())
                         if ( obj.getBox().getClassVBox() == (VBox)e.getTarget()
                                 || obj.getBox().getVariablesVBox() == ((VBox)e.getTarget())
@@ -376,8 +377,8 @@ public class Workspace extends AppWorkspaceComponent
                                 canvasEditController.handleSelectionRequest(obj);
                     
                     
-                    double initialX = ((ClassObject)selectedObject).getBox().getMainVBox().getTranslateX();
-                    double initialY = ((ClassObject)selectedObject).getBox().getMainVBox().getTranslateY();
+                    double initialX = selectedObject.getBox().getMainVBox().getTranslateX();
+                    double initialY = selectedObject.getBox().getMainVBox().getTranslateY();
                     canvas.setOnMouseDragged((MouseEvent e1) -> {
                         canvasEditController.handlePositionChangeRequest(e1, e, initialX, initialY);
                     });
@@ -388,8 +389,8 @@ public class Workspace extends AppWorkspaceComponent
                         if ( obj.getBox().getClassVBox().getChildren().get(0) == (Text)e.getTarget())
                                 canvasEditController.handleSelectionRequest(obj);
                     
-                    double initialX = ((ClassObject)selectedObject).getBox().getMainVBox().getTranslateX();
-                    double initialY = ((ClassObject)selectedObject).getBox().getMainVBox().getTranslateY();
+                    double initialX = selectedObject.getBox().getMainVBox().getTranslateX();
+                    double initialY = selectedObject.getBox().getMainVBox().getTranslateY();
                     canvas.setOnMouseDragged((MouseEvent e1) -> {
                         canvasEditController.handlePositionChangeRequest(e1, e, initialX, initialY);
                     });
@@ -450,12 +451,8 @@ public class Workspace extends AppWorkspaceComponent
         
         if (selectedObject != null)
         {
-            if (selectedObject instanceof ClassObject)
-            {
-                ClassObject obj = (ClassObject) selectedObject;
-                classNameTextField.setText(obj.getClassName());
-                packageNameTextField.setText(obj.getPackageName());
-            }
+            classNameTextField.setText(selectedObject.getClassName());
+            packageNameTextField.setText(selectedObject.getPackageName());
         }
         else
         {
@@ -631,12 +628,12 @@ public class Workspace extends AppWorkspaceComponent
         return canvasScrollPane;
     }
 
-    public Object getSelectedObject()
+    public ClassObject getSelectedObject()
     {
         return selectedObject;
     }
 
-    public void setSelectedObject(Object selectedObject) 
+    public void setSelectedObject(ClassObject selectedObject) 
     {
         this.selectedObject = selectedObject;
     }

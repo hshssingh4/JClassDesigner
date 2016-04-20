@@ -60,7 +60,7 @@ public class CanvasEditController
      * @param obj 
      * the object to be selected
      */
-    public void handleSelectionRequest(Object obj)
+    public void handleSelectionRequest(ClassObject obj)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         
@@ -99,10 +99,9 @@ public class CanvasEditController
      * @param obj 
      * the object whose effect is to be set to null
      */
-    private void unhighlight(Object obj)
+    private void unhighlight(ClassObject obj)
     {
-        if (obj instanceof ClassObject)
-            ((ClassObject)obj).getBox().getMainVBox().setEffect(null);
+        obj.getBox().getMainVBox().setEffect(null);
     }
     
     /**
@@ -110,10 +109,9 @@ public class CanvasEditController
      * @param obj 
      * the object whose effect is to be set
      */
-    private void highlight(Object obj)
+    private void highlight(ClassObject obj)
     {
-        if (obj instanceof ClassObject)
-            ((ClassObject)obj).getBox().getMainVBox().setEffect(dropShadowEffect);
+            obj.getBox().getMainVBox().setEffect(dropShadowEffect);
     }
     
     /**
@@ -134,20 +132,16 @@ public class CanvasEditController
             double initialX, double initialY)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        Object selectedObject = workspace.getSelectedObject();
+        ClassObject selectedObject = workspace.getSelectedObject();
         
         double xDiff;
         double yDiff;
         
-        // Handles the case for the ClassObject
-        if (selectedObject instanceof ClassObject)
-        {
-            VBox box = ((ClassObject)selectedObject).getBox().getMainVBox();
-            xDiff = e1.getX() - e.getX();
-            yDiff = e1.getY() - e.getY();
-            box.setTranslateX(initialX + xDiff);
-            box.setTranslateY(initialY + yDiff);
-        }
+        VBox box = selectedObject.getBox().getMainVBox();
+        xDiff = e1.getX() - e.getX();
+        yDiff = e1.getY() - e.getY();
+        box.setTranslateX(initialX + xDiff);
+        box.setTranslateY(initialY + yDiff);    
         
         resizeCanvasIfNeeded();
         
