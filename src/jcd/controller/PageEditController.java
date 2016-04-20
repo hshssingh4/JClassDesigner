@@ -8,6 +8,7 @@ package jcd.controller;
 import java.util.ArrayList;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import jcd.JClassDesigner;
@@ -27,6 +28,9 @@ public class PageEditController
     // These define the default height and width values for the rectangles inside vbox
     private static final double DEFAULT_WIDTH = 300.0;
     private static final double DEFAULT_HEIGHT = 150.0;
+    double originalSceneX, originalSceneY;
+    double originalTranslateX, originalTranslateY;
+    CanvasEditController canavasEditController;
     
     // HERE'S THE FULL APP, WHICH GIVES US ACCESS TO OTHER STUFF
     JClassDesigner app;
@@ -75,7 +79,7 @@ public class PageEditController
 	//scene.setCursor(Cursor.SE_RESIZE);
 	
 	// CHANGE THE STATE
-	dataManager.setState(JClassDesignerState.RESIZING_SHAPE);	
+	dataManager.setState(JClassDesignerState.RESIZING_SHAPE);
 	
 	// ENABLE/DISABLE THE PROPER BUTTONS
 	Workspace workspace = (Workspace)app.getWorkspaceComponent();
@@ -104,7 +108,9 @@ public class PageEditController
         box.getMainVBox().setTranslateY(y);
         
         // Now initialize the class object
-        ClassObject obj = new ClassObject(randomClassNameString, "", box);
+        ClassObject obj = new ClassObject(randomClassNameString, box);
+        obj.setPackageName(null);
+        obj.setParentName(null);
         obj.setInterfaceType(false);
         obj.setInterfaceNames(new ArrayList<>());
         obj.setVariables(new ArrayList<>());
@@ -119,6 +125,24 @@ public class PageEditController
             workspace.getCanvasEditController().handleSelectionRequest(obj);
         }
          
+        
+        box.getMainVBox().setOnMousePressed((MouseEvent e) -> {
+            originalSceneX = e.getSceneX();
+            originalSceneY = e.getSceneY();
+            originalTranslateX = box.getMainVBox().getTranslateX();
+            originalTranslateY = box.getMainVBox().getTranslateY();
+            
+            workspace.getCanvasEditController().handleSelectionRequest(obj);
+        });
+        
+        box.getMainVBox().setOnMouseDragged((MouseEvent e) -> {
+            double offsetX = e.getSceneX() - originalSceneX;
+            double offsetY = e.getSceneY() - originalSceneY;
+            double newTranslateX = originalTranslateX + offsetX;
+            double newTranslateY = originalTranslateY + offsetY;
+            workspace.getCanvasEditController().handlePositionChangeRequest(newTranslateX, newTranslateY);
+        });
+        
         app.getGUI().updateToolbarControls(false);
         workspace.reloadWorkspace();
     }
@@ -139,7 +163,7 @@ public class PageEditController
         if (selectedObject != null)
         {
             boolean unique = dataManager.checkIfUnique(className, selectedObject.getPackageName());
-            
+
             // Only change the name of the class to such if name is unique
             if (unique)
             {
@@ -165,7 +189,12 @@ public class PageEditController
             
         // Only change if it is unique.
         if (unique)
-            selectedObject.setPackageName(packageName);
+        {
+            if (packageName.isEmpty())
+                selectedObject.setPackageName(null);
+            else
+                selectedObject.setPackageName(packageName);
+        }
         
         workspace.reloadWorkspace();
     }

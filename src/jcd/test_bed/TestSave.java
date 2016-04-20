@@ -96,14 +96,16 @@ public class TestSave
     public JsonObject makeClassJsonObject(ClassObject classObject)
     {
         // First initialize all the objects that can possibly be null
-        String parentName;
+        String parentName, packageName;
         
         parentName = ((classObject.getParentName() == null)? 
                 JsonObject.NULL.toString(): classObject.getParentName());
+        packageName = ((classObject.getPackageName() == null)? 
+                JsonObject.NULL.toString(): classObject.getPackageName());
         
         JsonObject jso = Json.createObjectBuilder()
                 .add(JSON_CLASS_NAME, classObject.getClassName())
-                .add(JSON_PACKAGE_NAME, classObject.getPackageName())
+                .add(JSON_PACKAGE_NAME, packageName)
                 .add(JSON_PARENT_NAME, parentName)
                 .add(JSON_IS_INTERFACE, classObject.isInterfaceType())
                 .add(JSON_INTERFACE_NAMES, buildInterfaceNamesJsonArray(classObject.getInterfaceNames()))

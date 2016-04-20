@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import jcd.JClassDesigner;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.JClassDesignerState;
 import jcd.gui.Workspace;
 
 /**
@@ -62,20 +63,22 @@ public class CanvasEditController
      */
     public void handleSelectionRequest(ClassObject obj)
     {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        
-        // Unhighlight any previously selected objects
-        if(workspace.getSelectedObject() != null)
+        if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
         {
-            unhighlight(workspace.getSelectedObject());
-            workspace.setSelectedObject(null);
+            Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        
+            // Unhighlight any previously selected objects
+            if(workspace.getSelectedObject() != null)
+            {
+                unhighlight(workspace.getSelectedObject());
+                workspace.setSelectedObject(null);
+            }
+            
+            // And now select the object
+            workspace.setSelectedObject(obj);
+            highlight(obj);
+            //workspace.reloadWorkspace();
         }
-
-        // And now select the object
-        workspace.setSelectedObject(obj);
-        highlight(obj);
-       
-        workspace.reloadWorkspace();
     }
     
     /**
@@ -83,15 +86,18 @@ public class CanvasEditController
      */
     public void handleDeselectRequest()
     {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        
-        // Only if there is a selected object.
-        if(workspace.getSelectedObject() != null)
+        if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
         {
-            unhighlight(workspace.getSelectedObject());
-            workspace.setSelectedObject(null);
+            Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        
+            // Only if there is a selected object.
+            if(workspace.getSelectedObject() != null)
+            {
+                unhighlight(workspace.getSelectedObject());
+                workspace.setSelectedObject(null);
+            }
+            workspace.reloadWorkspace();
         }
-        workspace.reloadWorkspace();
     }
     
     /**
@@ -117,35 +123,24 @@ public class CanvasEditController
     /**
      * This method handles the request where the user tries to relocate or
      * reposition the selected object.
-     * @param obj
-     * the object that is to be moved
-     * @param e1
-     * the dragging event
-     * @param e
-     * the pressing event
-     * @param initialX
-     * initial X value of the vbox that keeps the stack panes
-     * @param initialY 
-     * the initial Y value of the vbox that keeps the stack panes
+     * @param newTranslateX
+     * @param newTranslateY
      */
-    public void handlePositionChangeRequest(MouseEvent e1, MouseEvent e,
-            double initialX, double initialY)
+    public void handlePositionChangeRequest(double newTranslateX, double newTranslateY)
     {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        ClassObject selectedObject = workspace.getSelectedObject();
+        if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
+        {
+            Workspace workspace = (Workspace) app.getWorkspaceComponent();
+            ClassObject selectedObject = workspace.getSelectedObject();
+            VBox box = selectedObject.getBox().getMainVBox();
         
-        double xDiff;
-        double yDiff;
+            box.setTranslateX(newTranslateX);
+            box.setTranslateY(newTranslateY);    
         
-        VBox box = selectedObject.getBox().getMainVBox();
-        xDiff = e1.getX() - e.getX();
-        yDiff = e1.getY() - e.getY();
-        box.setTranslateX(initialX + xDiff);
-        box.setTranslateY(initialY + yDiff);    
+            resizeCanvasIfNeeded();
         
-        resizeCanvasIfNeeded();
-        
-        app.getGUI().updateToolbarControls(false);
+            app.getGUI().updateToolbarControls(false);
+        }
     }
     
     /**

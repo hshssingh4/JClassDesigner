@@ -27,15 +27,12 @@ public class ClassObject
      * Constructor to initialize the class object.
      * @param className
      * the name of this class
-     * @param packageName
-     * the name of the package for this class
      * @param box 
      * the box that displays this class
      */
-    public ClassObject(String className, String packageName, Box box)
+    public ClassObject(String className, Box box)
     {
         this.className = className;
-        this.packageName = packageName;
         this.box = box;
     }
     
@@ -55,7 +52,8 @@ public class ClassObject
     public boolean equals(String className, String packageName)
     {
         return (this.className.equalsIgnoreCase(className) && 
-                this.packageName.equalsIgnoreCase(packageName));
+                (this.packageName == null ? 
+                packageName == null : this.packageName.equals(packageName)));
     }
 
     public String getClassName() 

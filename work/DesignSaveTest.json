@@ -3,7 +3,7 @@
     "classes":[
         {
             "class_name":"CounterTask",
-            "package_name":"",
+            "package_name":"null",
             "parent_name":"Task<Void>",
             "is_interface":false,
             "interface_names":[
@@ -36,13 +36,13 @@
                 }
             ],
             "box":{
-                "translate_x":34.0,
+                "translate_x":667.0,
                 "translate_y":300.0
             }
         },
         {
             "class_name":"DateTask",
-            "package_name":"",
+            "package_name":"null",
             "parent_name":"Task<Void>",
             "is_interface":false,
             "interface_names":[
@@ -75,13 +75,13 @@
                 }
             ],
             "box":{
-                "translate_x":234.0,
+                "translate_x":196.0,
                 "translate_y":300.0
             }
         },
         {
             "class_name":"PauseHandler",
-            "package_name":"",
+            "package_name":"null",
             "parent_name":"null",
             "is_interface":false,
             "interface_names":[
@@ -112,13 +112,13 @@
                 }
             ],
             "box":{
-                "translate_x":379.0,
+                "translate_x":321.0,
                 "translate_y":300.0
             }
         },
         {
             "class_name":"StartHandler",
-            "package_name":"",
+            "package_name":"null",
             "parent_name":"null",
             "is_interface":false,
             "interface_names":[
@@ -149,13 +149,13 @@
                 }
             ],
             "box":{
-                "translate_x":687.0,
+                "translate_x":259.0,
                 "translate_y":300.0
             }
         },
         {
             "class_name":"ThreadExample",
-            "package_name":"",
+            "package_name":"null",
             "parent_name":"Application",
             "is_interface":false,
             "interface_names":[
@@ -382,7 +382,7 @@
                 }
             ],
             "box":{
-                "translate_x":545.0,
+                "translate_x":207.0,
                 "translate_y":300.0
             }
         }

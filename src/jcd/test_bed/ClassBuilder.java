@@ -72,9 +72,10 @@ public class ClassBuilder
         Box box = initializeNewBox();
         addClassNameText(COUNTER_TASK, box);
         
-        ClassObject counterTaskClass = new ClassObject(COUNTER_TASK, "", box);
+        ClassObject counterTaskClass = new ClassObject(COUNTER_TASK, box);
         
         counterTaskClass.setParentName("Task<Void>");
+        counterTaskClass.setPackageName(null);
         counterTaskClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();
@@ -133,9 +134,10 @@ public class ClassBuilder
         Box box = initializeNewBox();
         addClassNameText(DATE_TASK, box);
         
-        ClassObject dateTaskClass = new ClassObject(DATE_TASK, "", box);
+        ClassObject dateTaskClass = new ClassObject(DATE_TASK, box);
         
         dateTaskClass.setParentName("Task<Void>");
+        dateTaskClass.setPackageName(null);
         dateTaskClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();
@@ -194,9 +196,10 @@ public class ClassBuilder
         Box box = initializeNewBox();
         addClassNameText(PAUSE_HANDLER, box);
         
-        ClassObject pauseHandlerClass = new ClassObject(PAUSE_HANDLER, "", box);
+        ClassObject pauseHandlerClass = new ClassObject(PAUSE_HANDLER, box);
         
         pauseHandlerClass.setParentName(null);
+        pauseHandlerClass.setPackageName(null);
         pauseHandlerClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = addPauseHandlerInterfaceNames();
@@ -262,9 +265,10 @@ public class ClassBuilder
         Box box = initializeNewBox();
         addClassNameText(START_HANDLER, box);
         
-        ClassObject startHandlerClass = new ClassObject(START_HANDLER, "", box);
+        ClassObject startHandlerClass = new ClassObject(START_HANDLER, box);
         
         startHandlerClass.setParentName(null);
+        startHandlerClass.setPackageName(null);
         startHandlerClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = addStartHandlerInterfaceNames();
@@ -329,9 +333,10 @@ public class ClassBuilder
         Box box = initializeNewBox();
         addClassNameText(THREAD_EXAMPLE, box);
         
-        ClassObject threadExampleClass = new ClassObject(THREAD_EXAMPLE, "", box);
+        ClassObject threadExampleClass = new ClassObject(THREAD_EXAMPLE, box);
         
         threadExampleClass.setParentName("Application");
+        threadExampleClass.setPackageName(null);
         threadExampleClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();

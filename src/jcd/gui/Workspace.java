@@ -356,48 +356,18 @@ public class Workspace extends AppWorkspaceComponent
         
         // HANDLERS FOR CONTROLS ON THE RIGHT
         classNameTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {
+            if (selectedObject != null)
                 pageEditController.handleClassNameChangeRequest(newClassName);
         });
         packageNameTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {
+            if (selectedObject != null)
                 pageEditController.handlePackageNameChangeRequest(newClassName);
         });
         
-        // HANDLES FOR CANVAS EVENTS
-        // THIS METHOD NEEDS IMPROVEMENT
-        canvas.setOnMousePressed((MouseEvent e) -> {
-            if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
-            {
-                if(e.getTarget() instanceof VBox)
-                {
-                    System.out.println("yes");
-                    for (ClassObject obj: dataManager.getClassesList())
-                        if ( obj.getBox().getClassVBox() == (VBox)e.getTarget()
-                                || obj.getBox().getVariablesVBox() == ((VBox)e.getTarget())
-                                || obj.getBox().getMethodsVBox() == ((VBox) e.getTarget()))
-                                canvasEditController.handleSelectionRequest(obj);
-                    
-                    
-                    double initialX = selectedObject.getBox().getMainVBox().getTranslateX();
-                    double initialY = selectedObject.getBox().getMainVBox().getTranslateY();
-                    canvas.setOnMouseDragged((MouseEvent e1) -> {
-                        canvasEditController.handlePositionChangeRequest(e1, e, initialX, initialY);
-                    });
-                }
-                else if (e.getTarget() instanceof Text)
-                {
-                    for (ClassObject obj: dataManager.getClassesList())
-                        if ( obj.getBox().getClassVBox().getChildren().get(0) == (Text)e.getTarget())
-                                canvasEditController.handleSelectionRequest(obj);
-                    
-                    double initialX = selectedObject.getBox().getMainVBox().getTranslateX();
-                    double initialY = selectedObject.getBox().getMainVBox().getTranslateY();
-                    canvas.setOnMouseDragged((MouseEvent e1) -> {
-                        canvasEditController.handlePositionChangeRequest(e1, e, initialX, initialY);
-                    });
-                }
-                else
+        canvas.setOnMouseReleased((MouseEvent e) -> {
+            if (!(e.getTarget() instanceof VBox || e.getTarget() instanceof Text))
                     canvasEditController.handleDeselectRequest();
-            }
+            reloadWorkspace();
         });
     }
     

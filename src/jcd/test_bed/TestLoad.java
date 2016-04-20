@@ -109,6 +109,8 @@ public class TestLoad
         // NOW GET ALL THE VALUES SAVED IN THE CLASS JSON OBJECT
         String className = jsoClass.getString(JSON_CLASS_NAME);
         String packageName = jsoClass.getString(JSON_PACKAGE_NAME);
+        if (packageName.equals("null"))
+            packageName = null;
         String parentName = jsoClass.getString(JSON_PARENT_NAME);
         if (parentName.equals("null"))
             parentName = null;
@@ -126,8 +128,9 @@ public class TestLoad
         box.getMainVBox().setTranslateX(translateX);
         box.getMainVBox().setTranslateY(translateY);
         
-        classObject = new ClassObject(className, packageName, box);
+        classObject = new ClassObject(className, box);
         classObject.setParentName(parentName);
+        classObject.setPackageName(packageName);
         classObject.setInterfaceType(interfaceType);
         classObject.setInterfaceNames(interfaceNames);
         classObject.setVariables(variables);
