@@ -1,0 +1,45 @@
+
+{
+    "classes":[
+        {
+            "class_name":"StartHandler",
+            "package_name":"",
+            "parent_name":"null",
+            "interface_names":[
+                "EventHandler"
+            ],
+            "variables":[
+                {
+                    "name":"app",
+                    "type":"ThreadExample",
+                    "scope":"private",
+                    "is_static":false,
+                    "is_final":false
+                }
+            ],
+            "methods":[
+                {
+                    "name":"handle",
+                    "type":"void",
+                    "scope":"public",
+                    "is_static":false,
+                    "is_final":false,
+                    "arguments":[
+                        {
+                            "name":"event",
+                            "type":"Event"
+                        },
+                        {
+                            "name":"arg1",
+                            "type":"String"
+                        }
+                    ]
+                }
+            ],
+            "box":{
+                "translate_x":550.0,
+                "translate_y":300.0
+            }
+        }
+    ]
+}

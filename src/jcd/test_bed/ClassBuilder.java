@@ -21,12 +21,6 @@ import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
  */
 public class ClassBuilder 
 {
-    ClassObject counterTaskClass;
-    ClassObject dateTaskClass;
-    ClassObject pauseHandlerClass;
-    ClassObject startHandlerClass;
-    ClassObject threadExampleClass;
-    
     public static final String PRIVATE = "private";
     public static final String PUBLIC = "public";
     public static final String PROTECTED = "protected";
@@ -49,27 +43,36 @@ public class ClassBuilder
     
     public void hardCodeClasses(DataManager dataManager)
     {
-        createCounterTaskClass();
-        createDateTaskClass();
-        createPauseHandlerClass();
-        createStartHandlerClass();
-        createThreadExampleClass();
-        
-        dataManager.addClassObject(counterTaskClass);
-        dataManager.addClassObject(dateTaskClass);
-        dataManager.addClassObject(pauseHandlerClass);
-        dataManager.addClassObject(startHandlerClass);
-        dataManager.addClassObject(threadExampleClass);
+        dataManager.addClassObject(createCounterTaskClass());
+        dataManager.addClassObject(createDateTaskClass());
+        dataManager.addClassObject(createPauseHandlerClass());
+        dataManager.addClassObject(createStartHandlerClass());
+        dataManager.addClassObject(createThreadExampleClass());
+    }
+    
+    public void hardCodeThreadExampleClass(DataManager dataManager)
+    {
+        dataManager.addClassObject(createThreadExampleClass());
+    }
+    
+    public void hardCodeCounterTaskClass(DataManager dataManager)
+    {
+        dataManager.addClassObject(createCounterTaskClass());
+    }
+    
+    public void hardCodeStartHandlerClass(DataManager dataManager)
+    {
+        dataManager.addClassObject(createStartHandlerClass());
     }
     
     // HERE IS THE FIRST HARD CODED CLASS
     
-    private void createCounterTaskClass()
+    private ClassObject createCounterTaskClass()
     {
         Box box = initializeNewBox();
         addClassNameText(COUNTER_TASK, box);
         
-        counterTaskClass = new ClassObject(COUNTER_TASK, "", box);
+        ClassObject counterTaskClass = new ClassObject(COUNTER_TASK, "", box);
         
         counterTaskClass.setParentName("Task<Void>");
         
@@ -79,6 +82,8 @@ public class ClassBuilder
         counterTaskClass.setVariables(variables);
         ArrayList<MethodObject> methods = addCounterTaskClassMethods();
         counterTaskClass.setMethods(methods);
+        
+        return counterTaskClass;
     }
     
     private ArrayList<VariableObject> addCounterTaskClassVariables()
@@ -122,12 +127,12 @@ public class ClassBuilder
     
     // HERE IS THE SECOND HARD CODED CLASS
     
-    private void createDateTaskClass()
+    private ClassObject createDateTaskClass()
     {
         Box box = initializeNewBox();
         addClassNameText(DATE_TASK, box);
         
-        dateTaskClass = new ClassObject(DATE_TASK, "", box);
+        ClassObject dateTaskClass = new ClassObject(DATE_TASK, "", box);
         
         dateTaskClass.setParentName("Task<Void>");
         
@@ -137,6 +142,8 @@ public class ClassBuilder
         dateTaskClass.setVariables(variables);
         ArrayList<MethodObject> methods = addDateTaskClassMethods();
         dateTaskClass.setMethods(methods);
+        
+        return dateTaskClass;
     }
     
     private ArrayList<VariableObject> addDateTaskClassVariables()
@@ -180,12 +187,12 @@ public class ClassBuilder
     
     // HERE IS THE THIRD HARD CODED CLASS
     
-    private void createPauseHandlerClass()
+    private ClassObject createPauseHandlerClass()
     {
         Box box = initializeNewBox();
         addClassNameText(PAUSE_HANDLER, box);
         
-        pauseHandlerClass = new ClassObject(PAUSE_HANDLER, "", box);
+        ClassObject pauseHandlerClass = new ClassObject(PAUSE_HANDLER, "", box);
         
         pauseHandlerClass.setParentName(null);
         
@@ -195,6 +202,8 @@ public class ClassBuilder
         pauseHandlerClass.setVariables(variables);
         ArrayList<MethodObject> methods = addPauseHandlerClassMethods();
         pauseHandlerClass.setMethods(methods);
+        
+        return pauseHandlerClass;
     }
     
     private ArrayList<String> addPauseHandlerInterfaceNames()
@@ -245,12 +254,12 @@ public class ClassBuilder
     
     // HERE IS THE FOURTH HARD CODED CLASS
     
-    private void createStartHandlerClass()
+    private ClassObject createStartHandlerClass()
     {
         Box box = initializeNewBox();
         addClassNameText(START_HANDLER, box);
         
-        startHandlerClass = new ClassObject(START_HANDLER, "", box);
+        ClassObject startHandlerClass = new ClassObject(START_HANDLER, "", box);
         
         startHandlerClass.setParentName(null);
         
@@ -260,6 +269,8 @@ public class ClassBuilder
         startHandlerClass.setVariables(variables);
         ArrayList<MethodObject> methods = addStartHandlerClassMethods();
         startHandlerClass.setMethods(methods);
+        
+        return startHandlerClass;
     }
     
     private ArrayList<String> addStartHandlerInterfaceNames()
@@ -309,12 +320,12 @@ public class ClassBuilder
     }
     
     // HERE IS THE FIFTH HARD CODED CLASS
-    private void createThreadExampleClass()
+    private ClassObject createThreadExampleClass()
     {
         Box box = initializeNewBox();
         addClassNameText(THREAD_EXAMPLE, box);
         
-        threadExampleClass = new ClassObject(THREAD_EXAMPLE, "", box);
+        ClassObject threadExampleClass = new ClassObject(THREAD_EXAMPLE, "", box);
         
         threadExampleClass.setParentName("Application");
         
@@ -324,6 +335,8 @@ public class ClassBuilder
         threadExampleClass.setVariables(variables);
         ArrayList<MethodObject> methods = addThreadExampleClassMethods();
         threadExampleClass.setMethods(methods);
+        
+        return threadExampleClass;
     }
     
     private ArrayList<VariableObject> addThreadExampleClassVariables()
@@ -605,7 +618,7 @@ public class ClassBuilder
     private Box initializeNewBox()
     {
         // x and y values where the box will be origined
-        int x = (int) ((Math.random() * 500) + 300);
+        int x = (int) ((Math.random() * 800));
         int y = 300;
         
         Box box = new Box();

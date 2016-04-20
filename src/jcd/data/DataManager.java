@@ -41,6 +41,13 @@ public class DataManager implements AppDataComponent
         hashClasses = new HashMap();
         classesList = new ArrayList();
     }
+
+    // EXTRA CONSTRUCOTR FOR TEST BED DRIVER CLASS
+    public DataManager() 
+    {
+        hashClasses = new HashMap();
+        classesList = new ArrayList();
+    }
     
     /**
      * This method adds the class object to the data manager.
@@ -100,11 +107,15 @@ public class DataManager implements AppDataComponent
     @Override
     public void reset()
     {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        if (app != null)
+        {
+            Workspace workspace = (Workspace) app.getWorkspaceComponent();
+            workspace.setSelectedObject(null);
+            workspace.getCanvas().getChildren().clear();
+        }
         hashClasses.clear();
         classesList.clear();
         state = null;
-        workspace.setSelectedObject(null);
-        workspace.getCanvas().getChildren().clear();
+        
     }
 }
