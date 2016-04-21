@@ -124,24 +124,6 @@ public class PageEditController
             dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
             workspace.getCanvasEditController().handleSelectionRequest(obj);
         }
-         
-        
-        box.getMainVBox().setOnMousePressed((MouseEvent e) -> {
-            originalSceneX = e.getSceneX();
-            originalSceneY = e.getSceneY();
-            originalTranslateX = box.getMainVBox().getTranslateX();
-            originalTranslateY = box.getMainVBox().getTranslateY();
-            
-            workspace.getCanvasEditController().handleSelectionRequest(obj);
-        });
-        
-        box.getMainVBox().setOnMouseDragged((MouseEvent e) -> {
-            double offsetX = e.getSceneX() - originalSceneX;
-            double offsetY = e.getSceneY() - originalSceneY;
-            double newTranslateX = originalTranslateX + offsetX;
-            double newTranslateY = originalTranslateY + offsetY;
-            workspace.getCanvasEditController().handlePositionChangeRequest(newTranslateX, newTranslateY);
-        });
         
         app.getGUI().updateToolbarControls(false);
         workspace.reloadWorkspace();

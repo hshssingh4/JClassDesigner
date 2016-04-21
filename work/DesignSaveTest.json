@@ -3,7 +3,7 @@
     "classes":[
         {
             "class_name":"CounterTask",
-            "package_name":"null",
+            "package_name":"ThreadExample",
             "parent_name":"Task<Void>",
             "is_interface":false,
             "interface_names":[
@@ -37,13 +37,13 @@
                 }
             ],
             "box":{
-                "translate_x":247.0,
+                "translate_x":790.0,
                 "translate_y":300.0
             }
         },
         {
             "class_name":"DateTask",
-            "package_name":"null",
+            "package_name":"ThreadExample",
             "parent_name":"Task<Void>",
             "is_interface":false,
             "interface_names":[
@@ -77,13 +77,13 @@
                 }
             ],
             "box":{
-                "translate_x":497.0,
+                "translate_x":709.0,
                 "translate_y":300.0
             }
         },
         {
             "class_name":"PauseHandler",
-            "package_name":"null",
+            "package_name":"ThreadExample",
             "parent_name":"null",
             "is_interface":false,
             "interface_names":[
@@ -115,13 +115,13 @@
                 }
             ],
             "box":{
-                "translate_x":130.0,
+                "translate_x":765.0,
                 "translate_y":300.0
             }
         },
         {
             "class_name":"StartHandler",
-            "package_name":"null",
+            "package_name":"ThreadExample",
             "parent_name":"null",
             "is_interface":false,
             "interface_names":[
@@ -153,13 +153,13 @@
                 }
             ],
             "box":{
-                "translate_x":613.0,
+                "translate_x":751.0,
                 "translate_y":300.0
             }
         },
         {
             "class_name":"ThreadExample",
-            "package_name":"null",
+            "package_name":"ThreadExample",
             "parent_name":"Application",
             "is_interface":false,
             "interface_names":[
@@ -397,7 +397,7 @@
                 }
             ],
             "box":{
-                "translate_x":81.0,
+                "translate_x":481.0,
                 "translate_y":300.0
             }
         }

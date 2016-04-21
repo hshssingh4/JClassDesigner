@@ -5,12 +5,15 @@
  */
 package jcd.file;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.test_bed.TestLoad;
 import jcd.test_bed.TestSave;
@@ -56,8 +59,35 @@ public class FileManager implements AppFileComponent
     @Override
     public void exportData(AppDataComponent data, String filePath) throws IOException 
     {
-        System.out.println("Export Data To .java Files Here");
-        System.out.println(filePath);
+        // First cast the data component to a data manager
+        DataManager dataManager = (DataManager) data;
+        
+        // Now create all the needed directories
+        for (ClassObject classObject: dataManager.getClassesList())
+        {
+            String[] tokens = classObject.getPackageName().split("[.]");
+            
+            String tempFilePath = filePath;
+            for (String packageName: tokens)
+            {
+                String packagePath = tempFilePath + "/" + packageName;
+                File file = new File(packagePath);
+                
+                if(!file.exists())
+                    file.mkdir();
+                
+                tempFilePath = packagePath;
+            }
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
     }
 
     @Override

@@ -58,9 +58,37 @@ public class CanvasEditController
     
     /**
      * Handles the selection request. Highlights the object that is selected.
-     * @param obj 
-     * the object to be selected
+     * @param layoutX
+     * @param layoutY
      */
+    public void handleSelectionRequest(double layoutX, double layoutY)
+    {
+        if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
+        {
+            Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        
+            // Unhighlight any previously selected objects
+            if(workspace.getSelectedObject() != null)
+            {
+                unhighlight(workspace.getSelectedObject());
+                workspace.setSelectedObject(null);
+            }
+            
+            ClassObject obj = dataManager.fetchTopObject(layoutX, layoutY);
+            
+            if (obj == null)
+                handleDeselectRequest();
+            else
+            {
+                // And now select the object
+                workspace.setSelectedObject(obj);
+                highlight(obj);
+            }
+            
+            //workspace.reloadWorkspace();
+        }
+    }
+    
     public void handleSelectionRequest(ClassObject obj)
     {
         if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
@@ -77,7 +105,8 @@ public class CanvasEditController
             // And now select the object
             workspace.setSelectedObject(obj);
             highlight(obj);
-            //workspace.reloadWorkspace();
+            
+            workspace.reloadWorkspace();
         }
     }
     
@@ -128,18 +157,19 @@ public class CanvasEditController
      */
     public void handlePositionChangeRequest(double newTranslateX, double newTranslateY)
     {
-        if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
+        if (dataManager.isInState(JClassDesignerState.DRAGGING_SHAPE))
         {
             Workspace workspace = (Workspace) app.getWorkspaceComponent();
             ClassObject selectedObject = workspace.getSelectedObject();
             VBox box = selectedObject.getBox().getMainVBox();
-        
+            
             box.setTranslateX(newTranslateX);
             box.setTranslateY(newTranslateY);    
         
             resizeCanvasIfNeeded();
         
             app.getGUI().updateToolbarControls(false);
+            workspace.reloadWorkspace();
         }
     }
     

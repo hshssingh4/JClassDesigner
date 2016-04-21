@@ -86,6 +86,17 @@ public class DataManager implements AppDataComponent
         return true;
     }
     
+    public ClassObject fetchTopObject(double layoutX, double layoutY)
+    {
+        for (int i = classesList.size() - 1; i >= 0; i--)
+        {
+            ClassObject obj = classesList.get(i);
+            if (obj.getBox().getMainVBox().getBoundsInParent().contains(layoutX, layoutY))
+                return obj;
+        }
+        return null;
+    }
+    
     public JClassDesignerState getState()
     {
 	return state;

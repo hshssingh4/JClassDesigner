@@ -58,7 +58,7 @@ public class TestSave
         // First create the string writer
         StringWriter sw = new StringWriter();
         
-        // Then case the data component to a data manager
+        // Then cast the data component to a data manager
         DataManager dataManager = (DataManager) data;
         
         // Now create the array builder from the class objects

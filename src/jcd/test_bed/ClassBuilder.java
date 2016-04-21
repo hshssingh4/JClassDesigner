@@ -21,6 +21,7 @@ import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
  */
 public class ClassBuilder 
 {
+    public static final String DEFAULT_PACKAGE = "ThreadExample";
     public static final String PRIVATE = "private";
     public static final String PUBLIC = "public";
     public static final String PROTECTED = "protected";
@@ -60,7 +61,7 @@ public class ClassBuilder
         ClassObject counterTaskClass = new ClassObject(COUNTER_TASK, box);
         
         counterTaskClass.setParentName("Task<Void>");
-        counterTaskClass.setPackageName(null);
+        counterTaskClass.setPackageName(DEFAULT_PACKAGE);
         counterTaskClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();
@@ -123,7 +124,7 @@ public class ClassBuilder
         ClassObject dateTaskClass = new ClassObject(DATE_TASK, box);
         
         dateTaskClass.setParentName("Task<Void>");
-        dateTaskClass.setPackageName(null);
+        dateTaskClass.setPackageName(DEFAULT_PACKAGE);
         dateTaskClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();
@@ -186,7 +187,7 @@ public class ClassBuilder
         ClassObject pauseHandlerClass = new ClassObject(PAUSE_HANDLER, box);
         
         pauseHandlerClass.setParentName(null);
-        pauseHandlerClass.setPackageName(null);
+        pauseHandlerClass.setPackageName(DEFAULT_PACKAGE);
         pauseHandlerClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = addPauseHandlerInterfaceNames();
@@ -256,7 +257,7 @@ public class ClassBuilder
         ClassObject startHandlerClass = new ClassObject(START_HANDLER, box);
         
         startHandlerClass.setParentName(null);
-        startHandlerClass.setPackageName(null);
+        startHandlerClass.setPackageName(DEFAULT_PACKAGE);
         startHandlerClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = addStartHandlerInterfaceNames();
@@ -325,7 +326,7 @@ public class ClassBuilder
         ClassObject threadExampleClass = new ClassObject(THREAD_EXAMPLE, box);
         
         threadExampleClass.setParentName("Application");
-        threadExampleClass.setPackageName(null);
+        threadExampleClass.setPackageName(DEFAULT_PACKAGE);
         threadExampleClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();

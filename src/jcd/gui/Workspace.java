@@ -75,6 +75,9 @@ import saf.ui.AppGUI;
  */
 public class Workspace extends AppWorkspaceComponent
 {
+    double originalSceneX, originalSceneY;
+    double originalTranslateX, originalTranslateY;
+    
     public static final String PRIVATE = "private";
     public static final String PUBLIC = "public";
     public static final String PROTECTED = "protected";
@@ -364,10 +367,30 @@ public class Workspace extends AppWorkspaceComponent
                 pageEditController.handlePackageNameChangeRequest(newClassName);
         });
         
-        canvas.setOnMouseReleased((MouseEvent e) -> {
-            if (!(e.getTarget() instanceof VBox || e.getTarget() instanceof Text))
-                    canvasEditController.handleDeselectRequest();
-            reloadWorkspace();
+        canvas.setOnMousePressed((MouseEvent e) -> {
+            dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
+            canvasEditController.handleSelectionRequest(e.getX(), e.getY());
+            
+            if (selectedObject != null)
+            {
+                originalSceneX = e.getSceneX();
+                originalSceneY = e.getSceneY();
+                originalTranslateX = selectedObject.getBox().getMainVBox().getTranslateX();
+                originalTranslateY = selectedObject.getBox().getMainVBox().getTranslateY();
+            
+                canvas.setOnMouseDragged((MouseEvent e1) -> {
+                    if (selectedObject != null)
+                    {
+                        dataManager.setState(JClassDesignerState.DRAGGING_SHAPE);
+                        double offsetX = e1.getSceneX() - originalSceneX;
+                        double offsetY = e1.getSceneY() - originalSceneY;
+                        double newTranslateX = originalTranslateX + offsetX;
+                        double newTranslateY = originalTranslateY + offsetY;
+                    
+                        canvasEditController.handlePositionChangeRequest(newTranslateX, newTranslateY);
+                    }
+                });
+            }
         });
     }
     
@@ -414,9 +437,12 @@ public class Workspace extends AppWorkspaceComponent
         for (ClassObject classObject: dataManager.getClassesList())
         {
             canvas.getChildren().add(classObject.getBox().getMainVBox());
-            reloadClassTextFields(classObject);
-            reloadVariablesTextFields(classObject);
-            reloadMethodsTextFields(classObject);
+            if (!dataManager.isInState(JClassDesignerState.DRAGGING_SHAPE))
+            {
+                reloadClassTextFields(classObject);
+                reloadVariablesTextFields(classObject);
+                reloadMethodsTextFields(classObject);
+            }
         }
         
         if (selectedObject != null)
