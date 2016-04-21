@@ -392,6 +392,9 @@ public class Workspace extends AppWorkspaceComponent
                 });
             }
         });
+        canvas.setOnMouseReleased((MouseEvent e) -> {
+            reloadWorkspace();
+        });
     }
     
     @Override

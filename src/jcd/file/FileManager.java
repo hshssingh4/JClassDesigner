@@ -65,20 +65,61 @@ public class FileManager implements AppFileComponent
         // Now create all the needed directories
         for (ClassObject classObject: dataManager.getClassesList())
         {
-            String[] tokens = classObject.getPackageName().split("[.]");
-            
-            String tempFilePath = filePath;
-            for (String packageName: tokens)
+            if (classObject.getPackageName() != null)
             {
-                String packagePath = tempFilePath + "/" + packageName;
-                File file = new File(packagePath);
+                String[] tokens = classObject.getPackageName().split("[.]");
+            
+                String tempFilePath = filePath;
+                for (String packageName: tokens)
+                {
+                    String packagePath = tempFilePath + "/" + packageName;
+                    File file = new File(packagePath);
                 
-                if(!file.exists())
-                    file.mkdir();
+                    if(!file.exists())
+                        file.mkdir();
                 
-                tempFilePath = packagePath;
+                    tempFilePath = packagePath;
+                }
+                
+                String javaFilePath = tempFilePath;
+                File javaFile = new File(javaFilePath + "/" + classObject.getClassName() + ".java");
+                if (!javaFile.exists())
+                    javaFile.createNewFile();
             }
         }
+        
+        // Since now we have all the directories, we can start writing to these files
+        for (ClassObject classObject: dataManager.getClassesList())
+        {
+            if (classObject.getPackageName() != null)
+            {
+                // First get the java class file path for the print writer
+                String packageName = classObject.getPackageName().replace("\\.", "/");
+                String className = classObject.getClassName();
+                
+                String javaClassFilePath = filePath + "/" + packageName + "/" + className + ".java";
+                
+                // Now create the print writer for the appropriate file
+                PrintWriter pw = new PrintWriter(javaClassFilePath);
+                
+                // And now start writing using other helper methods
+                pw.write(classObject.getClassName());
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                // Finally, close the writer
+                pw.close();
+            }
+        }
+        
         
         
         
