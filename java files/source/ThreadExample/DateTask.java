@@ -7,4 +7,11 @@ package ThreadExample;
 
 public class DateTask extends Task<Void>
 {
+    private ThreadExample app;
+    private Date now;
+
+    protected Void call()
+    {
+        return null;
+    }
 }

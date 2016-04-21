@@ -7,4 +7,9 @@ package ThreadExample;
 
 public class PauseHandler implements EventHandler
 {
+    private ThreadExample app;
+
+    public void handle(Event event)
+    {
+    }
 }

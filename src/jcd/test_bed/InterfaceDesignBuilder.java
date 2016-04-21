@@ -15,6 +15,7 @@ import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import static jcd.gui.Workspace.PUBLIC;
 import static jcd.gui.Workspace.STRING;
+import static jcd.test_bed.ThreadExampleClassBuilder.TEST_PACKAGE;
 import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 
 /**
@@ -40,7 +41,7 @@ public class InterfaceDesignBuilder
         ClassObject appStyleArbiterInterface = new ClassObject(APP_STYLE_ARBITER, box);
         
         appStyleArbiterInterface.setParentName(null);
-        appStyleArbiterInterface.setPackageName(null);
+        appStyleArbiterInterface.setPackageName(TEST_PACKAGE);
         appStyleArbiterInterface.setInterfaceType(true);
         
         ArrayList<String> interfaceNames = new ArrayList<>();

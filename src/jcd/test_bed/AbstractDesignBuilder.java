@@ -15,6 +15,7 @@ import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import static jcd.gui.Workspace.PROTECTED;
 import static jcd.test_bed.ClassBuilder.INT;
+import static jcd.test_bed.ThreadExampleClassBuilder.TEST_PACKAGE;
 import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 
 /**
@@ -40,7 +41,7 @@ public class AbstractDesignBuilder
         ClassObject graphicObjectClass = new ClassObject(GRAPHIC_OBJECT, box);
         
         graphicObjectClass.setParentName(null);
-        graphicObjectClass.setPackageName(null);
+        graphicObjectClass.setPackageName(TEST_PACKAGE);
         graphicObjectClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();

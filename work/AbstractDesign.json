@@ -3,7 +3,7 @@
     "classes":[
         {
             "class_name":"GraphicObject",
-            "package_name":"null",
+            "package_name":"test",
             "parent_name":"null",
             "is_interface":false,
             "interface_names":[
@@ -55,7 +55,7 @@
                 }
             ],
             "box":{
-                "translate_x":637.0,
+                "translate_x":296.0,
                 "translate_y":300.0
             }
         }

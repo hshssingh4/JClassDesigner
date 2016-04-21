@@ -13,9 +13,12 @@ import java.io.PrintWriter;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import jcd.data.ArgumentObject;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.MethodObject;
+import jcd.data.VariableObject;
+import static jcd.test_bed.ClassBuilder.PROTECTED;
 import jcd.test_bed.TestLoad;
 import jcd.test_bed.TestSave;
 import saf.components.AppDataComponent;
@@ -35,20 +38,36 @@ public class FileManager implements AppFileComponent
     public static final String CLASS = "class";
     public static final String EXTENDS = "extends";
     public static final String IMPLEMENTS = "implements";
+    public static final String STATIC = "static";
+    public static final String FINAL = "final";
+    public static final String RETURN = "return";
+    public static final String FALSE = "false";
     
     public static final String INT = "int";
     public static final String DOUBLE = "double";
     public static final String BOOLEAN = "boolean";
     public static final String CHAR = "char";
+    public static final String BYTE = "byte";
+    public static final String SHORT = "short";
+    public static final String LONG = "long";
+    public static final String FLOAT = "float";
     public static final String STRING = "String";
     public static final String ARRAY_LIST = "ArrayList";
+    public static final String NULL = "null";
     
     public static final String SPACE = " ";
     public static final String OPENING_CURLY_BRACE = "{";
     public static final String CLOSING_CURLY_BRACE = "}";
-    public static final String SINGLE_TAB = "\t";
-    public static final String DOUBLE_TAB = "\t\t";
+    public static final String OPENING_PARENTHESIS = "(";
+    public static final String CLOSING_PARENTHESIS = ")";
+    public static final String SINGLE_TAB = "    ";
+    public static final String DOUBLE_TAB = "        ";
+    public static final String BACKSPACE = "\b";
     public static final String SEMI_COLON = ";";
+    public static final String COMMA = ",";
+    public static final String EQUALS = "=";
+    
+    public static final String ZERO = "0";
     
     public static final String WELCOME_STRING = 
             "/*\n* Author:\n* Co-Author:\n* To change this license header, "
@@ -154,9 +173,11 @@ public class FileManager implements AppFileComponent
         writeClassNameLine(classObject, pw); // Write class name
         pw.println(OPENING_CURLY_BRACE);
         
+        // Now write all the variables
+        writeVariables(classObject, pw);
         
-        
-        
+        // Now write all the methods
+        writeMethods(classObject, pw);
         
         // Finally, close the class by printing a curly brace
         pw.println(CLOSING_CURLY_BRACE);
@@ -195,7 +216,117 @@ public class FileManager implements AppFileComponent
         
         pw.println(classNameLine);
     }
+    
+    private void writeVariables(ClassObject classObject, PrintWriter pw)
+    {
+        for (VariableObject variable: classObject.getVariables())
+            writeVariable(variable, pw);
+    }
+    
+    private void writeVariable(VariableObject variable, PrintWriter pw)
+    {
+        String variableLine = SINGLE_TAB;
+        variableLine += variable.getScope();
+        
+        if(variable.isStaticType())
+            variableLine += SPACE + STATIC;
+        if(variable.isFinalType())
+            variableLine += SPACE + FINAL;
+        variableLine += SPACE + variable.getType();
+        variableLine += SPACE + variable.getName();
+        if (variable.isFinalType())
+            variableLine += SPACE + EQUALS + SPACE + NULL;
+        variableLine += SEMI_COLON;
+        
+        pw.println(variableLine);
+    }
+    
+    private void writeMethods(ClassObject classObject, PrintWriter pw)
+    {
+        for (MethodObject method: classObject.getMethods())
+        {
+            pw.println();
+            writeMethod(classObject, method, pw);
+        }
+    }
+    
+    private void writeMethod(ClassObject classObject, MethodObject method, PrintWriter pw)
+    {
+        String methodLine = SINGLE_TAB;
+        methodLine += method.getScope();
+        
+        if(method.isStaticType())
+            methodLine += SPACE + STATIC;
+        else if (method.isAbstractType())
+            methodLine += SPACE + ABSTRACT;
+            
+        if(method.isFinalType())
+            methodLine += SPACE + FINAL;
+        
+        methodLine += SPACE + method.getType();
+        methodLine += SPACE + method.getName();
+        
+        pw.print(methodLine);
+        
+        // Print the arguments on the same line now
+        pw.print(OPENING_PARENTHESIS);
+        for (int i = 0; i < method.getArguments().size(); i++)
+        {
+            ArgumentObject arg = method.getArguments().get(i);
+            writeMethodArgument(arg, pw);
+            if (i != method.getArguments().size() - 1)
+                pw.print(COMMA + SPACE);
+        }
+        pw.print(CLOSING_PARENTHESIS);
+        
+        if (method.isAbstractType() || classObject.isInterfaceType())
+            pw.println(SEMI_COLON);
+        else
+        {
+            // Now check whether the method has a return type. If yes, print appropriate line
+            String returnLine = "";
+            pw.println();
+            pw.println(SINGLE_TAB + OPENING_CURLY_BRACE);
+            if (!method.getType().equals("void"))
+            {
+                returnLine += DOUBLE_TAB + RETURN + SPACE + fetchReturnValue(method.getType()) + SEMI_COLON;
+                pw.println(returnLine);
+            }
+            pw.println(SINGLE_TAB + CLOSING_CURLY_BRACE);
+        }
+    }
 
+    private void writeMethodArgument(ArgumentObject arg, PrintWriter pw)
+    {
+        String argLine = arg.getType() + SPACE + arg.getName();
+        pw.print(argLine);
+    }
+    
+    private String fetchReturnValue(String returnType)
+    {
+        switch (returnType)
+        {
+            case INT:
+                return ZERO;
+            case DOUBLE:
+                return ZERO;
+            case LONG:
+                return ZERO;
+            case BYTE:
+                return ZERO;
+            case CHAR:
+                return ZERO;
+            case SHORT:
+                return ZERO;
+            case FLOAT:
+                return ZERO;
+            case BOOLEAN:
+                return FALSE;
+            default:
+                return null;
+        }
+    }
+    
     @Override
     public void importData(AppDataComponent data, String filePath) throws IOException
     {

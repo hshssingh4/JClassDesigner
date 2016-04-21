@@ -26,6 +26,8 @@ import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
  */
 public class ThreadExampleClassBuilder 
 {
+    public static final String TEST_PACKAGE = "test";
+    
     public ThreadExampleClassBuilder() {}
     
     public void hardCodeThreadExampleClass(DataManager dataManager)
@@ -42,7 +44,7 @@ public class ThreadExampleClassBuilder
         ClassObject threadExampleClass = new ClassObject(THREAD_EXAMPLE, box);
         
         threadExampleClass.setParentName(null);
-        threadExampleClass.setPackageName(null);
+        threadExampleClass.setPackageName(TEST_PACKAGE);
         threadExampleClass.setInterfaceType(false);
         
         ArrayList<String> interfaceNames = new ArrayList<>();

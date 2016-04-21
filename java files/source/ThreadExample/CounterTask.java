@@ -7,4 +7,11 @@ package ThreadExample;
 
 public class CounterTask extends Task<Void>
 {
+    private ThreadExample app;
+    private int counter;
+
+    protected Void call()
+    {
+        return null;
+    }
 }

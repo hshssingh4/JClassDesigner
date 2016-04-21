@@ -7,4 +7,9 @@ package ThreadExample;
 
 public class StartHandler implements EventHandler
 {
+    private ThreadExample app;
+
+    public void handle(Event event)
+    {
+    }
 }

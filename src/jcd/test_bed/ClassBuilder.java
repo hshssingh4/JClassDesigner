@@ -342,14 +342,14 @@ public class ClassBuilder
     private ArrayList<VariableObject> addThreadExampleClassVariables()
     {
         VariableObject START_TEXT = new VariableObject();
-        START_TEXT.setName("Start");
+        START_TEXT.setName("START_TEXT");
         START_TEXT.setScope(PUBLIC);
         START_TEXT.setType(STRING);
         START_TEXT.setStaticType(true);
         START_TEXT.setFinalType(true);
         
         VariableObject PAUSE_TEXT = new VariableObject();
-        PAUSE_TEXT.setName("Pause");
+        PAUSE_TEXT.setName("PAUSE_TEXT");
         PAUSE_TEXT.setScope(PUBLIC);
         PAUSE_TEXT.setType(STRING);
         PAUSE_TEXT.setStaticType(true);
