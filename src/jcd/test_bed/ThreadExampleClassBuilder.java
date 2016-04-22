@@ -6,11 +6,13 @@
 package jcd.test_bed;
 
 import java.util.ArrayList;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import jcd.data.ArgumentObject;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.LineConnector;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import static jcd.test_bed.ClassBuilder.BOOLEAN;
@@ -55,6 +57,8 @@ public class ThreadExampleClassBuilder
         threadExampleClass.setMethods(methods);
         ArrayList<String> javaApiPackages = new ArrayList<>();
         threadExampleClass.setJavaApiPackages(javaApiPackages);
+        ArrayList<LineConnector> linesConnector = addThreadExampleClassLineConnectors();
+        threadExampleClass.setLineConnectors(linesConnector); 
         
         return threadExampleClass;
     }
@@ -123,6 +127,31 @@ public class ThreadExampleClassBuilder
         methods.add(main);
         
         return methods;
+    }
+    
+    private ArrayList<LineConnector> addThreadExampleClassLineConnectors()
+    {
+        ArrayList<LineConnector> linesConnector = new ArrayList<>();
+        
+        LineConnector lineConnector1 = createThreadExampleClassLineConnector();
+        
+        linesConnector.add(lineConnector1);
+        
+        return linesConnector;
+    }
+    
+    private LineConnector createThreadExampleClassLineConnector()
+    {
+        LineConnector lineConnector = new LineConnector();
+        
+        int startX = (int) (Math.random() * 500);
+        int startY = (int) (Math.random() * 500);
+        int endX = (int) (Math.random() * 500);
+        int endY = (int) (Math.random() * 500);
+        Line line = new Line(startX, startY, endX, endY);
+        
+        lineConnector.getLines().add(line);
+        return lineConnector;
     }
     
     /**

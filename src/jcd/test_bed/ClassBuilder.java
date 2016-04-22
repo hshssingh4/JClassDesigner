@@ -6,11 +6,13 @@
 package jcd.test_bed;
 
 import java.util.ArrayList;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import jcd.data.ArgumentObject;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.LineConnector;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
@@ -72,6 +74,8 @@ public class ClassBuilder
         counterTaskClass.setMethods(methods);
         ArrayList<String> javaApiPackages = addCounterTaskClassJavaApiPackages();
         counterTaskClass.setJavaApiPackages(javaApiPackages);
+        ArrayList<LineConnector> linesConnector = addCounterTaskClassLineConnectors();
+        counterTaskClass.setLineConnectors(linesConnector);
         
         return counterTaskClass;
     }
@@ -126,6 +130,31 @@ public class ClassBuilder
         return packageNames;
     }
     
+    private ArrayList<LineConnector> addCounterTaskClassLineConnectors()
+    {
+        ArrayList<LineConnector> linesConnector = new ArrayList<>();
+        
+        LineConnector lineConnector1 = createCounterTaskLineConnector();
+        
+        linesConnector.add(lineConnector1);
+        
+        return linesConnector;
+    }
+    
+    private LineConnector createCounterTaskLineConnector()
+    {
+        LineConnector lineConnector = new LineConnector();
+        
+        int startX = (int) (Math.random() * 500);
+        int startY = (int) (Math.random() * 500);
+        int endX = (int) (Math.random() * 500);
+        int endY = (int) (Math.random() * 500);
+        Line line = new Line(startX, startY, endX, endY);
+        
+        lineConnector.getLines().add(line);
+        return lineConnector;
+    }
+    
     // HERE IS THE SECOND HARD CODED CLASS
     
     private ClassObject createDateTaskClass()
@@ -147,6 +176,8 @@ public class ClassBuilder
         dateTaskClass.setMethods(methods);
         ArrayList<String> javaApiPackages = addDateTaskClassJavaApiPackages();
         dateTaskClass.setJavaApiPackages(javaApiPackages);
+        ArrayList<LineConnector> linesConnector = addDateTaskClassLineConnectors();
+        dateTaskClass.setLineConnectors(linesConnector);
         
         return dateTaskClass;
     }
@@ -202,6 +233,31 @@ public class ClassBuilder
         return packageNames;
     }
     
+    private ArrayList<LineConnector> addDateTaskClassLineConnectors()
+    {
+        ArrayList<LineConnector> linesConnector = new ArrayList<>();
+        
+        LineConnector lineConnector1 = createDateTaskLineConnector();
+        
+        linesConnector.add(lineConnector1);
+        
+        return linesConnector;
+    }
+    
+    private LineConnector createDateTaskLineConnector()
+    {
+        LineConnector lineConnector = new LineConnector();
+        
+        int startX = (int) (Math.random() * 500);
+        int startY = (int) (Math.random() * 500);
+        int endX = (int) (Math.random() * 500);
+        int endY = (int) (Math.random() * 500);
+        Line line = new Line(startX, startY, endX, endY);
+        
+        lineConnector.getLines().add(line);
+        return lineConnector;
+    }
+    
     // HERE IS THE THIRD HARD CODED CLASS
     
     private ClassObject createPauseHandlerClass()
@@ -223,6 +279,8 @@ public class ClassBuilder
         pauseHandlerClass.setMethods(methods);
         ArrayList<String> javaApiPackages = addPauseHandlerClassJavaApiPackages();
         pauseHandlerClass.setJavaApiPackages(javaApiPackages);
+        ArrayList<LineConnector> linesConnector = addPauseHandlerClassLineConnectors();
+        pauseHandlerClass.setLineConnectors(linesConnector);
         
         return pauseHandlerClass;
     }
@@ -284,6 +342,31 @@ public class ClassBuilder
         return packageNames;
     }
     
+    private ArrayList<LineConnector> addPauseHandlerClassLineConnectors()
+    {
+        ArrayList<LineConnector> linesConnector = new ArrayList<>();
+        
+        LineConnector lineConnector1 = createPauseHandlerClassLineConnector();
+        
+        linesConnector.add(lineConnector1);
+        
+        return linesConnector;
+    }
+    
+    private LineConnector createPauseHandlerClassLineConnector()
+    {
+        LineConnector lineConnector = new LineConnector();
+        
+        int startX = (int) (Math.random() * 500);
+        int startY = (int) (Math.random() * 500);
+        int endX = (int) (Math.random() * 500);
+        int endY = (int) (Math.random() * 500);
+        Line line = new Line(startX, startY, endX, endY);
+        
+        lineConnector.getLines().add(line);
+        return lineConnector;
+    }
+    
     // HERE IS THE FOURTH HARD CODED CLASS
     
     private ClassObject createStartHandlerClass()
@@ -305,6 +388,8 @@ public class ClassBuilder
         startHandlerClass.setMethods(methods);
         ArrayList<String> javaApiPackages = addStartHandlerClassJavaApiPackages();
         startHandlerClass.setJavaApiPackages(javaApiPackages);
+        ArrayList<LineConnector> linesConnector = addStartHandlerClassLineConnectors();
+        startHandlerClass.setLineConnectors(linesConnector);
         
         return startHandlerClass;
     }
@@ -366,6 +451,31 @@ public class ClassBuilder
         return packageNames;
     }
     
+    private ArrayList<LineConnector> addStartHandlerClassLineConnectors()
+    {
+        ArrayList<LineConnector> linesConnector = new ArrayList<>();
+        
+        LineConnector lineConnector1 = createStartHandlerClassLineConnector();
+        
+        linesConnector.add(lineConnector1);
+        
+        return linesConnector;
+    }
+    
+    private LineConnector createStartHandlerClassLineConnector()
+    {
+        LineConnector lineConnector = new LineConnector();
+        
+        int startX = (int) (Math.random() * 500);
+        int startY = (int) (Math.random() * 500);
+        int endX = (int) (Math.random() * 500);
+        int endY = (int) (Math.random() * 500);
+        Line line = new Line(startX, startY, endX, endY);
+        
+        lineConnector.getLines().add(line);
+        return lineConnector;
+    }
+    
     // HERE IS THE FIFTH HARD CODED CLASS
     private ClassObject createThreadExampleClass()
     {
@@ -386,6 +496,8 @@ public class ClassBuilder
         threadExampleClass.setMethods(methods);
         ArrayList<String> javaApiPackages = addThreadExampleClassJavaApiPackages();
         threadExampleClass.setJavaApiPackages(javaApiPackages);
+        ArrayList<LineConnector> linesConnector = new ArrayList<>();
+        threadExampleClass.setLineConnectors(linesConnector);
         
         return threadExampleClass;
     }

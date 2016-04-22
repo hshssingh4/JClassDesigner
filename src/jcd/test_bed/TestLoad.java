@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import javafx.scene.shape.Line;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -17,6 +18,7 @@ import jcd.data.ArgumentObject;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.LineConnector;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import saf.components.AppDataComponent;
@@ -36,6 +38,7 @@ public class TestLoad
     public static final String JSON_VARIABLES_ARRAY = "variables";
     public static final String JSON_METHODS_ARRAY = "methods";
     public static final String JSON_JAVA_API_PACKAGES_ARRAY = "java_api_packages";
+    public static final String JSON_LINE_CONNECTORS_ARRAY = "line_connectors";
     public static final String JSON_ARGUMENTS_ARRAY = "arguments";
     public static final String JSON_NAME = "name";
     public static final String JSON_TYPE = "type";
@@ -46,6 +49,10 @@ public class TestLoad
     public static final String JSON_BOX_OBJECT = "box";
     public static final String JSON_TRANSLATE_X = "translate_x";
     public static final String JSON_TRANSLATE_Y = "translate_y";
+    public static final String JSON_START_X = "start_x";
+    public static final String JSON_START_Y = "start_y";
+    public static final String JSON_END_X = "end_x";
+    public static final String JSON_END_Y = "end_y";
     
     /**
      * This method loads data from a JSON formatted file into the data 
@@ -121,6 +128,7 @@ public class TestLoad
         ArrayList<VariableObject> variables = loadVariables(jsoClass);
         ArrayList<MethodObject> methods = loadMethods(jsoClass);
         ArrayList<String> javaApiPackages = loadJavaApiPackages(jsoClass);
+        ArrayList<LineConnector> lineConnectors = loadLineConnectors(jsoClass);
         
         // ALSO GET THE X AND Y COORDINATES FOR THE BOX
         JsonObject jsoBox = jsoClass.getJsonObject(JSON_BOX_OBJECT);
@@ -139,6 +147,7 @@ public class TestLoad
         classObject.setVariables(variables);
         classObject.setMethods(methods);
         classObject.setJavaApiPackages(javaApiPackages);
+        classObject.setLineConnectors(lineConnectors);
         
         return classObject;
     }
@@ -222,14 +231,49 @@ public class TestLoad
     private ArrayList<String> loadJavaApiPackages(JsonObject jsoClass)
     {
         ArrayList<String> javaApiPackages = new ArrayList<>();
-        JsonArray javaApiPackagesArray = jsoClass.getJsonArray(JSON_JAVA_API_PACKAGES_ARRAY);
+        JsonArray javaApiPackagesJsonArray = jsoClass.getJsonArray(JSON_JAVA_API_PACKAGES_ARRAY);
         
-        for (int i = 0; i < javaApiPackagesArray.size(); i++)
+        for (int i = 0; i < javaApiPackagesJsonArray.size(); i++)
         {
-            String interfaceName = javaApiPackagesArray.getString(i);
+            String interfaceName = javaApiPackagesJsonArray.getString(i);
             javaApiPackages.add(interfaceName);
         }
         
         return javaApiPackages;
+    }
+    
+    private ArrayList<LineConnector> loadLineConnectors(JsonObject jsoClass)
+    {
+        ArrayList<LineConnector> lineConnectors = new ArrayList<>();
+        
+        JsonArray lineConnectorsJsonArray = jsoClass.getJsonArray(JSON_LINE_CONNECTORS_ARRAY);
+        
+        for (int i = 0; i < lineConnectorsJsonArray.size(); i++)
+        {
+            LineConnector lineConnector = loadLineConnector(lineConnectorsJsonArray.getJsonArray(i));
+            lineConnectors.add(lineConnector);
+        }
+        
+        return lineConnectors;
+    }
+    
+    private LineConnector loadLineConnector(JsonArray jsoLineConnector)
+    {
+        LineConnector lineConnector = new LineConnector();
+        
+        for (int i = 0; i < jsoLineConnector.size(); i++)
+        {
+            Line line = new Line();
+            JsonObject jsoLine = jsoLineConnector.getJsonObject(i);
+            
+            line.setStartX(jsoLine.getInt(JSON_START_X));
+            line.setStartY(jsoLine.getInt(JSON_START_Y));
+            line.setEndX(jsoLine.getInt(JSON_END_X));
+            line.setEndY(jsoLine.getInt(JSON_END_Y));
+            
+            lineConnector.getLines().add(line);
+        }
+        
+        return lineConnector;
     }
 }

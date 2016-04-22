@@ -115,6 +115,7 @@ public class PageEditController
         obj.setVariables(new ArrayList<>());
         obj.setMethods(new ArrayList<>());
         obj.setJavaApiPackages(new ArrayList<>());
+        obj.setLineConnectors(new ArrayList<>());
         
         if (dataManager.checkIfUnique(obj))
         {

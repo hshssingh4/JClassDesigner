@@ -42,7 +42,10 @@ public class AbstractDesignTest
         String savedMethodArgumentOneType = savedGraphicObject.getMethods().get(0).getArguments().get(0).getType();
         String savedMethodArgumentTwoName = savedGraphicObject.getMethods().get(0).getArguments().get(1).getName();
         String savedMethodArgumentTwoType = savedGraphicObject.getMethods().get(0).getArguments().get(1).getType();
-        // ****************Line Segment Points Left*********************
+        int savedStartXLocation = (int) savedGraphicObject.getLineConnectors().get(0).getLines().get(0).getStartX();
+        int savedStartYLocation = (int) savedGraphicObject.getLineConnectors().get(0).getLines().get(0).getStartY();
+        int savedEndXLocation = (int) savedGraphicObject.getLineConnectors().get(0).getLines().get(0).getEndX();
+        int savedEndYLocation = (int) savedGraphicObject.getLineConnectors().get(0).getLines().get(0).getEndY();
         
         
         // NOW SAVE THIS CLASS
@@ -62,6 +65,10 @@ public class AbstractDesignTest
         String loadedMethodArgumentOneType = loadedGraphicObject.getMethods().get(0).getArguments().get(0).getType();
         String loadedMethodArgumentTwoName = loadedGraphicObject.getMethods().get(0).getArguments().get(1).getName();
         String loadedMethodArgumentTwoType = loadedGraphicObject.getMethods().get(0).getArguments().get(1).getType();
+        int loadedStartXLocation = (int) loadedGraphicObject.getLineConnectors().get(0).getLines().get(0).getStartX();
+        int loadedStartYLocation = (int) loadedGraphicObject.getLineConnectors().get(0).getLines().get(0).getStartY();
+        int loadedEndXLocation = (int) loadedGraphicObject.getLineConnectors().get(0).getLines().get(0).getEndX();
+        int loadedEndYLocation = (int) loadedGraphicObject.getLineConnectors().get(0).getLines().get(0).getEndY();
         
         // AND NOW CHECK WHAT HAS BEEN LOADED
         assertEquals(savedXLocation, loadedXLocation);
@@ -72,5 +79,9 @@ public class AbstractDesignTest
         assertEquals(savedMethodArgumentTwoName, loadedMethodArgumentTwoName);
         assertEquals(savedMethodArgumentOneType, loadedMethodArgumentOneType);
         assertEquals(savedMethodArgumentTwoType, loadedMethodArgumentTwoType);
+        assertEquals(savedStartXLocation, loadedStartXLocation);
+        assertEquals(savedStartYLocation, loadedStartYLocation);
+        assertEquals(savedEndXLocation, loadedEndXLocation);
+        assertEquals(savedEndYLocation, loadedEndYLocation);
     }
 }

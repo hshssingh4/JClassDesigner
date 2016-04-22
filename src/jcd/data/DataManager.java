@@ -86,13 +86,24 @@ public class DataManager implements AppDataComponent
         return true;
     }
     
-    public ClassObject findClassWithName(String className)
+    /*public ArrayList<String> fetchAggregatesList(ClassObject classObject)
     {
-        for (ClassObject c: classesList)
-            if (c.getClassName().equals(className))
-                return c;
-        return null;
-    }
+        ArrayList<String> classNames = new ArrayList<>();
+        
+        for (VariableObject variable: classObject.getVariables())
+            for (ClassObject obj: classesList)
+                if (variable.getType().equals(obj.getClassName())
+                        && !classNames.contains(obj.getClassName()))
+                    classNames.add(obj.getClassName());
+        
+        for (MethodObject method: classObject.getMethods())
+            for (ClassObject obj: classesList)
+                if (method.getType().equals(obj.getClassName())
+                        && !classNames.contains(obj.getClassName()))
+                    classNames.add(obj.getClassName());
+        
+        return classNames;
+    }*/
     
     public ClassObject fetchTopObject(double layoutX, double layoutY)
     {

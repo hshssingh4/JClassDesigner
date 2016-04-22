@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.scene.shape.Line;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -24,6 +25,7 @@ import jcd.data.ArgumentObject;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.LineConnector;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import saf.components.AppDataComponent;
@@ -42,6 +44,7 @@ public class TestSave
     public static final String JSON_CLASSES_ARRAY = "classes";
     public static final String JSON_VARIABLES_ARRAY = "variables";
     public static final String JSON_METHODS_ARRAY = "methods";
+    public static final String JSON_LINE_CONNECTORS_ARRAY = "line_connectors";
     public static final String JSON_JAVA_API_PACKAGES_ARRAY = "java_api_packages";
     public static final String JSON_ARGUMENTS_ARRAY = "arguments";
     public static final String JSON_NAME = "name";
@@ -53,6 +56,10 @@ public class TestSave
     public static final String JSON_BOX_OBJECT = "box";
     public static final String JSON_TRANSLATE_X = "translate_x";
     public static final String JSON_TRANSLATE_Y = "translate_y";
+    public static final String JSON_START_X = "start_x";
+    public static final String JSON_START_Y = "start_y";
+    public static final String JSON_END_X = "end_x";
+    public static final String JSON_END_Y = "end_y";
     
     public void saveTestData(AppDataComponent data, String filePath) throws IOException 
     {
@@ -113,8 +120,9 @@ public class TestSave
                 .add(JSON_INTERFACE_NAMES, buildInterfaceNamesJsonArray(classObject.getInterfaceNames()))
                 .add(JSON_VARIABLES_ARRAY, buildVariablesJsonArray(classObject.getVariables()))
                 .add(JSON_METHODS_ARRAY, buildMethodsJsonArray(classObject.getMethods()))
-                .add(JSON_JAVA_API_PACKAGES_ARRAY, buildJavaApiPackagesArray(classObject.getJavaApiPackages()))
+                .add(JSON_JAVA_API_PACKAGES_ARRAY, buildJavaApiPackagesJsonArray(classObject.getJavaApiPackages()))
                 .add(JSON_BOX_OBJECT, buildBoxJsonObject(classObject.getBox()))
+                .add(JSON_LINE_CONNECTORS_ARRAY, buildLineConnectorsJsonArray(classObject.getLineConnectors()))
 		.build();
 	return jso;
     }
@@ -192,7 +200,7 @@ public class TestSave
 	return jA;
     }
     
-    private JsonArray buildJavaApiPackagesArray(ArrayList<String> javaApiPackages)
+    private JsonArray buildJavaApiPackagesJsonArray(ArrayList<String> javaApiPackages)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         
@@ -211,5 +219,36 @@ public class TestSave
 		.build();
         
         return jso;
+    }
+    
+    private JsonArray buildLineConnectorsJsonArray(ArrayList<LineConnector> lineConnectors)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        for (LineConnector lineConnector: lineConnectors)
+            arrayBuilder.add(buildLineConnectorJsonArray(lineConnector));
+        
+            
+        JsonArray jA = arrayBuilder.build();
+	return jA;
+    }
+    
+    private JsonArray buildLineConnectorJsonArray(LineConnector lineConnector)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        for (Line line: lineConnector.getLines())
+        {
+            JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_START_X, line.getStartX())
+                .add(JSON_START_Y, line.getStartY())
+                .add(JSON_END_X, line.getEndX())
+                .add(JSON_END_Y, line.getEndY())
+		.build();
+            arrayBuilder.add(jso);
+        }
+        
+        JsonArray jA = arrayBuilder.build();
+	return jA;
     }
 }

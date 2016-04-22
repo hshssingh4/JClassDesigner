@@ -6,11 +6,13 @@
 package jcd.test_bed;
 
 import java.util.ArrayList;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import jcd.data.ArgumentObject;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.LineConnector;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import static jcd.gui.Workspace.PUBLIC;
@@ -52,6 +54,8 @@ public class InterfaceDesignBuilder
         appStyleArbiterInterface.setMethods(methods);
         ArrayList<String> javaApiPackages = new ArrayList<>();
         appStyleArbiterInterface.setJavaApiPackages(javaApiPackages);
+        ArrayList<LineConnector> linesConnector = addAppStyleArbiterInterfaceLineConnectors();
+        appStyleArbiterInterface.setLineConnectors(linesConnector); 
         
         return appStyleArbiterInterface;
     }
@@ -101,6 +105,31 @@ public class InterfaceDesignBuilder
         methods.add(initStyle);
         
         return methods;
+    }
+    
+    private ArrayList<LineConnector> addAppStyleArbiterInterfaceLineConnectors()
+    {
+        ArrayList<LineConnector> linesConnector = new ArrayList<>();
+        
+        LineConnector lineConnector1 = createAppStyleInterfaceLineConnector();
+        
+        linesConnector.add(lineConnector1);
+        
+        return linesConnector;
+    }
+    
+    private LineConnector createAppStyleInterfaceLineConnector()
+    {
+        LineConnector lineConnector = new LineConnector();
+        
+        int startX = (int) (Math.random() * 500);
+        int startY = (int) (Math.random() * 500);
+        int endX = (int) (Math.random() * 500);
+        int endY = (int) (Math.random() * 500);
+        Line line = new Line(startX, startY, endX, endY);
+        
+        lineConnector.getLines().add(line);
+        return lineConnector;
     }
     
     /**
