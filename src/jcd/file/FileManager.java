@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
@@ -174,7 +175,7 @@ public class FileManager implements AppFileComponent
         
         // NOW WRITE THE IMPORT STATEMENTS
         writeJavaApiPackageImports(classObject, pw);
-        //writeUserClassImports(dataManager, classObject, pw);
+        writeUserClassImports(dataManager, classObject, pw);
         pw.println();
         
         writeClassNameLine(classObject, pw); // Write class name
@@ -192,63 +193,28 @@ public class FileManager implements AppFileComponent
     
     private void writeJavaApiPackageImports(ClassObject classObject, PrintWriter pw)
     {
-        for (String packageName: classObject.getJavaApiPackages())
-            pw.println(fetchImportLine(packageName));
+        for (String importString: classObject.getJavaApiPackages())
+            pw.println(fetchImportLine(importString));
     }
     
-    /*private void writeUserClassImports(DataManager dataManager, ClassObject classObject, PrintWriter pw)
+    private void writeUserClassImports(DataManager dataManager, ClassObject classObject, PrintWriter pw)
     {
-        // First check if any variable has a class with the name of a class in data manager
+        // First get the relationship classes that this class object has
         // If yes, write an import statement for that
-        for (VariableObject variable: classObject.getVariables())
+        ArrayList<ClassObject> relationshipClasses = dataManager.fetchRelationshipsList(classObject);
+        for (ClassObject obj: relationshipClasses)
         {
-            ClassObject object = dataManager.findClassWithName(variable.getType());
-            
-            if (object != null)
-            {
-                String classObjectPackageName = classObject.getPackageName();
-                String objectPackageName = object.getPackageName();
-                String className = object.getClassName();
-                if (classObjectPackageName == null ? objectPackageName != null : 
-                    !classObjectPackageName.equals(objectPackageName))
-                    writeImportLine(objectPackageName, className, pw);
-            }  
+            String packageName = obj.getPackageName();
+            String className = obj.getClassName();
+            String importString = packageName + PERIOD + className;
+            if (!classObject.getPackageName().equals(obj.getPackageName()))
+                pw.println(fetchImportLine(importString));
         }
-        
-        for (MethodObject method: classObject.getMethods())
-        {
-            ClassObject object = dataManager.findClassWithName(method.getType());
-            
-            if (object != null)
-            {
-                String classObjectPackageName = classObject.getPackageName();
-                String objectPackageName = object.getPackageName();
-                String className = object.getClassName();
-                if (classObjectPackageName == null ? objectPackageName != null : 
-                    !classObjectPackageName.equals(objectPackageName))
-                    writeImportLine(objectPackageName, className, pw);
-            }  
-            
-            for (ArgumentObject argument: method.getArguments())
-            {
-                ClassObject newObject = dataManager.findClassWithName(argument.getType());
-            
-                if (newObject != null)
-                {
-                    String classObjectPackageName = classObject.getPackageName();
-                    String objectPackageName = newObject.getPackageName();
-                    String className = newObject.getClassName();
-                    if (classObjectPackageName == null ? objectPackageName != null : 
-                        !classObjectPackageName.equals(objectPackageName))
-                        writeImportLine(objectPackageName, className, pw);
-                }  
-            }
-        }
-    }*/
+    }
     
-    private String fetchImportLine(String packageName)
+    private String fetchImportLine(String importString)
     {
-        return IMPORT + SPACE + packageName + SEMI_COLON;
+        return IMPORT + SPACE + importString + SEMI_COLON;
     }
     
     private void writePackageNameLine(ClassObject classObject, PrintWriter pw)

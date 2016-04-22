@@ -86,24 +86,38 @@ public class DataManager implements AppDataComponent
         return true;
     }
     
-    /*public ArrayList<String> fetchAggregatesList(ClassObject classObject)
+    public ArrayList<ClassObject> fetchRelationshipsList(ClassObject classObject)
     {
-        ArrayList<String> classNames = new ArrayList<>();
+        ArrayList<ClassObject> realationshipClasses = new ArrayList<>();
+        
+        if (classObject.getParentName() != null)
+        {
+            for (ClassObject obj: classesList)
+                if (classObject.getParentName().equals(obj.getClassName())
+                        && !realationshipClasses.contains(obj))
+                    realationshipClasses.add(obj);
+        }
+        
+        for (String interfaceName: classObject.getInterfaceNames())
+            for (ClassObject obj: classesList)
+                if (interfaceName.equals(obj.getClassName()) 
+                        && !realationshipClasses.contains(obj))
+                    realationshipClasses.add(obj);
         
         for (VariableObject variable: classObject.getVariables())
             for (ClassObject obj: classesList)
                 if (variable.getType().equals(obj.getClassName())
-                        && !classNames.contains(obj.getClassName()))
-                    classNames.add(obj.getClassName());
+                        && !realationshipClasses.contains(obj))
+                    realationshipClasses.add(obj);
         
         for (MethodObject method: classObject.getMethods())
             for (ClassObject obj: classesList)
                 if (method.getType().equals(obj.getClassName())
-                        && !classNames.contains(obj.getClassName()))
-                    classNames.add(obj.getClassName());
+                        && !realationshipClasses.contains(obj))
+                    realationshipClasses.add(obj);
         
-        return classNames;
-    }*/
+        return realationshipClasses;
+    }
     
     public ClassObject fetchTopObject(double layoutX, double layoutY)
     {
