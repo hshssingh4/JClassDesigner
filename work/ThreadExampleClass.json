@@ -3,7 +3,7 @@
     "classes":[
         {
             "class_name":"ThreadExample",
-            "package_name":"null",
+            "package_name":"test",
             "parent_name":"null",
             "is_interface":false,
             "interface_names":[
@@ -51,8 +51,10 @@
                     ]
                 }
             ],
+            "java_api_packages":[
+            ],
             "box":{
-                "translate_x":559.0,
+                "translate_x":718.0,
                 "translate_y":300.0
             }
         }

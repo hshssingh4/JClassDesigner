@@ -18,7 +18,6 @@ import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
-import static jcd.test_bed.ClassBuilder.PROTECTED;
 import jcd.test_bed.TestLoad;
 import jcd.test_bed.TestSave;
 import saf.components.AppDataComponent;
@@ -42,6 +41,7 @@ public class FileManager implements AppFileComponent
     public static final String FINAL = "final";
     public static final String RETURN = "return";
     public static final String FALSE = "false";
+    public static final String IMPORT = "import";
     
     public static final String INT = "int";
     public static final String DOUBLE = "double";
@@ -66,6 +66,7 @@ public class FileManager implements AppFileComponent
     public static final String SEMI_COLON = ";";
     public static final String COMMA = ",";
     public static final String EQUALS = "=";
+    public static final String PERIOD = ".";
     
     public static final String ZERO = "0";
     
@@ -149,7 +150,7 @@ public class FileManager implements AppFileComponent
                 PrintWriter pw = new PrintWriter(javaClassFilePath);
                 
                 // And now start writing using other helper methods
-                writeJavaClass(classObject, pw);
+                writeJavaClass(dataManager, classObject, pw);
                 
                 // Finally, close the writer
                 pw.close();
@@ -164,12 +165,17 @@ public class FileManager implements AppFileComponent
      * @param pw 
      * the print writer object to aid in writing to file
      */
-    private void writeJavaClass(ClassObject classObject, PrintWriter pw)
+    private void writeJavaClass(DataManager dataManager, ClassObject classObject, PrintWriter pw)
     {
         // First print a few extra lines
         pw.println(WELCOME_STRING);
         writePackageNameLine(classObject, pw); // Write package name
         pw.println();
+        
+        // NOW WRITE THE IMPORT STATEMENTS
+        writeUserClassImports(dataManager, classObject, pw);
+        pw.println();
+        
         writeClassNameLine(classObject, pw); // Write class name
         pw.println(OPENING_CURLY_BRACE);
         
@@ -181,6 +187,61 @@ public class FileManager implements AppFileComponent
         
         // Finally, close the class by printing a curly brace
         pw.println(CLOSING_CURLY_BRACE);
+    }
+    
+    private void writeUserClassImports(DataManager dataManager, ClassObject classObject, PrintWriter pw)
+    {
+        // First check if any variable has a class with the name of a class in data manager
+        // If yes, write an import statement for that
+        for (VariableObject variable: classObject.getVariables())
+        {
+            ClassObject object = dataManager.findClassWithName(variable.getType());
+            
+            if (object != null)
+            {
+                String classObjectPackageName = classObject.getPackageName();
+                String objectPackageName = object.getPackageName();
+                String className = object.getClassName();
+                if (classObjectPackageName == null ? objectPackageName != null : 
+                    !classObjectPackageName.equals(objectPackageName))
+                    writeImportLine(objectPackageName, className, pw);
+            }  
+        }
+        
+        for (MethodObject method: classObject.getMethods())
+        {
+            ClassObject object = dataManager.findClassWithName(method.getType());
+            
+            if (object != null)
+            {
+                String classObjectPackageName = classObject.getPackageName();
+                String objectPackageName = object.getPackageName();
+                String className = object.getClassName();
+                if (classObjectPackageName == null ? objectPackageName != null : 
+                    !classObjectPackageName.equals(objectPackageName))
+                    writeImportLine(objectPackageName, className, pw);
+            }  
+            
+            for (ArgumentObject argument: method.getArguments())
+            {
+                ClassObject newObject = dataManager.findClassWithName(argument.getType());
+            
+                if (newObject != null)
+                {
+                    String classObjectPackageName = classObject.getPackageName();
+                    String objectPackageName = newObject.getPackageName();
+                    String className = newObject.getClassName();
+                    if (classObjectPackageName == null ? objectPackageName != null : 
+                        !classObjectPackageName.equals(objectPackageName))
+                        writeImportLine(objectPackageName, className, pw);
+                }  
+            }
+        }
+    }
+    
+    private void writeImportLine(String packageName, String className, PrintWriter pw)
+    {
+        pw.println(IMPORT + SPACE + packageName + PERIOD + className + SEMI_COLON);
     }
     
     private void writePackageNameLine(ClassObject classObject, PrintWriter pw)

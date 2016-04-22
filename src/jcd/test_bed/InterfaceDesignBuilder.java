@@ -50,6 +50,8 @@ public class InterfaceDesignBuilder
         appStyleArbiterInterface.setVariables(variables);
         ArrayList<MethodObject> methods = addAppStyleArbiterInterfaceMethods();
         appStyleArbiterInterface.setMethods(methods);
+        ArrayList<String> javaApiPackages = new ArrayList<>();
+        appStyleArbiterInterface.setJavaApiPackages(javaApiPackages);
         
         return appStyleArbiterInterface;
     }

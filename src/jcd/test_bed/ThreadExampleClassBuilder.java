@@ -53,6 +53,8 @@ public class ThreadExampleClassBuilder
         threadExampleClass.setVariables(variables);
         ArrayList<MethodObject> methods = addThreadExampleClassMethods();
         threadExampleClass.setMethods(methods);
+        ArrayList<String> javaApiPackages = new ArrayList<>();
+        threadExampleClass.setJavaApiPackages(javaApiPackages);
         
         return threadExampleClass;
     }

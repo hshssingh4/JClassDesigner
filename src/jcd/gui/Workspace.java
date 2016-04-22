@@ -7,6 +7,7 @@ package jcd.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,6 +19,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -369,7 +371,17 @@ public class Workspace extends AppWorkspaceComponent
         
         canvas.setOnMousePressed((MouseEvent e) -> {
             dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
-            canvasEditController.handleSelectionRequest(e.getX(), e.getY());
+            if (e.getClickCount() == 1)
+                canvasEditController.handleSelectionRequest(e.getX(), e.getY());
+            if (e.getClickCount() == 2)
+            {
+                canvasEditController.handleSelectionRequest(e.getX(), e.getY());
+                if (selectedObject != null)
+                {
+                    PackagesDialog dialog = new PackagesDialog(app.getGUI().getWindow(), selectedObject);
+                    dialog.makeVisible();
+                }
+            }
             
             if (selectedObject != null)
             {

@@ -50,6 +50,8 @@ public class AbstractDesignBuilder
         graphicObjectClass.setVariables(variables);
         ArrayList<MethodObject> methods = addGraphicObjectClassMethods();
         graphicObjectClass.setMethods(methods);
+        ArrayList<String> javaApiPackages = new ArrayList<>();
+        graphicObjectClass.setJavaApiPackages(javaApiPackages);
         
         return graphicObjectClass;
     }

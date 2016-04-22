@@ -3,7 +3,7 @@
     "classes":[
         {
             "class_name":"AppStyleArbiter",
-            "package_name":"null",
+            "package_name":"test",
             "parent_name":"null",
             "is_interface":true,
             "interface_names":[
@@ -37,8 +37,10 @@
                     ]
                 }
             ],
+            "java_api_packages":[
+            ],
             "box":{
-                "translate_x":720.0,
+                "translate_x":375.0,
                 "translate_y":300.0
             }
         }

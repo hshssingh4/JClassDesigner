@@ -70,6 +70,8 @@ public class ClassBuilder
         counterTaskClass.setVariables(variables);
         ArrayList<MethodObject> methods = addCounterTaskClassMethods();
         counterTaskClass.setMethods(methods);
+        ArrayList<String> javaApiPackages = addCounterTaskClassJavaApiPackages();
+        counterTaskClass.setJavaApiPackages(javaApiPackages);
         
         return counterTaskClass;
     }
@@ -114,6 +116,16 @@ public class ClassBuilder
         return methods;
     }
     
+    private ArrayList<String> addCounterTaskClassJavaApiPackages()
+    {
+        ArrayList<String> packageNames = new ArrayList<>();
+        
+        packageNames.add("javafx.application.Platform");
+        packageNames.add("javafx.concurrent.Task");
+        
+        return packageNames;
+    }
+    
     // HERE IS THE SECOND HARD CODED CLASS
     
     private ClassObject createDateTaskClass()
@@ -133,6 +145,8 @@ public class ClassBuilder
         dateTaskClass.setVariables(variables);
         ArrayList<MethodObject> methods = addDateTaskClassMethods();
         dateTaskClass.setMethods(methods);
+        ArrayList<String> javaApiPackages = addDateTaskClassJavaApiPackages();
+        dateTaskClass.setJavaApiPackages(javaApiPackages);
         
         return dateTaskClass;
     }
@@ -177,6 +191,17 @@ public class ClassBuilder
         return methods;
     }
     
+    private ArrayList<String> addDateTaskClassJavaApiPackages()
+    {
+        ArrayList<String> packageNames = new ArrayList<>();
+        
+        packageNames.add("java.util.Date");
+        packageNames.add("javafx.application.Platform");
+        packageNames.add("javafx.concurrent.Task");
+        
+        return packageNames;
+    }
+    
     // HERE IS THE THIRD HARD CODED CLASS
     
     private ClassObject createPauseHandlerClass()
@@ -196,6 +221,8 @@ public class ClassBuilder
         pauseHandlerClass.setVariables(variables);
         ArrayList<MethodObject> methods = addPauseHandlerClassMethods();
         pauseHandlerClass.setMethods(methods);
+        ArrayList<String> javaApiPackages = addPauseHandlerClassJavaApiPackages();
+        pauseHandlerClass.setJavaApiPackages(javaApiPackages);
         
         return pauseHandlerClass;
     }
@@ -247,6 +274,16 @@ public class ClassBuilder
         return methods;
     }
     
+    private ArrayList<String> addPauseHandlerClassJavaApiPackages()
+    {
+        ArrayList<String> packageNames = new ArrayList<>();
+        
+        packageNames.add("javafx.event.Event");
+        packageNames.add("javafx.event.EventHandler");
+        
+        return packageNames;
+    }
+    
     // HERE IS THE FOURTH HARD CODED CLASS
     
     private ClassObject createStartHandlerClass()
@@ -266,6 +303,8 @@ public class ClassBuilder
         startHandlerClass.setVariables(variables);
         ArrayList<MethodObject> methods = addStartHandlerClassMethods();
         startHandlerClass.setMethods(methods);
+        ArrayList<String> javaApiPackages = addStartHandlerClassJavaApiPackages();
+        startHandlerClass.setJavaApiPackages(javaApiPackages);
         
         return startHandlerClass;
     }
@@ -317,6 +356,16 @@ public class ClassBuilder
         return methods;
     }
     
+    private ArrayList<String> addStartHandlerClassJavaApiPackages()
+    {
+        ArrayList<String> packageNames = new ArrayList<>();
+        
+        packageNames.add("javafx.event.Event");
+        packageNames.add("javafx.event.EventHandler");
+        
+        return packageNames;
+    }
+    
     // HERE IS THE FIFTH HARD CODED CLASS
     private ClassObject createThreadExampleClass()
     {
@@ -335,6 +384,8 @@ public class ClassBuilder
         threadExampleClass.setVariables(variables);
         ArrayList<MethodObject> methods = addThreadExampleClassMethods();
         threadExampleClass.setMethods(methods);
+        ArrayList<String> javaApiPackages = addThreadExampleClassJavaApiPackages();
+        threadExampleClass.setJavaApiPackages(javaApiPackages);
         
         return threadExampleClass;
     }
@@ -621,6 +672,24 @@ public class ClassBuilder
         methods.add(main);
         
         return methods;
+    }
+    
+    private ArrayList<String> addThreadExampleClassJavaApiPackages()
+    {
+        ArrayList<String> packageNames = new ArrayList<>();
+        
+        packageNames.add("javafx.application.Application");
+        packageNames.add("javafx.concurrent.Task");
+        packageNames.add("javafx.geometry.Orientation");
+        packageNames.add("javafx.scene.Scene");
+        packageNames.add("javafx.scene.control.Button");
+        packageNames.add("javafx.scene.control.ScrollPane");
+        packageNames.add("javafx.scene.control.TextArea");
+        packageNames.add("javafx.scene.layout.BorderPane");
+        packageNames.add("javafx.scene.layout.FlowPane");
+        packageNames.add("javafx.stage.Stage");
+        
+        return packageNames;
     }
     
     /**

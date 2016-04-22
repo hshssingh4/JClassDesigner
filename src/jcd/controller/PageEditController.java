@@ -8,7 +8,6 @@ package jcd.controller;
 import java.util.ArrayList;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import jcd.JClassDesigner;
@@ -115,6 +114,7 @@ public class PageEditController
         obj.setInterfaceNames(new ArrayList<>());
         obj.setVariables(new ArrayList<>());
         obj.setMethods(new ArrayList<>());
+        obj.setJavaApiPackages(new ArrayList<>());
         
         if (dataManager.checkIfUnique(obj))
         {

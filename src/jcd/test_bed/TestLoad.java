@@ -35,6 +35,7 @@ public class TestLoad
     public static final String JSON_CLASSES_ARRAY = "classes";
     public static final String JSON_VARIABLES_ARRAY = "variables";
     public static final String JSON_METHODS_ARRAY = "methods";
+    public static final String JSON_JAVA_API_PACKAGES_ARRAY = "java_api_packages";
     public static final String JSON_ARGUMENTS_ARRAY = "arguments";
     public static final String JSON_NAME = "name";
     public static final String JSON_TYPE = "type";
@@ -119,6 +120,7 @@ public class TestLoad
         ArrayList<String> interfaceNames = loadInterfaceNames(jsoClass);
         ArrayList<VariableObject> variables = loadVariables(jsoClass);
         ArrayList<MethodObject> methods = loadMethods(jsoClass);
+        ArrayList<String> javaApiPackages = loadJavaApiPackages(jsoClass);
         
         // ALSO GET THE X AND Y COORDINATES FOR THE BOX
         JsonObject jsoBox = jsoClass.getJsonObject(JSON_BOX_OBJECT);
@@ -136,7 +138,7 @@ public class TestLoad
         classObject.setInterfaceNames(interfaceNames);
         classObject.setVariables(variables);
         classObject.setMethods(methods);
-        
+        classObject.setJavaApiPackages(javaApiPackages);
         
         return classObject;
     }
@@ -215,5 +217,19 @@ public class TestLoad
         }
         
         return arguments;
+    }
+    
+    private ArrayList<String> loadJavaApiPackages(JsonObject jsoClass)
+    {
+        ArrayList<String> javaApiPackages = new ArrayList<>();
+        JsonArray javaApiPackagesArray = jsoClass.getJsonArray(JSON_JAVA_API_PACKAGES_ARRAY);
+        
+        for (int i = 0; i < javaApiPackagesArray.size(); i++)
+        {
+            String interfaceName = javaApiPackagesArray.getString(i);
+            javaApiPackages.add(interfaceName);
+        }
+        
+        return javaApiPackages;
     }
 }

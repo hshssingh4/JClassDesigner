@@ -21,6 +21,7 @@ public class ClassObject
     private ArrayList<String> interfaceNames;
     private ArrayList<VariableObject> variables;
     private ArrayList<MethodObject> methods;
+    private ArrayList<String> javaApiPackages;
     private Box box;
     
     /**
@@ -130,5 +131,15 @@ public class ClassObject
     public void setMethods(ArrayList<MethodObject> methods) 
     {
         this.methods = methods;
+    }
+
+    public ArrayList<String> getJavaApiPackages() 
+    {
+        return javaApiPackages;
+    }
+
+    public void setJavaApiPackages(ArrayList<String> javaApiPackages)
+    {
+        this.javaApiPackages = javaApiPackages;
     }
 }

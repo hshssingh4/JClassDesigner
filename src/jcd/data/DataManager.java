@@ -86,6 +86,14 @@ public class DataManager implements AppDataComponent
         return true;
     }
     
+    public ClassObject findClassWithName(String className)
+    {
+        for (ClassObject c: classesList)
+            if (c.getClassName().equals(className))
+                return c;
+        return null;
+    }
+    
     public ClassObject fetchTopObject(double layoutX, double layoutY)
     {
         for (int i = classesList.size() - 1; i >= 0; i--)

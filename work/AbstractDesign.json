@@ -54,8 +54,10 @@
                     ]
                 }
             ],
+            "java_api_packages":[
+            ],
             "box":{
-                "translate_x":296.0,
+                "translate_x":286.0,
                 "translate_y":300.0
             }
         }

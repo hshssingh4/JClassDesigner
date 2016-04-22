@@ -36,8 +36,12 @@
                     ]
                 }
             ],
+            "java_api_packages":[
+                "javafx.application.Platform",
+                "javafx.concurrent.Task"
+            ],
             "box":{
-                "translate_x":561.0,
+                "translate_x":290.0,
                 "translate_y":300.0
             }
         },
@@ -76,8 +80,13 @@
                     ]
                 }
             ],
+            "java_api_packages":[
+                "java.util.Date",
+                "javafx.application.Platform",
+                "javafx.concurrent.Task"
+            ],
             "box":{
-                "translate_x":69.0,
+                "translate_x":564.0,
                 "translate_y":300.0
             }
         },
@@ -114,8 +123,12 @@
                     ]
                 }
             ],
+            "java_api_packages":[
+                "javafx.event.Event",
+                "javafx.event.EventHandler"
+            ],
             "box":{
-                "translate_x":272.0,
+                "translate_x":777.0,
                 "translate_y":300.0
             }
         },
@@ -152,8 +165,12 @@
                     ]
                 }
             ],
+            "java_api_packages":[
+                "javafx.event.Event",
+                "javafx.event.EventHandler"
+            ],
             "box":{
-                "translate_x":533.0,
+                "translate_x":661.0,
                 "translate_y":300.0
             }
         },
@@ -396,8 +413,20 @@
                     ]
                 }
             ],
+            "java_api_packages":[
+                "javafx.application.Application",
+                "javafx.concurrent.Task",
+                "javafx.geometry.Orientation",
+                "javafx.scene.Scene",
+                "javafx.scene.control.Button",
+                "javafx.scene.control.ScrollPane",
+                "javafx.scene.control.TextArea",
+                "javafx.scene.layout.BorderPane",
+                "javafx.scene.layout.FlowPane",
+                "javafx.stage.Stage"
+            ],
             "box":{
-                "translate_x":645.0,
+                "translate_x":781.0,
                 "translate_y":300.0
             }
         }

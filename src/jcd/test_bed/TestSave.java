@@ -42,6 +42,7 @@ public class TestSave
     public static final String JSON_CLASSES_ARRAY = "classes";
     public static final String JSON_VARIABLES_ARRAY = "variables";
     public static final String JSON_METHODS_ARRAY = "methods";
+    public static final String JSON_JAVA_API_PACKAGES_ARRAY = "java_api_packages";
     public static final String JSON_ARGUMENTS_ARRAY = "arguments";
     public static final String JSON_NAME = "name";
     public static final String JSON_TYPE = "type";
@@ -112,6 +113,7 @@ public class TestSave
                 .add(JSON_INTERFACE_NAMES, buildInterfaceNamesJsonArray(classObject.getInterfaceNames()))
                 .add(JSON_VARIABLES_ARRAY, buildVariablesJsonArray(classObject.getVariables()))
                 .add(JSON_METHODS_ARRAY, buildMethodsJsonArray(classObject.getMethods()))
+                .add(JSON_JAVA_API_PACKAGES_ARRAY, buildJavaApiPackagesArray(classObject.getJavaApiPackages()))
                 .add(JSON_BOX_OBJECT, buildBoxJsonObject(classObject.getBox()))
 		.build();
 	return jso;
@@ -188,6 +190,17 @@ public class TestSave
         
         JsonArray jA = arrayBuilder.build();
 	return jA;
+    }
+    
+    private JsonArray buildJavaApiPackagesArray(ArrayList<String> javaApiPackages)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        for (String name: javaApiPackages)
+            arrayBuilder.add(name);
+        
+        JsonArray jA = arrayBuilder.build();
+        return jA;
     }
     
     private JsonObject buildBoxJsonObject(Box box)
