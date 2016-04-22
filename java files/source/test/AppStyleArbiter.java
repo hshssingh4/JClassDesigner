@@ -5,6 +5,7 @@
 */
 package test;
 
+
 public interface AppStyleArbiter
 {
     public static final String CLASS_BORDERED_PANE = null;

@@ -5,6 +5,9 @@
 */
 package ThreadExample;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+
 public class CounterTask extends Task<Void>
 {
     private ThreadExample app;

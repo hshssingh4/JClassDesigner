@@ -5,6 +5,7 @@
 */
 package test;
 
+
 public class ThreadExample
 {
     private boolean work;

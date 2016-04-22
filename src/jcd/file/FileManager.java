@@ -173,7 +173,8 @@ public class FileManager implements AppFileComponent
         pw.println();
         
         // NOW WRITE THE IMPORT STATEMENTS
-        writeUserClassImports(dataManager, classObject, pw);
+        writeJavaApiPackageImports(classObject, pw);
+        //writeUserClassImports(dataManager, classObject, pw);
         pw.println();
         
         writeClassNameLine(classObject, pw); // Write class name
@@ -189,7 +190,13 @@ public class FileManager implements AppFileComponent
         pw.println(CLOSING_CURLY_BRACE);
     }
     
-    private void writeUserClassImports(DataManager dataManager, ClassObject classObject, PrintWriter pw)
+    private void writeJavaApiPackageImports(ClassObject classObject, PrintWriter pw)
+    {
+        for (String packageName: classObject.getJavaApiPackages())
+            pw.println(fetchImportLine(packageName));
+    }
+    
+    /*private void writeUserClassImports(DataManager dataManager, ClassObject classObject, PrintWriter pw)
     {
         // First check if any variable has a class with the name of a class in data manager
         // If yes, write an import statement for that
@@ -237,11 +244,11 @@ public class FileManager implements AppFileComponent
                 }  
             }
         }
-    }
+    }*/
     
-    private void writeImportLine(String packageName, String className, PrintWriter pw)
+    private String fetchImportLine(String packageName)
     {
-        pw.println(IMPORT + SPACE + packageName + PERIOD + className + SEMI_COLON);
+        return IMPORT + SPACE + packageName + SEMI_COLON;
     }
     
     private void writePackageNameLine(ClassObject classObject, PrintWriter pw)

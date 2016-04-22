@@ -5,6 +5,7 @@
 */
 package test;
 
+
 public abstract class GraphicObject
 {
     protected int x;
