@@ -58,6 +58,14 @@ public class ClassObject
                 (this.packageName == null ? 
                 packageName == null : this.packageName.equals(packageName)));
     }
+    
+    public boolean isAbstractType()
+    {
+        for (MethodObject method: this.getMethods())
+            if (method.isAbstractType())
+                return true;
+        return false;
+    }
 
     public String getClassName() 
     {

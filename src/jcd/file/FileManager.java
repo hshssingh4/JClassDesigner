@@ -230,12 +230,8 @@ public class FileManager implements AppFileComponent
             classNameLine += SPACE + INTERFACE;
         else
         {
-            for (MethodObject method: classObject.getMethods())
-                if (method.isAbstractType())
-                {
-                    classNameLine += SPACE + ABSTRACT;
-                    break;
-                }
+            if (classObject.isAbstractType())
+                classNameLine += SPACE + ABSTRACT;
             classNameLine += SPACE + CLASS;
         }
         classNameLine += SPACE + classObject.getClassName();

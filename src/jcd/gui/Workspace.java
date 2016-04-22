@@ -7,7 +7,6 @@ package jcd.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Optional;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,7 +18,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -488,6 +486,18 @@ public class Workspace extends AppWorkspaceComponent
         Text text = new Text(classObject.getClassName());
         text.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         box.getClassVBox().getChildren().add(text);
+        
+        // Also, if it is an interface or an abstract class, add the extra text
+        if (classObject.isInterfaceType())
+        {
+            Text interfaceText = new Text("<<interface>>");
+            box.getClassVBox().getChildren().add(interfaceText);
+        }
+        else if (classObject.isAbstractType())
+        {
+            Text interfaceText = new Text("{abstract}");
+            box.getClassVBox().getChildren().add(interfaceText);
+        }
     }
     
     private void reloadVariablesTextFields(ClassObject classObject)
