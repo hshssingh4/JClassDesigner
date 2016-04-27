@@ -8,7 +8,7 @@ package ThreadExample;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 
-public class StartHandle implements EventHandler
+public class StartHandler implements EventHandler
 {
     private ThreadExample app;
 

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jcd.test_bed;
+package jcd.file;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,39 +29,17 @@ import jcd.data.LineConnector;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import saf.components.AppDataComponent;
+import static jcd.file.FileManager.*;
 
 /**
  *
  * @author RaniSons
  */
-public class TestSave 
+public class FileSaver 
 {
-    public static final String JSON_CLASS_NAME = "class_name";
-    public static final String JSON_PACKAGE_NAME = "package_name";
-    public static final String JSON_PARENT_NAME = "parent_name";
-    public static final String JSON_IS_INTERFACE = "is_interface";
-    public static final String JSON_INTERFACE_NAMES = "interface_names";
-    public static final String JSON_CLASSES_ARRAY = "classes";
-    public static final String JSON_VARIABLES_ARRAY = "variables";
-    public static final String JSON_METHODS_ARRAY = "methods";
-    public static final String JSON_LINE_CONNECTORS_ARRAY = "line_connectors";
-    public static final String JSON_JAVA_API_PACKAGES_ARRAY = "java_api_packages";
-    public static final String JSON_ARGUMENTS_ARRAY = "arguments";
-    public static final String JSON_NAME = "name";
-    public static final String JSON_TYPE = "type";
-    public static final String JSON_SCOPE = "scope";
-    public static final String JSON_IS_STATIC = "is_static";
-    public static final String JSON_IS_FINAL = "is_final";
-    public static final String JSON_IS_ABSTRACT = "is_abstract";
-    public static final String JSON_BOX_OBJECT = "box";
-    public static final String JSON_TRANSLATE_X = "translate_x";
-    public static final String JSON_TRANSLATE_Y = "translate_y";
-    public static final String JSON_START_X = "start_x";
-    public static final String JSON_START_Y = "start_y";
-    public static final String JSON_END_X = "end_x";
-    public static final String JSON_END_Y = "end_y";
+    public FileSaver() {}
     
-    public void saveTestData(AppDataComponent data, String filePath) throws IOException 
+    public void saveData(AppDataComponent data, String filePath) throws IOException 
     {
         // First create the string writer
         StringWriter sw = new StringWriter();

@@ -41,16 +41,16 @@
                 "javafx.concurrent.Task"
             ],
             "box":{
-                "translate_x":233.0,
+                "translate_x":355.0,
                 "translate_y":300.0
             },
             "line_connectors":[
                 [
                     {
-                        "start_x":205.0,
-                        "start_y":222.0,
-                        "end_x":126.0,
-                        "end_y":371.0
+                        "start_x":55.0,
+                        "start_y":160.0,
+                        "end_x":355.0,
+                        "end_y":0.0
                     }
                 ]
             ]
@@ -96,16 +96,16 @@
                 "javafx.concurrent.Task"
             ],
             "box":{
-                "translate_x":524.0,
+                "translate_x":77.0,
                 "translate_y":300.0
             },
             "line_connectors":[
                 [
                     {
-                        "start_x":239.0,
-                        "start_y":229.0,
-                        "end_x":479.0,
-                        "end_y":357.0
+                        "start_x":389.0,
+                        "start_y":324.0,
+                        "end_x":12.0,
+                        "end_y":479.0
                     }
                 ]
             ]
@@ -148,16 +148,16 @@
                 "javafx.event.EventHandler"
             ],
             "box":{
-                "translate_x":143.0,
+                "translate_x":618.0,
                 "translate_y":300.0
             },
             "line_connectors":[
                 [
                     {
-                        "start_x":202.0,
-                        "start_y":479.0,
-                        "end_x":404.0,
-                        "end_y":144.0
+                        "start_x":334.0,
+                        "start_y":295.0,
+                        "end_x":22.0,
+                        "end_y":497.0
                     }
                 ]
             ]
@@ -200,16 +200,16 @@
                 "javafx.event.EventHandler"
             ],
             "box":{
-                "translate_x":771.0,
+                "translate_x":335.0,
                 "translate_y":300.0
             },
             "line_connectors":[
                 [
                     {
-                        "start_x":53.0,
-                        "start_y":449.0,
-                        "end_x":492.0,
-                        "end_y":453.0
+                        "start_x":312.0,
+                        "start_y":135.0,
+                        "end_x":182.0,
+                        "end_y":202.0
                     }
                 ]
             ]
@@ -466,7 +466,7 @@
                 "javafx.stage.Stage"
             ],
             "box":{
-                "translate_x":257.0,
+                "translate_x":761.0,
                 "translate_y":300.0
             },
             "line_connectors":[

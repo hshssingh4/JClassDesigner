@@ -54,16 +54,16 @@
             "java_api_packages":[
             ],
             "box":{
-                "translate_x":5.0,
+                "translate_x":535.0,
                 "translate_y":300.0
             },
             "line_connectors":[
                 [
                     {
-                        "start_x":175.0,
-                        "start_y":118.0,
-                        "end_x":234.0,
-                        "end_y":234.0
+                        "start_x":408.0,
+                        "start_y":245.0,
+                        "end_x":360.0,
+                        "end_y":51.0
                     }
                 ]
             ]
