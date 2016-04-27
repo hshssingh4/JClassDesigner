@@ -237,31 +237,4 @@ public class PageEditController
         workspace.reloadWorkspace();
     }
     
-    /**
-     * This method helps in zooming in the workspace currently being worked on.
-     */
-    public void handleZoomInRequest()
-    {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        Pane canvas = workspace.getCanvas();
-
-        canvas.setScaleX(canvas.getScaleX() * 1.25);
-        canvas.setScaleY(canvas.getScaleY() * 1.25);
-        
-        workspace.reloadWorkspace();
-    }
-    
-    /**
-     * This method helps in zooming out the workspace currently being worked on.
-     */
-    public void handleZoomOutRequest()
-    {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        Pane canvas = workspace.getCanvas();
-        
-        canvas.setScaleX(canvas.getScaleX() * 0.8);
-        canvas.setScaleY(canvas.getScaleY() * 0.8);
-
-        workspace.reloadWorkspace();
-    }
 }

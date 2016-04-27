@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -27,6 +29,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -93,7 +96,7 @@ public class Workspace extends AppWorkspaceComponent
     public static final String HASHTAG = "#";
     public static final String COLON = ":";
     public static final String SPACE = " ";
-    
+        
     // HERE'S THE APP
     AppTemplate app;
     
@@ -363,10 +366,17 @@ public class Workspace extends AppWorkspaceComponent
             pageEditController.handleRemoveRequest();
         });
         zoomInButton.setOnAction(e -> {
-            pageEditController.handleZoomInRequest();
+            canvasEditController.handleZoomInRequest();
         });
         zoomOutButton.setOnAction(e -> {
-            pageEditController.handleZoomOutRequest();
+            canvasEditController.handleZoomOutRequest();
+        });
+        gridRenderCheckBox.setOnAction(e -> {
+            reloadWorkspace();
+        });
+        gridSnapCheckBox.setOnAction(e -> {
+            if (gridSnapCheckBox.isSelected())
+                canvasEditController.handleSnapRequest();
         });
         
         // HANDLERS FOR CONTROLS ON THE RIGHT
@@ -379,41 +389,72 @@ public class Workspace extends AppWorkspaceComponent
                 pageEditController.handlePackageNameChangeRequest(newClassName);
         });
         
+        // AND THESE ARE THE SELECTION, RESIZING, DRAGGING HANDLERS
+        canvas.setOnMouseMoved(e -> {
+            if (dataManager.isInState(JClassDesignerState.RESIZING_SHAPE))
+                canvasEditController.handleCheckResizeRequest((int) e.getX(), (int) e.getY());
+        });
         canvas.setOnMousePressed((MouseEvent e) -> {
-            dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
-            if (e.getClickCount() == 1)
-                canvasEditController.handleSelectionRequest(e.getX(), e.getY());
-            if (e.getClickCount() == 2)
+            if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
             {
-                canvasEditController.handleSelectionRequest(e.getX(), e.getY());
-                if (selectedObject != null)
+                if (e.getClickCount() == 1)
+                    canvasEditController.handleSelectionRequest(e.getX(), e.getY());
+                if (e.getClickCount() == 2)
                 {
-                    PackagesDialog dialog = new PackagesDialog(app.getGUI().getWindow(), selectedObject);
-                    dialog.makeVisible();
-                }
-            }
-            
-            if (selectedObject != null)
-            {
-                originalSceneX = e.getSceneX();
-                originalSceneY = e.getSceneY();
-                originalTranslateX = selectedObject.getBox().getMainVBox().getTranslateX();
-                originalTranslateY = selectedObject.getBox().getMainVBox().getTranslateY();
-            
-                canvas.setOnMouseDragged((MouseEvent e1) -> {
+                    canvasEditController.handleSelectionRequest(e.getX(), e.getY());
                     if (selectedObject != null)
                     {
-                        dataManager.setState(JClassDesignerState.DRAGGING_SHAPE);
-                        double offsetX = e1.getSceneX() - originalSceneX;
-                        double offsetY = e1.getSceneY() - originalSceneY;
-                        double newTranslateX = originalTranslateX + offsetX;
-                        double newTranslateY = originalTranslateY + offsetY;
+                        PackagesDialog dialog = new PackagesDialog(app.getGUI().getWindow(), selectedObject);
+                        dialog.makeVisible();
+                    }
+                }
+            
+                if (selectedObject != null)
+                {
+                    originalSceneX = e.getSceneX();
+                    originalSceneY = e.getSceneY();
+                    originalTranslateX = selectedObject.getBox().getMainVBox().getTranslateX();
+                    originalTranslateY = selectedObject.getBox().getMainVBox().getTranslateY();
+            
+                    canvas.setOnMouseDragged((MouseEvent e1) -> {
+                        if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
+                        {
+                            if (selectedObject != null)
+                            {
+                                double offsetX = e1.getSceneX() - originalSceneX;
+                                double offsetY = e1.getSceneY() - originalSceneY;
+                                double newTranslateX = originalTranslateX + offsetX;
+                                double newTranslateY = originalTranslateY + offsetY;
                     
-                        canvasEditController.handlePositionChangeRequest(newTranslateX, newTranslateY);
+                                canvasEditController.handlePositionChangeRequest(newTranslateX, newTranslateY);
+                            }
+                        }
+                    });
+                }
+            }
+            else if (dataManager.isInState(JClassDesignerState.RESIZING_SHAPE))
+            {
+                Scene scene = app.getGUI().getPrimaryScene();
+                Cursor cursor = scene.getCursor();
+                
+                if (cursor == Cursor.E_RESIZE)
+                    canvasEditController.handleResizePressDetected(e.getX());
+                else if (cursor == Cursor.S_RESIZE)
+                    canvasEditController.handleResizePressDetected(e.getY());
+                
+                
+                canvas.setOnMouseDragged((MouseEvent e1) -> {
+                    if (dataManager.isInState(JClassDesignerState.RESIZING_SHAPE))
+                    {
+                        if (cursor == Cursor.E_RESIZE)
+                            canvasEditController.handleHorizontalResizeRequest(e1.getX());
+                        else if (cursor == Cursor.S_RESIZE)
+                            canvasEditController.handleVerticalResizeRequest(e1.getY());
                     }
                 });
             }
-        });
+         });
+                
         canvas.setOnMouseReleased((MouseEvent e) -> {
             reloadWorkspace();
         });
@@ -459,15 +500,18 @@ public class Workspace extends AppWorkspaceComponent
         
         canvas.getChildren().clear();
         
+        // NOW CHECK THE GRID RENDER AND GRID SNAP
+        if (gridRenderCheckBox.isSelected())
+            renderLines();
+        if (gridSnapCheckBox.isSelected())
+            canvasEditController.handleSnapRequest();
+        
         for (ClassObject classObject: dataManager.getClassesList())
         {
             canvas.getChildren().add(classObject.getBox().getMainVBox());
-            if (!dataManager.isInState(JClassDesignerState.DRAGGING_SHAPE))
-            {
-                reloadClassTextFields(classObject);
-                reloadVariablesTextFields(classObject);
-                reloadMethodsTextFields(classObject);
-            }
+            reloadClassTextFields(classObject);
+            reloadVariablesTextFields(classObject);
+            reloadMethodsTextFields(classObject);
         }
         
         if (selectedObject != null)
@@ -485,6 +529,30 @@ public class Workspace extends AppWorkspaceComponent
         //ArrayList
         
         enableLegalButtons();
+    }
+    
+    private void renderLines()
+    {
+        int numHorizontalLines = (int) canvas.getHeight();
+        for (int i = 0; i < numHorizontalLines; i = i + 20)
+        {
+            Line horizontalLine = new Line();
+            horizontalLine.setStartX(0);
+            horizontalLine.setStartY(i);
+            horizontalLine.setEndX(canvas.getWidth());
+            horizontalLine.setEndY(i);
+            canvas.getChildren().addAll(horizontalLine);
+        }
+        int numVerticalLines = (int) canvas.getWidth();
+        for (int i = 0; i < numVerticalLines; i = i + 20)
+        {
+            Line verticalLine = new Line();
+            verticalLine.setStartX(i);
+            verticalLine.setStartY(0);
+            verticalLine.setEndX(i);
+            verticalLine.setEndY(canvas.getHeight());
+            canvas.getChildren().add(verticalLine);
+       }
     }
     
     private void reloadClassTextFields(ClassObject classObject)
@@ -524,6 +592,8 @@ public class Workspace extends AppWorkspaceComponent
         {
             Text text = getVariableTextField(variable);
             text.getStyleClass().add(CLASS_TEXT_LABEL);
+            if (variable.isStaticType())
+                text.setUnderline(true);
             box.getVariablesVBox().getChildren().add(text);
         }
     }
@@ -568,6 +638,8 @@ public class Workspace extends AppWorkspaceComponent
         {
             Text text = getMethodTextField(method);
             text.getStyleClass().add(CLASS_TEXT_LABEL);
+            if (method.isStaticType())
+                text.setUnderline(true);
             box.getMethodsVBox().getChildren().add(text);
         }
     }
@@ -637,6 +709,7 @@ public class Workspace extends AppWorkspaceComponent
             addMethodButton.setDisable(false);
             removeMethodButton.setDisable(false);
             removeButton.setDisable(false);
+            resizeButton.setDisable(false);
         }
         else
         {
@@ -648,6 +721,7 @@ public class Workspace extends AppWorkspaceComponent
             addMethodButton.setDisable(true);
             removeMethodButton.setDisable(true);
             removeButton.setDisable(true);
+            resizeButton.setDisable(true);
         }
         
         // NOW CHECK ENABLING OF THE ZOOM BUTTONS
@@ -660,6 +734,12 @@ public class Workspace extends AppWorkspaceComponent
             zoomOutButton.setDisable(true);
         else
             zoomOutButton.setDisable(false);
+        
+        // NOW CHECK WHETHER SNAP SHOULD BE ENABLED OR NOT
+        if (gridRenderCheckBox.isSelected())
+            gridSnapCheckBox.setDisable(false);
+        else
+            gridSnapCheckBox.setDisable(true);
     }
 
     public Pane getCanvas() 

@@ -13,6 +13,5 @@ package jcd.data;
 public enum JClassDesignerState 
 {
     SELECTING_SHAPE,
-    RESIZING_SHAPE,
-    DRAGGING_SHAPE
+    RESIZING_SHAPE
 }
