@@ -59,6 +59,17 @@ public class DataManager implements AppDataComponent
         hashClasses.put(obj.getClassName(), obj);
         classesList.add(obj);
     }
+    
+    /**
+     * This method removes the class object from the data manager.
+     * @param obj 
+     * the object to be removed
+     */
+    public void removeClassObject(ClassObject obj)
+    {
+        hashClasses.remove(obj.getClassName());
+        classesList.remove(obj);
+    }
 
     public HashMap<String, ClassObject> getHashClasses()
     {

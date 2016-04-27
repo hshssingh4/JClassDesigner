@@ -102,15 +102,56 @@ public class PageEditController
         int x = (int)(Math.random() * (canvas.getWidth() - (int)(DEFAULT_WIDTH)));
         int y = (int) ((canvas.getHeight()/2) - (DEFAULT_HEIGHT/2));
         
-        Box box = new Box();
-        box.getMainVBox().setTranslateX(x);
-        box.getMainVBox().setTranslateY(y);
-        
         // Now initialize the class object
-        ClassObject obj = new ClassObject(randomClassNameString, box);
+        ClassObject obj = new ClassObject();
+        obj.setClassName(randomClassNameString);
+        obj.setBox(new Box(x, y));
         obj.setPackageName(null);
         obj.setParentName(null);
         obj.setInterfaceType(false);
+        obj.setInterfaceNames(new ArrayList<>());
+        obj.setVariables(new ArrayList<>());
+        obj.setMethods(new ArrayList<>());
+        obj.setJavaApiPackages(new ArrayList<>());
+        obj.setLineConnectors(new ArrayList<>());
+        
+        if (dataManager.checkIfUnique(obj))
+        {
+            canvas.getChildren().add(obj.getBox().getMainVBox());
+            dataManager.addClassObject(obj);
+            // AND SELECT IT
+            dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
+            workspace.getCanvasEditController().handleSelectionRequest(obj);
+        }
+        
+        app.getGUI().updateToolbarControls(false);
+        workspace.reloadWorkspace();
+    }
+    
+    /**
+     * Handles the request for adding the interface object. It first initializes an interface
+     * object and then puts it on the canvas.
+     */
+    public void handleAddInterfaceRequest() 
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+         
+        int randomInt = (int) (Math.random() * 100);
+        String randomClassNameString = "DummyInterface" + randomInt;
+        
+        // Initialize the box
+        // x and y values where the box will be origined
+        int x = (int)(Math.random() * (canvas.getWidth() - (int)(DEFAULT_WIDTH)));
+        int y = (int) ((canvas.getHeight()/2) - (DEFAULT_HEIGHT/2));
+        
+        // Now initialize the class object
+        ClassObject obj = new ClassObject();
+        obj.setClassName(randomClassNameString);
+        obj.setBox(new Box(x, y));
+        obj.setPackageName(null);
+        obj.setParentName(null);
+        obj.setInterfaceType(true);
         obj.setInterfaceNames(new ArrayList<>());
         obj.setVariables(new ArrayList<>());
         obj.setMethods(new ArrayList<>());
@@ -179,6 +220,48 @@ public class PageEditController
                 selectedObject.setPackageName(packageName);
         }
         
+        workspace.reloadWorkspace();
+    }
+    
+    /**
+     * This method handles the remove request for the selected object in the
+     * workspace.
+     */
+    public void handleRemoveRequest()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        
+        dataManager.removeClassObject(workspace.getSelectedObject());
+        workspace.setSelectedObject(null);
+        
+        workspace.reloadWorkspace();
+    }
+    
+    /**
+     * This method helps in zooming in the workspace currently being worked on.
+     */
+    public void handleZoomInRequest()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+
+        canvas.setScaleX(canvas.getScaleX() * 1.25);
+        canvas.setScaleY(canvas.getScaleY() * 1.25);
+        
+        workspace.reloadWorkspace();
+    }
+    
+    /**
+     * This method helps in zooming out the workspace currently being worked on.
+     */
+    public void handleZoomOutRequest()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+        
+        canvas.setScaleX(canvas.getScaleX() * 0.8);
+        canvas.setScaleY(canvas.getScaleY() * 0.8);
+
         workspace.reloadWorkspace();
     }
 }

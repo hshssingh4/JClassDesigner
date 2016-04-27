@@ -27,16 +27,8 @@ public class ClassObject
     
     /**
      * Constructor to initialize the class object.
-     * @param className
-     * the name of this class
-     * @param box 
-     * the box that displays this class
      */
-    public ClassObject(String className, Box box)
-    {
-        this.className = className;
-        this.box = box;
-    }
+    public ClassObject() {}
     
     /**
      * This checks if whether the two class objects are equal or not.
@@ -76,6 +68,8 @@ public class ClassObject
     {
         this.className = className;
     }
+    
+    
 
     public String getPackageName()
     {
@@ -100,6 +94,11 @@ public class ClassObject
     public Box getBox()
     {
         return box;
+    }
+
+    public void setBox(Box box) 
+    {
+        this.box = box;
     }
     
     public String getParentName() 

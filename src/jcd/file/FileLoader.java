@@ -112,11 +112,9 @@ public class FileLoader
         int translateX = jsoBox.getInt(JSON_TRANSLATE_X);
         int translateY = jsoBox.getInt(JSON_TRANSLATE_Y);
         
-        Box box = new Box();
-        box.getMainVBox().setTranslateX(translateX);
-        box.getMainVBox().setTranslateY(translateY);
-        
-        classObject = new ClassObject(className, box);
+        classObject = new ClassObject();
+        classObject.setClassName(className);
+        classObject.setBox(new Box(translateX, translateY));
         classObject.setParentName(parentName);
         classObject.setPackageName(packageName);
         classObject.setInterfaceType(interfaceType);

@@ -356,6 +356,18 @@ public class Workspace extends AppWorkspaceComponent
         addClassButton.setOnAction(e -> {
             pageEditController.handleAddClassRequest();
         });
+        addInterfaceButton.setOnAction(e -> {
+            pageEditController.handleAddInterfaceRequest();
+        });
+        removeButton.setOnAction(e -> {
+            pageEditController.handleRemoveRequest();
+        });
+        zoomInButton.setOnAction(e -> {
+            pageEditController.handleZoomInRequest();
+        });
+        zoomOutButton.setOnAction(e -> {
+            pageEditController.handleZoomOutRequest();
+        });
         
         // HANDLERS FOR CONTROLS ON THE RIGHT
         classNameTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {
@@ -637,6 +649,17 @@ public class Workspace extends AppWorkspaceComponent
             removeMethodButton.setDisable(true);
             removeButton.setDisable(true);
         }
+        
+        // NOW CHECK ENABLING OF THE ZOOM BUTTONS
+        if (canvas.getScaleX() > 2.00)
+            zoomInButton.setDisable(true);
+        else
+            zoomInButton.setDisable(false);
+        
+        if (canvas.getScaleX() < 0.50)
+            zoomOutButton.setDisable(true);
+        else
+            zoomOutButton.setDisable(false);
     }
 
     public Pane getCanvas() 

@@ -33,13 +33,17 @@ public class Box
 
     /**
      * Constructor to initialize this box.
+     * @param x
+     * @param y
      */
-    public Box()
+    public Box(int x, int y)
     {
         initClassVBox();
         initVariablesVBox();
         initMethodsVBox();
         mainVBox = new VBox(classVBox, variablesVBox, methodsVBox);
+        mainVBox.setTranslateX(x);
+        mainVBox.setTranslateY(y);
     }
     
     /**
