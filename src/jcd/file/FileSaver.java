@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -194,9 +195,69 @@ public class FileSaver
         JsonObject jso = Json.createObjectBuilder()
                 .add(JSON_TRANSLATE_X, box.getMainVBox().getTranslateX())
                 .add(JSON_TRANSLATE_Y, box.getMainVBox().getTranslateY())
+                .add(JSON_CLASS_TEXT_FIELDS, buildClassTextFieldsJsonArray(box))
+                .add(JSON_VARIABLES_TEXT_FIELDS, buildVariablesTextFieldsJsonArray(box))
+                .add(JSON_METHODS_TEXT_FIELDS, buildMethodsTextFieldsJsonArray(box))
 		.build();
         
         return jso;
+    }
+    
+    private JsonArray buildClassTextFieldsJsonArray(Box box)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        for (Object obj: box.getClassVBox().getChildren())
+        {
+            Text text = (Text) obj;
+            JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_TEXT, text.getText())
+                .add(JSON_STYLE_CLASS, text.getStyleClass().get(0))
+                .add(JSON_IS_UNDERLINED, text.isUnderline())
+		.build();
+            arrayBuilder.add(jso);
+        }
+        
+        JsonArray jA = arrayBuilder.build();
+	return jA;
+    }
+    
+    private JsonArray buildVariablesTextFieldsJsonArray(Box box)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        for (Object obj: box.getVariablesVBox().getChildren())
+        {
+            Text text = (Text) obj;
+            JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_TEXT, text.getText())
+                .add(JSON_STYLE_CLASS, text.getStyleClass().get(0))
+                .add(JSON_IS_UNDERLINED, text.isUnderline())
+		.build();
+            arrayBuilder.add(jso);
+        }
+        
+        JsonArray jA = arrayBuilder.build();
+	return jA;
+    }
+    
+    private JsonArray buildMethodsTextFieldsJsonArray(Box box)
+    {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        
+        for (Object obj: box.getMethodsVBox().getChildren())
+        {
+            Text text = (Text) obj;
+            JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_TEXT, text.getText())
+                .add(JSON_STYLE_CLASS, text.getStyleClass().get(0))
+                .add(JSON_IS_UNDERLINED, text.isUnderline())
+		.build();
+            arrayBuilder.add(jso);
+        }
+        
+        JsonArray jA = arrayBuilder.build();
+	return jA;
     }
     
     private JsonArray buildLineConnectorsJsonArray(ArrayList<LineConnector> lineConnectors)

@@ -37,6 +37,12 @@ public class FileManager implements AppFileComponent
     public static final String JSON_BOX_OBJECT = "box";
     public static final String JSON_TRANSLATE_X = "translate_x";
     public static final String JSON_TRANSLATE_Y = "translate_y";
+    public static final String JSON_CLASS_TEXT_FIELDS = "class_text_fields";
+    public static final String JSON_VARIABLES_TEXT_FIELDS = "variables_text_fields";
+    public static final String JSON_METHODS_TEXT_FIELDS = "methods_text_fields";
+    public static final String JSON_TEXT = "text";
+    public static final String JSON_STYLE_CLASS = "style_class";
+    public static final String JSON_IS_UNDERLINED = "underlined";
     public static final String JSON_START_X = "start_x";
     public static final String JSON_START_Y = "start_y";
     public static final String JSON_END_X = "end_x";

@@ -78,9 +78,6 @@ import saf.ui.AppGUI;
  */
 public class Workspace extends AppWorkspaceComponent
 {
-    double originalSceneX, originalSceneY;
-    double originalTranslateX, originalTranslateY;
-    
     public static final String PRIVATE = "private";
     public static final String PUBLIC = "public";
     public static final String PROTECTED = "protected";
@@ -402,35 +399,13 @@ public class Workspace extends AppWorkspaceComponent
                 if (e.getClickCount() == 2)
                 {
                     canvasEditController.handleSelectionRequest(e.getX(), e.getY());
-                    if (selectedObject != null)
-                    {
-                        PackagesDialog dialog = new PackagesDialog(app.getGUI().getWindow(), selectedObject);
-                        dialog.makeVisible();
-                    }
+                    pageEditController.handleOpenPackagesDialogRequest();
                 }
-            
-                if (selectedObject != null)
-                {
-                    originalSceneX = e.getSceneX();
-                    originalSceneY = e.getSceneY();
-                    originalTranslateX = selectedObject.getBox().getMainVBox().getTranslateX();
-                    originalTranslateY = selectedObject.getBox().getMainVBox().getTranslateY();
-            
-                    canvas.setOnMouseDragged((MouseEvent e1) -> {
-                        if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
-                        {
-                            if (selectedObject != null)
-                            {
-                                double offsetX = e1.getSceneX() - originalSceneX;
-                                double offsetY = e1.getSceneY() - originalSceneY;
-                                double newTranslateX = originalTranslateX + offsetX;
-                                double newTranslateY = originalTranslateY + offsetY;
-                    
-                                canvasEditController.handlePositionChangeRequest(newTranslateX, newTranslateY);
-                            }
-                        }
-                    });
-                }
+                canvas.setOnMouseDragged((MouseEvent e1) -> {
+                    if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
+                        if (selectedObject != null) 
+                            canvasEditController.handlePositionChangeRequest(e1.getX(), e1.getY());
+                });
             }
             else if (dataManager.isInState(JClassDesignerState.RESIZING_SHAPE))
             {
@@ -454,10 +429,6 @@ public class Workspace extends AppWorkspaceComponent
                 });
             }
          });
-                
-        canvas.setOnMouseReleased((MouseEvent e) -> {
-            reloadWorkspace();
-        });
     }
     
     @Override
@@ -502,23 +473,15 @@ public class Workspace extends AppWorkspaceComponent
         
         // NOW CHECK THE GRID RENDER AND GRID SNAP
         if (gridRenderCheckBox.isSelected())
-            renderLines();
+            canvasEditController.handleRenderLinesRequest();
         if (gridSnapCheckBox.isSelected())
             canvasEditController.handleSnapRequest();
         
         for (ClassObject classObject: dataManager.getClassesList())
-        {
             canvas.getChildren().add(classObject.getBox().getMainVBox());
-            reloadClassTextFields(classObject);
-            reloadVariablesTextFields(classObject);
-            reloadMethodsTextFields(classObject);
-        }
         
         if (selectedObject != null)
-        {
-            classNameTextField.setText(selectedObject.getClassName());
-            packageNameTextField.setText(selectedObject.getPackageName());
-        }
+            loadComponentToolbar();
         else
         {
             classNameTextField.clear();
@@ -531,164 +494,10 @@ public class Workspace extends AppWorkspaceComponent
         enableLegalButtons();
     }
     
-    private void renderLines()
+    private void loadComponentToolbar()
     {
-        int numHorizontalLines = (int) canvas.getHeight();
-        for (int i = 0; i < numHorizontalLines; i = i + 20)
-        {
-            Line horizontalLine = new Line();
-            horizontalLine.setStartX(0);
-            horizontalLine.setStartY(i);
-            horizontalLine.setEndX(canvas.getWidth());
-            horizontalLine.setEndY(i);
-            canvas.getChildren().addAll(horizontalLine);
-        }
-        int numVerticalLines = (int) canvas.getWidth();
-        for (int i = 0; i < numVerticalLines; i = i + 20)
-        {
-            Line verticalLine = new Line();
-            verticalLine.setStartX(i);
-            verticalLine.setStartY(0);
-            verticalLine.setEndX(i);
-            verticalLine.setEndY(canvas.getHeight());
-            canvas.getChildren().add(verticalLine);
-       }
-    }
-    
-    private void reloadClassTextFields(ClassObject classObject)
-    {
-        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
-        Box box = classObject.getBox();
-        // THEN CLEAR ITS CONTENTS
-        box.getClassVBox().getChildren().clear();
-        
-        // NOW ADD IT AGAIN
-        Text text = new Text(classObject.getClassName());
-        text.getStyleClass().add(CLASS_SUBHEADING_LABEL);
-        box.getClassVBox().getChildren().add(text);
-        
-        // Also, if it is an interface or an abstract class, add the extra text
-        if (classObject.isInterfaceType())
-        {
-            Text interfaceText = new Text("<<interface>>");
-            box.getClassVBox().getChildren().add(interfaceText);
-        }
-        else if (classObject.isAbstractType())
-        {
-            Text interfaceText = new Text("{abstract}");
-            box.getClassVBox().getChildren().add(interfaceText);
-        }
-    }
-    
-    private void reloadVariablesTextFields(ClassObject classObject)
-    {
-        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
-        Box box = classObject.getBox();
-        // THEN CLEAR ITS CONTENTS
-        box.getVariablesVBox().getChildren().clear();
-        
-        // NOW ADD IT AGAIN
-        for (VariableObject variable: classObject.getVariables())
-        {
-            Text text = getVariableTextField(variable);
-            text.getStyleClass().add(CLASS_TEXT_LABEL);
-            if (variable.isStaticType())
-                text.setUnderline(true);
-            box.getVariablesVBox().getChildren().add(text);
-        }
-    }
-    
-    private Text getVariableTextField(VariableObject variable)
-    {
-        Text text = new Text();
-        String textString = new String();
-        
-        String name = variable.getName();
-        String type = variable.getType();
-        String scope = variable.getScope();
-        
-        switch (scope)
-        {
-            case PUBLIC:
-                textString += PLUS;
-                break;
-            case PRIVATE:
-                textString += MINUS;
-                break;
-            case PROTECTED:
-                textString += HASHTAG;
-                break;
-        }
-        
-        textString += SPACE + name + COLON + SPACE + type;
-        text.setText(textString);
-        
-        return text;
-    }
-    
-    private void reloadMethodsTextFields(ClassObject classObject)
-    {
-        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
-        Box box = classObject.getBox();
-        // THEN CLEAR ITS CONTENTS
-        box.getMethodsVBox().getChildren().clear();
-        
-        // NOW ADD IT AGAIN
-        for (MethodObject method: classObject.getMethods())
-        {
-            Text text = getMethodTextField(method);
-            text.getStyleClass().add(CLASS_TEXT_LABEL);
-            if (method.isStaticType())
-                text.setUnderline(true);
-            box.getMethodsVBox().getChildren().add(text);
-        }
-    }
-    
-    private Text getMethodTextField(MethodObject method)
-    {
-        Text text = new Text();
-        String textString = new String();
-        
-        String name = method.getName();
-        String type = method.getType();
-        String scope = method.getScope();
-        
-        switch (scope)
-        {
-            case PUBLIC:
-                textString += PLUS;
-                break;
-            case PRIVATE:
-                textString += MINUS;
-                break;
-            case PROTECTED:
-                textString += HASHTAG;
-                break;
-        }
-        
-        textString += SPACE + name + "(" + methodArgumentsString(method) + ")" 
-                + COLON + SPACE + type;
-        text.setText(textString);
-        
-        return text;
-    }
-    
-    private String methodArgumentsString(MethodObject method)
-    {
-        String answer = "";
-        ArrayList<ArgumentObject> arguments = method.getArguments();
-        
-        for (int i = 0; i < arguments.size(); i++)
-        {
-            ArgumentObject argument = arguments.get(i);
-            
-            if (i == arguments.size() - 1)
-                answer += argument.getName() + COLON + SPACE + argument.getType();
-            else
-                answer += argument.getName() + COLON + SPACE + argument.getType() + ", ";
-        }
-        
-        return answer;
+        classNameTextField.setText(selectedObject.getClassName());
+        packageNameTextField.setText(selectedObject.getPackageName());
     }
     
     private void enableLegalButtons()
@@ -745,11 +554,6 @@ public class Workspace extends AppWorkspaceComponent
     public Pane getCanvas() 
     {
         return canvas;
-    }
-
-    public ScrollPane getCanvasScrollPane() 
-    {
-        return canvasScrollPane;
     }
 
     public ClassObject getSelectedObject()

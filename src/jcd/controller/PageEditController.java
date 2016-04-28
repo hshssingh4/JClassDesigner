@@ -15,7 +15,10 @@ import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
+import jcd.gui.PackagesDialog;
 import jcd.gui.Workspace;
+import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
+import static saf.components.AppStyleArbiter.CLASS_TEXT_LABEL;
 
 /**
  * This class serves as a controller to handle all the user actions except the ones
@@ -114,6 +117,7 @@ public class PageEditController
         obj.setMethods(new ArrayList<>());
         obj.setJavaApiPackages(new ArrayList<>());
         obj.setLineConnectors(new ArrayList<>());
+        addClassTextFields(obj);
         
         if (dataManager.checkIfUnique(obj))
         {
@@ -157,6 +161,7 @@ public class PageEditController
         obj.setMethods(new ArrayList<>());
         obj.setJavaApiPackages(new ArrayList<>());
         obj.setLineConnectors(new ArrayList<>());
+        addClassTextFields(obj);
         
         if (dataManager.checkIfUnique(obj))
         {
@@ -169,6 +174,34 @@ public class PageEditController
         
         app.getGUI().updateToolbarControls(false);
         workspace.reloadWorkspace();
+    }
+    
+    // METHOD FOR FETCHING THE ARRAYLIST OF TEXT OBJECTS FOR CLASS BOX
+    private void addClassTextFields(ClassObject classObject)
+    {
+        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
+        Box box = classObject.getBox();
+        // THEN CLEAR ITS CONTENTS
+        box.getClassVBox().getChildren().clear();
+        
+        // NOW ADD IT AGAIN
+        Text text = new Text(classObject.getClassName());
+        text.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        box.getClassVBox().getChildren().add(text);
+        
+        // Also, if it is an interface or an abstract class, add the extra text
+        if (classObject.isInterfaceType())
+        {
+            Text interfaceText = new Text("<<interface>>");
+            interfaceText.getStyleClass().add(CLASS_TEXT_LABEL);
+            box.getClassVBox().getChildren().add(interfaceText);
+        }
+        else if (classObject.isAbstractType())
+        {
+            Text abstractText = new Text("{abstract}");
+            abstractText.getStyleClass().add(CLASS_TEXT_LABEL);
+            box.getClassVBox().getChildren().add(abstractText);
+        }
     }
     
     /**
@@ -236,5 +269,128 @@ public class PageEditController
         
         workspace.reloadWorkspace();
     }
+
+    public void handleOpenPackagesDialogRequest() 
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+
+        if (selectedObject != null) 
+        {
+            PackagesDialog dialog = new PackagesDialog(app.getGUI().getWindow(), selectedObject);
+            dialog.makeVisible();
+        }
+    }
     
+    
+    /*private void reloadVariablesTextFields(ClassObject classObject)
+    {
+        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
+        Box box = classObject.getBox();
+        // THEN CLEAR ITS CONTENTS
+        box.getVariablesVBox().getChildren().clear();
+        
+        // NOW ADD IT AGAIN
+        for (VariableObject variable: classObject.getVariables())
+        {
+            Text text = getVariableTextField(variable);
+            text.getStyleClass().add(CLASS_TEXT_LABEL);
+            if (variable.isStaticType())
+                text.setUnderline(true);
+            box.getVariablesVBox().getChildren().add(text);
+        }
+    }
+    
+    private Text getVariableTextField(VariableObject variable)
+    {
+        Text text = new Text();
+        String textString = new String();
+        
+        String name = variable.getName();
+        String type = variable.getType();
+        String scope = variable.getScope();
+        
+        switch (scope)
+        {
+            case PUBLIC:
+                textString += PLUS;
+                break;
+            case PRIVATE:
+                textString += MINUS;
+                break;
+            case PROTECTED:
+                textString += HASHTAG;
+                break;
+        }
+        
+        textString += SPACE + name + COLON + SPACE + type;
+        text.setText(textString);
+        
+        return text;
+    }
+    
+    private void reloadMethodsTextFields(ClassObject classObject)
+    {
+        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
+        Box box = classObject.getBox();
+        // THEN CLEAR ITS CONTENTS
+        box.getMethodsVBox().getChildren().clear();
+        
+        // NOW ADD IT AGAIN
+        for (MethodObject method: classObject.getMethods())
+        {
+            Text text = getMethodTextField(method);
+            text.getStyleClass().add(CLASS_TEXT_LABEL);
+            if (method.isStaticType())
+                text.setUnderline(true);
+            box.getMethodsVBox().getChildren().add(text);
+        }
+    }
+    
+    private Text getMethodTextField(MethodObject method)
+    {
+        Text text = new Text();
+        String textString = new String();
+        
+        String name = method.getName();
+        String type = method.getType();
+        String scope = method.getScope();
+        
+        switch (scope)
+        {
+            case PUBLIC:
+                textString += PLUS;
+                break;
+            case PRIVATE:
+                textString += MINUS;
+                break;
+            case PROTECTED:
+                textString += HASHTAG;
+                break;
+        }
+        
+        textString += SPACE + name + "(" + methodArgumentsString(method) + ")" 
+                + COLON + SPACE + type;
+        text.setText(textString);
+        
+        return text;
+    }
+    
+    private String methodArgumentsString(MethodObject method)
+    {
+        String answer = "";
+        ArrayList<ArgumentObject> arguments = method.getArguments();
+        
+        for (int i = 0; i < arguments.size(); i++)
+        {
+            ArgumentObject argument = arguments.get(i);
+            
+            if (i == arguments.size() - 1)
+                answer += argument.getName() + COLON + SPACE + argument.getType();
+            else
+                answer += argument.getName() + COLON + SPACE + argument.getType() + ", ";
+        }
+        
+        return answer;
+    }*/
 }

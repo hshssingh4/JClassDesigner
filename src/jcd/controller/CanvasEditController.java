@@ -40,6 +40,10 @@ public class CanvasEditController
     
     // HERE ARE THE CONSTANTS FOR RESIZING
     double originalPressLocation, originalWidth, originalHeight;
+    
+    // HERE ARE THE CONSTANTS FOR DRAGGING
+    double originalX, originalY;
+    double originalTranslateX, originalTranslateY;
   
     
     /**
@@ -92,9 +96,15 @@ public class CanvasEditController
                 // And now select the object
                 workspace.setSelectedObject(obj);
                 highlight(obj);
+                // NOW INITIALIZE THE CONSTANTS FOR RESIZING
+                ClassObject selectedObject = workspace.getSelectedObject();
+                originalX = layoutX;
+                originalY = layoutY;
+                originalTranslateX = selectedObject.getBox().getMainVBox().getTranslateX();
+                originalTranslateY = selectedObject.getBox().getMainVBox().getTranslateY();
             }
             
-            //workspace.reloadWorkspace();
+            workspace.reloadWorkspace();
         }
     }
     
@@ -161,15 +171,20 @@ public class CanvasEditController
     /**
      * This method handles the request where the user tries to relocate or
      * reposition the selected object.
-     * @param newTranslateX
-     * @param newTranslateY
+     * @param newX
+     * @param newY
      */
-    public void handlePositionChangeRequest(double newTranslateX, double newTranslateY)
+    public void handlePositionChangeRequest(double newX, double newY)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         ClassObject selectedObject = workspace.getSelectedObject();
         VBox box = selectedObject.getBox().getMainVBox();
-            
+
+        double offsetX = newX - originalX;
+        double offsetY = newY - originalY;
+        double newTranslateX = originalTranslateX + offsetX;
+        double newTranslateY = originalTranslateY + offsetY;
+        
         box.setTranslateX(newTranslateX);
         box.setTranslateY(newTranslateY);    
         
@@ -227,6 +242,38 @@ public class CanvasEditController
         canvas.setScaleY(canvas.getScaleY() * 0.8);
 
         workspace.reloadWorkspace();
+    }
+    
+    public void handleRenderLinesRequest()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+        
+        renderLines(canvas);
+    }
+    
+    private void renderLines(Pane canvas)
+    {
+        int numHorizontalLines = (int) canvas.getHeight();
+        for (int i = 0; i < numHorizontalLines; i = i + 20)
+        {
+            Line horizontalLine = new Line();
+            horizontalLine.setStartX(0);
+            horizontalLine.setStartY(i);
+            horizontalLine.setEndX(canvas.getWidth());
+            horizontalLine.setEndY(i);
+            canvas.getChildren().addAll(horizontalLine);
+        }
+        int numVerticalLines = (int) canvas.getWidth();
+        for (int i = 0; i < numVerticalLines; i = i + 20)
+        {
+            Line verticalLine = new Line();
+            verticalLine.setStartX(i);
+            verticalLine.setStartY(0);
+            verticalLine.setEndX(i);
+            verticalLine.setEndY(canvas.getHeight());
+            canvas.getChildren().add(verticalLine);
+       }
     }
     
     public void handleSnapRequest()

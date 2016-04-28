@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -23,6 +24,7 @@ import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import saf.components.AppDataComponent;
 import static jcd.file.FileManager.*;
+import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 
 /**
  *
@@ -105,16 +107,12 @@ public class FileLoader
         ArrayList<VariableObject> variables = loadVariables(jsoClass);
         ArrayList<MethodObject> methods = loadMethods(jsoClass);
         ArrayList<String> javaApiPackages = loadJavaApiPackages(jsoClass);
+        Box box = loadBoxObject(jsoClass);
         ArrayList<LineConnector> lineConnectors = loadLineConnectors(jsoClass);
-        
-        // ALSO GET THE X AND Y COORDINATES FOR THE BOX
-        JsonObject jsoBox = jsoClass.getJsonObject(JSON_BOX_OBJECT);
-        int translateX = jsoBox.getInt(JSON_TRANSLATE_X);
-        int translateY = jsoBox.getInt(JSON_TRANSLATE_Y);
         
         classObject = new ClassObject();
         classObject.setClassName(className);
-        classObject.setBox(new Box(translateX, translateY));
+        classObject.setBox(box);
         classObject.setParentName(parentName);
         classObject.setPackageName(packageName);
         classObject.setInterfaceType(interfaceType);
@@ -215,6 +213,84 @@ public class FileLoader
         }
         
         return javaApiPackages;
+    }
+    
+    private Box loadBoxObject(JsonObject jsoClass)
+    {
+        // ALSO GET THE X AND Y COORDINATES FOR THE BOX
+        JsonObject jsoBox = jsoClass.getJsonObject(JSON_BOX_OBJECT);
+        int translateX = jsoBox.getInt(JSON_TRANSLATE_X);
+        int translateY = jsoBox.getInt(JSON_TRANSLATE_Y);
+        
+        Box box = new Box(translateX, translateY);
+        box.getClassVBox().getChildren().addAll(loadClassTextFields(jsoBox));
+        box.getVariablesVBox().getChildren().addAll(loadVariablesTextFields(jsoBox));
+        box.getMethodsVBox().getChildren().addAll(loadMethodsTextFields(jsoBox));
+        
+        return box;
+    }
+    
+    private ArrayList<Text> loadClassTextFields(JsonObject jsoBox)
+    {
+        ArrayList<Text> classTextFields = new ArrayList<>();
+        
+        JsonArray classTextFieldsJsonArray = jsoBox.getJsonArray(JSON_CLASS_TEXT_FIELDS);
+        
+        for (int i = 0; i < classTextFieldsJsonArray.size(); i++)
+        {
+            JsonObject jsoText = classTextFieldsJsonArray.getJsonObject(i);
+            String textString = jsoText.getString(JSON_TEXT);
+            String styleClass = jsoText.getString(JSON_STYLE_CLASS);
+            boolean underlined = jsoText.getBoolean(JSON_IS_UNDERLINED);
+            Text text = new Text(textString);
+            text.getStyleClass().add(styleClass);
+            text.setUnderline(underlined);
+            classTextFields.add(text);
+        }
+        
+        return classTextFields;
+    }
+    
+    private ArrayList<Text> loadVariablesTextFields(JsonObject jsoBox)
+    {
+        ArrayList<Text> variablesTextFields = new ArrayList<>();
+        
+        JsonArray variablesTextFieldsJsonArray = jsoBox.getJsonArray(JSON_VARIABLES_TEXT_FIELDS);
+        
+        for (int i = 0; i < variablesTextFieldsJsonArray.size(); i++)
+        {
+            JsonObject jsoText = variablesTextFieldsJsonArray.getJsonObject(i);
+            String textString = jsoText.getString(JSON_TEXT);
+            String styleClass = jsoText.getString(JSON_STYLE_CLASS);
+            boolean underlined = jsoText.getBoolean(JSON_IS_UNDERLINED);
+            Text text = new Text(textString);
+            text.getStyleClass().add(styleClass);
+            text.setUnderline(underlined);
+            variablesTextFields.add(text);
+        }
+        
+        return variablesTextFields;
+    }
+    
+    private ArrayList<Text> loadMethodsTextFields(JsonObject jsoBox)
+    {
+        ArrayList<Text> methodsTextFields = new ArrayList<>();
+        
+        JsonArray methodsTextFieldsJsonArray = jsoBox.getJsonArray(JSON_METHODS_TEXT_FIELDS);
+        
+        for (int i = 0; i < methodsTextFieldsJsonArray.size(); i++)
+        {
+            JsonObject jsoText = methodsTextFieldsJsonArray.getJsonObject(i);
+            String textString = jsoText.getString(JSON_TEXT);
+            String styleClass = jsoText.getString(JSON_STYLE_CLASS);
+            boolean underlined = jsoText.getBoolean(JSON_IS_UNDERLINED);
+            Text text = new Text(textString);
+            text.getStyleClass().add(styleClass);
+            text.setUnderline(underlined);
+            methodsTextFields.add(text);
+        }
+        
+        return methodsTextFields;
     }
     
     private ArrayList<LineConnector> loadLineConnectors(JsonObject jsoClass)

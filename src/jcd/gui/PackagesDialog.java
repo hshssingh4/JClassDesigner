@@ -5,9 +5,7 @@
  */
 package jcd.gui;
 
-import com.sun.glass.ui.Window;
 import java.util.ArrayList;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -28,6 +26,8 @@ import jcd.data.ClassObject;
 public class PackagesDialog extends Stage
 {
     public static final String TITLE = "Java API Packages: ";
+    public static final int DEFAULT_HEIGHT = 350;
+    public static final int DEFAULT_WIDTH = 350;
     
     BorderPane borderPane;
     VBox textFieldsVBox;
@@ -113,6 +113,7 @@ public class PackagesDialog extends Stage
         borderPane = new BorderPane();
         borderPane.setTop(buttonsBox);
         borderPane.setCenter(textFieldsVBox);
+        borderPane.setPrefSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
     
     private void addPackageNames()
