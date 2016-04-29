@@ -15,8 +15,12 @@ import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
+import jcd.gui.ApiInterfacesDialog;
+import jcd.gui.LocalInterfacesDialog;
 import jcd.gui.PackagesDialog;
+import jcd.gui.VariableDialog;
 import jcd.gui.Workspace;
+import static jcd.gui.Workspace.NONE;
 import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 import static saf.components.AppStyleArbiter.CLASS_TEXT_LABEL;
 
@@ -279,6 +283,57 @@ public class PageEditController
         {
             PackagesDialog dialog = new PackagesDialog(app.getGUI().getWindow(), selectedObject);
             dialog.makeVisible();
+        }
+    }
+    
+    public void handleOpenLocalInterfacesDialogRequest() 
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+
+        if (selectedObject != null) 
+        {
+            LocalInterfacesDialog dialog = new LocalInterfacesDialog(app.getGUI().getWindow(),
+                    selectedObject, dataManager);
+            dialog.makeVisible();
+        }
+    }
+    
+    public void handleOpenApiInterfacesDialogRequest() 
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+
+        if (selectedObject != null) 
+        {
+            ApiInterfacesDialog dialog = new ApiInterfacesDialog(app.getGUI().getWindow(),
+                    selectedObject, dataManager);
+            dialog.makeVisible();
+        }
+    }
+    
+    public void handleOpenVariableDialogRequest() 
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        if (selectedObject != null) 
+        {
+            VariableDialog dialog = new VariableDialog(app.getGUI().getWindow(),
+                    selectedObject, app);
+            dialog.makeVisible();
+        }
+    }
+    
+    public void handleParentClassRequest(String className)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        if (selectedObject != null)
+        {
+            if (className.equals(NONE) || className.isEmpty())
+                selectedObject.setParentName(null);
+            else
+                selectedObject.setParentName(className);
         }
     }
     

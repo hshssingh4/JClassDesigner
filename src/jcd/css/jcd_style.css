@@ -88,7 +88,7 @@ and open the template in the editor.
 // CSS class for the elements inside the components of the component toolbar
 .component_child_element
 {
-    -fx-background-color: #ccccff;
+    -fx-background-color: #d8d8ff;
     -fx-background-radius: 5.0;
     -fx-padding: 15;
     -fx-border-width: 2px;

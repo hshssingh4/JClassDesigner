@@ -6,7 +6,6 @@
 package jcd.gui;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -16,24 +15,27 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import jcd.JClassDesigner;
 import static jcd.PropertyType.ADD_CLASS_ICON;
 import static jcd.PropertyType.ADD_CLASS_TOOLTIP;
@@ -61,13 +63,9 @@ import static jcd.PropertyType.ZOOM_OUT_ICON;
 import static jcd.PropertyType.ZOOM_OUT_TOOLTIP;
 import jcd.controller.CanvasEditController;
 import jcd.controller.PageEditController;
-import jcd.data.ArgumentObject;
-import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
-import jcd.data.MethodObject;
-import jcd.data.VariableObject;
 import saf.AppTemplate;
 import saf.components.AppWorkspaceComponent;
 import saf.ui.AppGUI;
@@ -93,6 +91,7 @@ public class Workspace extends AppWorkspaceComponent
     public static final String HASHTAG = "#";
     public static final String COLON = ":";
     public static final String SPACE = " ";
+    public static final String NONE = "None";
         
     // HERE'S THE APP
     AppTemplate app;
@@ -131,9 +130,18 @@ public class Workspace extends AppWorkspaceComponent
     Label packageLabel;
     TextField packageNameTextField;
     
-    // Third row
-    Label parentLabel;
-    ComboBox<String> parentComboBox;
+    // Third row (Parent)
+    ToggleGroup parentClassGroup;
+    RadioButton localParentClassRadioButton;
+    ComboBox<String> parentClassComboBox;
+    RadioButton apiParentClassRadioButton;
+    TextField parentClassTextField;
+    //Third Row (Interfaces)
+    Label localInterfacesLabel;
+    Button addLocalInterfacesButton;
+    Label apiInterfacesLabel;
+    Button addApiInterfacesButton;
+    
     
     // Fourth row
     VBox variablesVBox;
@@ -141,6 +149,7 @@ public class Workspace extends AppWorkspaceComponent
     Label variablesLabel;
     Button addVariableButton;
     Button removeVariableButton;
+    ScrollPane variablesTableViewScrollPane;
     TableView variablesTableView;
     
     // Fifth row
@@ -149,6 +158,7 @@ public class Workspace extends AppWorkspaceComponent
     Label methodsLabel;
     Button addMethodButton;
     Button removeMethodButton;
+    ScrollPane methodsTableViewScrollPane;
     TableView methodsTableView;
     
     // Selected Object
@@ -234,7 +244,7 @@ public class Workspace extends AppWorkspaceComponent
     private void initComponentToolbar()
     {
         componentToolbar = new VBox(20);
-        componentToolbar.setMaxWidth(300);
+        componentToolbar.setMaxWidth(400);
         initGridPane();
         initVariablesRow();
         initMethodsRow();
@@ -249,11 +259,12 @@ public class Workspace extends AppWorkspaceComponent
         gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
+        ColumnConstraints columnConstraint = new ColumnConstraints();
+        columnConstraint.setHgrow(Priority.ALWAYS);
+        gridPane.getColumnConstraints().add(columnConstraint);
         
         // First row
         classNameLabel = new Label("Class Name:");
-        classNameLabel.setMinWidth(Region.USE_PREF_SIZE);
-        classNameLabel.setMaxWidth(Region.USE_PREF_SIZE);
         classNameTextField = new TextField();
         classNameTextField.setDisable(true);
         classNameTextField.setAlignment(Pos.BOTTOM_RIGHT);
@@ -267,21 +278,49 @@ public class Workspace extends AppWorkspaceComponent
         packageNameTextField.setPromptText("Enter Package Name");
         
         // Third row
-        parentLabel = new Label("Parent:");
-        parentComboBox = new ComboBox<>();
-        parentComboBox.setMaxWidth(Double.MAX_VALUE);
-        parentComboBox.setTooltip(new Tooltip("Choose Parent"));
+        parentClassGroup = new ToggleGroup();
+        
+        localParentClassRadioButton = new RadioButton("Local Parent: ");
+        localParentClassRadioButton.setToggleGroup(parentClassGroup);
+        parentClassComboBox = new ComboBox<>();
+        parentClassComboBox.getItems().add(NONE);
+        parentClassComboBox.setMaxWidth(Double.MAX_VALUE);
+        parentClassComboBox.setTooltip(new Tooltip("Choose Local Parent Class"));
+        
+        // Fourth row
+        apiParentClassRadioButton = new RadioButton("API Parent: ");
+        apiParentClassRadioButton.setToggleGroup(parentClassGroup);
+        parentClassTextField = new TextField();
+        parentClassTextField.setDisable(true);
+        parentClassTextField.setAlignment(Pos.BOTTOM_RIGHT);
+        parentClassTextField.setPromptText("Enter Java API Class");
+        
+        // Fifth row
+        localInterfacesLabel = new Label("Local Interfaces: ");
+        addLocalInterfacesButton = new Button("Add Local Interfaces");
+        addLocalInterfacesButton.setMaxWidth(Double.MAX_VALUE);
+        apiInterfacesLabel = new Label("API Interfaces: ");
+        addApiInterfacesButton = new Button("Add API Interfaces");
+        addApiInterfacesButton.setMaxWidth(Double.MAX_VALUE);
         
         // Now add these rows to the grid pane
         gridPane.add(classNameLabel, 0, 0);
         gridPane.add(classNameTextField, 1, 0);
         gridPane.add(packageLabel, 0, 1);
         gridPane.add(packageNameTextField, 1, 1);
-        gridPane.add(parentLabel, 0, 2);
-        gridPane.add(parentComboBox, 1, 2);
+        gridPane.add(localParentClassRadioButton, 0, 2);
+        gridPane.add(parentClassComboBox, 1, 2);
+        gridPane.add(apiParentClassRadioButton, 0, 3);
+        gridPane.add(parentClassTextField, 1, 3);
+        gridPane.add(localInterfacesLabel, 0, 4);
+        gridPane.add(addLocalInterfacesButton, 1, 4);
+        gridPane.add(apiInterfacesLabel, 0, 5);
+        gridPane.add(addApiInterfacesButton, 1, 5);
         
         // Align the combo box to the right of the grid pane
-        GridPane.setHalignment(parentComboBox, HPos.RIGHT);
+        GridPane.setHalignment(parentClassComboBox, HPos.RIGHT);
+        GridPane.setHalignment(addLocalInterfacesButton, HPos.RIGHT);
+        GridPane.setHalignment(addApiInterfacesButton, HPos.RIGHT);
     }
     
     private void initVariablesRow()
@@ -299,15 +338,18 @@ public class Workspace extends AppWorkspaceComponent
         
         variablesTableView = new TableView();
         variablesTableView.setPrefHeight(200);
+        variablesTableViewScrollPane = new ScrollPane(variablesTableView);
 
         TableColumn variableNameCol = new TableColumn("Name");
         TableColumn variableTypeCol = new TableColumn("Type");
+        TableColumn variableScopeCol = new TableColumn("Scope");
         TableColumn variableStaticCol = new TableColumn("Static");
-        TableColumn variableAccessCol = new TableColumn("Access");
+        TableColumn variableFinalCol = new TableColumn("Final");
         
-        variablesTableView.getColumns().addAll(variableNameCol, variableTypeCol, variableStaticCol, variableAccessCol);
+        variablesTableView.getColumns().addAll(variableNameCol, variableTypeCol,
+                variableScopeCol, variableStaticCol, variableFinalCol);
         
-        variablesVBox.getChildren().addAll(variablesHBox, variablesTableView);
+        variablesVBox.getChildren().addAll(variablesHBox, variablesTableViewScrollPane);
     }
     
     private void initMethodsRow()
@@ -323,17 +365,20 @@ public class Workspace extends AppWorkspaceComponent
         
         methodsTableView = new TableView();
         methodsTableView.setPrefHeight(200);
+        methodsTableViewScrollPane = new ScrollPane(methodsTableView);
+        
         TableColumn variableNameCol = new TableColumn("Name");
-        TableColumn variableReturnCol = new TableColumn("Return");
         TableColumn variableTypeCol = new TableColumn("Type");
-        TableColumn variableAbstractCol = new TableColumn("Abstract");
+        TableColumn variableScopeCol = new TableColumn("Scope");
         TableColumn variableStaticCol = new TableColumn("Static");
-        TableColumn variableAccessCol = new TableColumn("Access");
+        TableColumn variableFinalCol = new TableColumn("Final");
+        TableColumn variableAbstractCol = new TableColumn("Abstract");
+        TableColumn variableArgumentsCol = new TableColumn("Arguments");
+
+        methodsTableView.getColumns().addAll(variableNameCol, variableTypeCol, variableScopeCol,
+                variableStaticCol, variableFinalCol, variableAbstractCol, variableArgumentsCol);
         
-        methodsTableView.getColumns().addAll(variableNameCol, variableReturnCol,
-                variableTypeCol, variableAbstractCol, variableStaticCol, variableAccessCol);
-        
-        methodsVBox.getChildren().addAll(methodsHBox, methodsTableView);
+        methodsVBox.getChildren().addAll(methodsHBox, methodsTableViewScrollPane);
     }
     
     private void initGUI()
@@ -384,6 +429,37 @@ public class Workspace extends AppWorkspaceComponent
         packageNameTextField.textProperty().addListener((observable, oldClassName, newClassName) -> {
             if (selectedObject != null)
                 pageEditController.handlePackageNameChangeRequest(newClassName);
+        });
+        parentClassGroup.selectedToggleProperty().addListener((observable, old_toggle, new_toggle) -> {
+            if (localParentClassRadioButton.isSelected()) 
+            {
+                if (!parentClassComboBox.getItems().contains(NONE))
+                    parentClassComboBox.getItems().add(NONE);
+                for (ClassObject obj: dataManager.getClassesList())
+                    if (!obj.equals(selectedObject) && !obj.isInterfaceType()
+                            && !parentClassComboBox.getItems().contains(obj.getClassName()))
+                        parentClassComboBox.getItems().add(obj.getClassName());
+                if (parentClassComboBox.getItems().contains(selectedObject.getClassName()))
+                    parentClassComboBox.getItems().remove(selectedObject.getClassName());
+            }
+            reloadWorkspace();
+        });
+        parentClassTextField.textProperty().addListener((observable, oldClassName, newParentName) -> {
+            if (selectedObject != null)
+                pageEditController.handleParentClassRequest(newParentName);
+        });
+        parentClassComboBox.setOnAction(e -> {
+            if (parentClassComboBox.getValue() != null)
+                pageEditController.handleParentClassRequest(parentClassComboBox.getValue());
+        });
+        addLocalInterfacesButton.setOnAction(e -> {
+            pageEditController.handleOpenLocalInterfacesDialogRequest();
+        });
+        addApiInterfacesButton.setOnAction(e -> {
+            pageEditController.handleOpenApiInterfacesDialogRequest();
+        });
+        addVariableButton.setOnAction(e -> {
+            pageEditController.handleOpenVariableDialogRequest();
         });
         
         // AND THESE ARE THE SELECTION, RESIZING, DRAGGING HANDLERS
@@ -447,8 +523,13 @@ public class Workspace extends AppWorkspaceComponent
         // For Component Toolbar
         classNameLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         packageLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
-        parentLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
-        parentComboBox.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        localParentClassRadioButton.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        apiParentClassRadioButton.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        parentClassComboBox.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        localInterfacesLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        apiInterfacesLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        addLocalInterfacesButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        addApiInterfacesButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
         gridPane.getStyleClass().add(CLASS_COMPONENT_CHILD_ELEMENT);
         
         variablesLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
@@ -467,8 +548,6 @@ public class Workspace extends AppWorkspaceComponent
     @Override
     public void reloadWorkspace() 
     {
-        DataManager dataManager = (DataManager) app.getDataComponent();
-        
         canvas.getChildren().clear();
         
         // NOW CHECK THE GRID RENDER AND GRID SNAP
@@ -486,6 +565,10 @@ public class Workspace extends AppWorkspaceComponent
         {
             classNameTextField.clear();
             packageNameTextField.clear();
+            localParentClassRadioButton.setSelected(false);
+            apiParentClassRadioButton.setSelected(false);
+            parentClassComboBox.getItems().clear();
+            parentClassTextField.clear();
         }
         
         // Now load all the childrens again
@@ -498,6 +581,39 @@ public class Workspace extends AppWorkspaceComponent
     {
         classNameTextField.setText(selectedObject.getClassName());
         packageNameTextField.setText(selectedObject.getPackageName());
+        if (selectedObject.isInterfaceType())
+        {
+            localParentClassRadioButton.setSelected(false);
+            apiParentClassRadioButton.setSelected(false);
+            parentClassComboBox.getItems().clear();
+            parentClassTextField.clear();
+        }
+        else
+        {   
+            if (selectedObject.getParentName() == null)
+            {
+                parentClassComboBox.setValue(NONE);
+                parentClassTextField.clear();
+            }
+            else if (dataManager.getHashClasses().containsKey(selectedObject.getParentName()))
+            {
+                localParentClassRadioButton.setSelected(true);
+                apiParentClassRadioButton.setSelected(false);
+                parentClassComboBox.setValue(selectedObject.getParentName());
+                String tempParentName = selectedObject.getParentName();
+                parentClassTextField.clear();
+                selectedObject.setParentName(tempParentName);
+            }
+            else
+            {
+                localParentClassRadioButton.setSelected(false);
+                apiParentClassRadioButton.setSelected(true);
+                String tempParentName = selectedObject.getParentName();
+                parentClassComboBox.setValue(NONE);
+                selectedObject.setParentName(tempParentName);
+                parentClassTextField.setText(selectedObject.getParentName());
+            }
+        }
     }
     
     private void enableLegalButtons()
@@ -512,7 +628,31 @@ public class Workspace extends AppWorkspaceComponent
         {
             classNameTextField.setDisable(false);
             packageNameTextField.setDisable(false);
-            parentComboBox.setDisable(false);
+            
+            if (selectedObject.isInterfaceType())
+            {
+                localParentClassRadioButton.setDisable(true);
+                apiParentClassRadioButton.setDisable(true);
+                parentClassComboBox.setDisable(true);
+                parentClassTextField.setDisable(true);
+            }
+            else
+            {
+                localParentClassRadioButton.setDisable(false);
+                apiParentClassRadioButton.setDisable(false);
+            }
+            if (localParentClassRadioButton.isSelected())
+            {
+                parentClassComboBox.setDisable(false);
+                parentClassTextField.setDisable(true);
+            } 
+            else if (apiParentClassRadioButton.isSelected())
+            {
+                parentClassComboBox.setDisable(true);
+                parentClassTextField.setDisable(false);
+            }
+            addLocalInterfacesButton.setDisable(false);
+            addApiInterfacesButton.setDisable(false);
             addVariableButton.setDisable(false);
             removeVariableButton.setDisable(false);
             addMethodButton.setDisable(false);
@@ -524,7 +664,12 @@ public class Workspace extends AppWorkspaceComponent
         {
             classNameTextField.setDisable(true);
             packageNameTextField.setDisable(true);
-            parentComboBox.setDisable(true);
+            localParentClassRadioButton.setDisable(true);
+            apiParentClassRadioButton.setDisable(true);
+            parentClassComboBox.setDisable(true);
+            parentClassTextField.setDisable(true);
+            addLocalInterfacesButton.setDisable(true);
+            addApiInterfacesButton.setDisable(true);
             addVariableButton.setDisable(true);
             removeVariableButton.setDisable(true);
             addMethodButton.setDisable(true);

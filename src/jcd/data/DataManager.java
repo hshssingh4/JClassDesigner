@@ -141,6 +141,28 @@ public class DataManager implements AppDataComponent
         return null;
     }
     
+    public ArrayList<String> fetchLocalInterfaceNames()
+    {
+        ArrayList<String> localInterfaceNames = new ArrayList<>();
+        
+        for (ClassObject obj: classesList)
+            if (obj.isInterfaceType())
+                localInterfaceNames.add(obj.getClassName());
+        
+        return localInterfaceNames;
+    }
+    
+    public ArrayList<String> fetchLocalInterfaceNames(ClassObject classObject)
+    {
+        ArrayList<String> classLocalInterfaceNames = new ArrayList<>();
+        
+        for (String interfaceName: classObject.getInterfaceNames())
+            if (hashClasses.containsKey(interfaceName))
+                classLocalInterfaceNames.add(interfaceName);
+        
+        return classLocalInterfaceNames;
+    }
+    
     public JClassDesignerState getState()
     {
 	return state;
