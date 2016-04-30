@@ -19,6 +19,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import saf.AppTemplate;
+import static saf.components.AppStyleArbiter.CLASS_COMPONENT_BUTTON;
+import static saf.components.AppStyleArbiter.CLASS_COMPONENT_CHILD_ELEMENT;
 
 /**
  *
@@ -27,8 +30,9 @@ import jcd.data.DataManager;
 public class ApiInterfacesDialog extends Stage
 {
     public static final String TITLE = "Java API Interfaces: ";
-    public static final int DEFAULT_HEIGHT = 350;
-    public static final int DEFAULT_WIDTH = 350;
+    
+    // This is our app
+    AppTemplate app;
     
     BorderPane borderPane;
     VBox textFieldsVBox;
@@ -44,24 +48,29 @@ public class ApiInterfacesDialog extends Stage
     
     DataManager dataManager;
     
-    public ApiInterfacesDialog(Stage primaryStage, ClassObject object, DataManager dataManager)
+    public ApiInterfacesDialog(AppTemplate initApp, ClassObject object)
     {
+        app = initApp;
+        
         initModality(Modality.WINDOW_MODAL);
-        initOwner(primaryStage);
+        initOwner(app.getGUI().getWindow());
         
         this.classObject = object;
-        this.dataManager = dataManager;
+        this.dataManager = (DataManager) app.getDataComponent();
         
         // Initialize the text field and buttons
         initTextFieldsVBox(classObject.getInterfaceNames());
         initButtonsBox();
         initBorderPane();
-        initStyle();
         
         // AND PUT IT IN THE WINDOW
         dialogScene = new Scene(borderPane);
         this.setScene(dialogScene);
         this.setTitle(TITLE + classObject.getClassName());
+        
+        // AND NOW THE STYLE
+        initStylesheet();
+        initStyle();
     }
     
     private void initTextFieldsVBox(ArrayList<String> interfaceNames)
@@ -91,6 +100,8 @@ public class ApiInterfacesDialog extends Stage
         // AND THEN REGISTER THEM TO RESPOND TO INTERACTIONS
         addButton.setOnAction(e -> {
             TextField textField = new TextField();
+            textField.setPromptText("Enter Interface Name! (eg. Runnable)");
+            textField.setAlignment(Pos.BOTTOM_LEFT);
             textField.focusedProperty().addListener(e1 -> {
                 if (textField.isFocused())
                     selectedTextField = textField;
@@ -120,7 +131,7 @@ public class ApiInterfacesDialog extends Stage
         borderPane = new BorderPane();
         borderPane.setTop(buttonsBox);
         borderPane.setCenter(textFieldsVBox);
-        borderPane.setPrefSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        borderPane.setPrefHeight(300);
     }
     
     private void addInterfaceNames()
@@ -134,12 +145,26 @@ public class ApiInterfacesDialog extends Stage
         }
     }
     
+    /**
+     * This function sets up the stylesheet to be used for specifying all
+     * style for this application. Note that it does not attach CSS style
+     * classes to controls, that must be done separately.
+     */
+    private void initStylesheet()
+    {
+	dialogScene.getStylesheets().addAll(
+                app.getGUI().getPrimaryScene().getStylesheets());
+    }
+    
     private void initStyle()
     {
+        addButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        deleteButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        doneButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        borderPane.getStyleClass().add(CLASS_COMPONENT_CHILD_ELEMENT);
         buttonsBox.setAlignment(Pos.BOTTOM_CENTER);
         buttonsBox.setPadding(new Insets(20, 20, 20, 20));
         textFieldsVBox.setPadding(new Insets(5, 20, 20, 20));
-        borderPane.setStyle("-fx-background-color: ghostwhite;");
     }
     
     public void makeVisible()

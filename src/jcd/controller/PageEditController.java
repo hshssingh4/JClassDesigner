@@ -6,8 +6,6 @@
 package jcd.controller;
 
 import java.util.ArrayList;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.TableView;
@@ -317,7 +315,7 @@ public class PageEditController
 
         if (selectedObject != null) 
         {
-            PackagesDialog dialog = new PackagesDialog(app.getGUI().getWindow(), selectedObject);
+            PackagesDialog dialog = new PackagesDialog(app, selectedObject);
             dialog.makeVisible();
         }
     }
@@ -329,8 +327,7 @@ public class PageEditController
 
         if (selectedObject != null) 
         {
-            LocalInterfacesDialog dialog = new LocalInterfacesDialog(app.getGUI().getWindow(),
-                    selectedObject, dataManager);
+            LocalInterfacesDialog dialog = new LocalInterfacesDialog(app, selectedObject);
             dialog.makeVisible();
         }
     }
@@ -342,8 +339,7 @@ public class PageEditController
 
         if (selectedObject != null) 
         {
-            ApiInterfacesDialog dialog = new ApiInterfacesDialog(app.getGUI().getWindow(),
-                    selectedObject, dataManager);
+            ApiInterfacesDialog dialog = new ApiInterfacesDialog(app, selectedObject);
             dialog.makeVisible();
         }
     }

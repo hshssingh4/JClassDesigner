@@ -24,7 +24,6 @@ import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import saf.components.AppDataComponent;
 import static jcd.file.FileManager.*;
-import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 
 /**
  *

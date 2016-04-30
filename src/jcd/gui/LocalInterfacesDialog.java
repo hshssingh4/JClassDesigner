@@ -17,7 +17,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import saf.AppTemplate;
 import static saf.components.AppStyleArbiter.CLASS_COMPONENT_BUTTON;
+import static saf.components.AppStyleArbiter.CLASS_COMPONENT_CHILD_ELEMENT;
 
 /**
  *
@@ -26,8 +28,11 @@ import static saf.components.AppStyleArbiter.CLASS_COMPONENT_BUTTON;
 public class LocalInterfacesDialog extends Stage
 {
     public static final String TITLE = "Local Interfaces: ";
-    public static final int DEFAULT_HEIGHT = 300;
-    public static final int DEFAULT_WIDTH = 650;
+    public static final int HEIGHT = 300;
+    public static final int WIDTH = 700;
+    
+    // This is our app
+    AppTemplate app;
     
     BorderPane borderPane;
     ListView<String> localInterfaceNamesListView;
@@ -41,13 +46,15 @@ public class LocalInterfacesDialog extends Stage
     ClassObject classObject;
     DataManager dataManager;
     
-    public LocalInterfacesDialog(Stage primaryStage, ClassObject classObject, DataManager dataManager)
+    public LocalInterfacesDialog(AppTemplate initApp, ClassObject classObject)
     {
+        app = initApp;
+        
         initModality(Modality.WINDOW_MODAL);
-        initOwner(primaryStage);
+        initOwner(app.getGUI().getWindow());
         
         this.classObject = classObject;
-        this.dataManager = dataManager;
+        this.dataManager = (DataManager) app.getDataComponent();
         
         // Initialize the text field and buttons
         initLeftListView(dataManager.fetchLocalInterfaceNames());
@@ -60,6 +67,10 @@ public class LocalInterfacesDialog extends Stage
         dialogScene = new Scene(borderPane);
         this.setScene(dialogScene);
         this.setTitle(TITLE + classObject.getClassName());
+        
+        // AND NOW THE STYLE
+        initStylesheet();
+        initStyle();
     }
     
     private void initLeftListView(ArrayList<String> localInterfaceNames)
@@ -125,15 +136,28 @@ public class LocalInterfacesDialog extends Stage
         borderPane.setLeft(localInterfaceNamesListView);
         borderPane.setCenter(buttonsBox);
         borderPane.setRight(classLocalInterfaceNamesListView);
-        borderPane.setPrefSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        borderPane.setPrefSize(WIDTH, HEIGHT);
+    }
+    
+    /**
+     * This function sets up the stylesheet to be used for specifying all
+     * style for this application. Note that it does not attach CSS style
+     * classes to controls, that must be done separately.
+     */
+    private void initStylesheet()
+    {
+	dialogScene.getStylesheets().addAll(
+                app.getGUI().getPrimaryScene().getStylesheets());
     }
     
     private void initStyle()
     {
+        addButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        removeButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        doneButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        borderPane.getStyleClass().add(CLASS_COMPONENT_CHILD_ELEMENT);
         buttonsBox.setAlignment(Pos.BOTTOM_CENTER);
         buttonsBox.setPadding(new Insets(20, 20, 20, 20));
-        borderPane.setStyle("-fx-background-color: ghostwhite;");
-        addButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
     }
     
     public void makeVisible()

@@ -14,8 +14,8 @@ import javafx.scene.layout.VBox;
  */
 public class Box 
 {
-    private static final double DEFAULT_WIDTH = 300.0;
-    private static final double DEFAULT_HEIGHT = 50.0;
+    private static final double DEFAULT_WIDTH = 180.0;
+    private static final double DEFAULT_HEIGHT = 30.0;
     
     private static final String CLASS_BOX_ELEMENTS = "box_elements";
     

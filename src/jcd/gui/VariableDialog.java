@@ -42,6 +42,7 @@ public class VariableDialog extends Stage
     public static final String VARIABLE_ADD_ERROR_MESSAGE = "Make sure text fields are "
             + "not empty!";
     
+    // This is our app
     AppTemplate app;
     
     Scene dialogScene;

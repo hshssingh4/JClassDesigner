@@ -256,14 +256,14 @@ public class Workspace extends AppWorkspaceComponent
         classNameLabel = new Label("Class Name:");
         classNameTextField = new TextField();
         classNameTextField.setDisable(true);
-        classNameTextField.setAlignment(Pos.BOTTOM_RIGHT);
+        classNameTextField.setAlignment(Pos.BOTTOM_LEFT);
         classNameTextField.setPromptText("Enter Class Name");
         
         // Second row
         packageLabel = new Label("Package:");
         packageNameTextField = new TextField();
         packageNameTextField.setDisable(true);
-        packageNameTextField.setAlignment(Pos.BOTTOM_RIGHT);
+        packageNameTextField.setAlignment(Pos.BOTTOM_LEFT);
         packageNameTextField.setPromptText("Enter Package Name");
         
         // Third row
@@ -281,7 +281,7 @@ public class Workspace extends AppWorkspaceComponent
         apiParentClassRadioButton.setToggleGroup(parentClassGroup);
         parentClassTextField = new TextField();
         parentClassTextField.setDisable(true);
-        parentClassTextField.setAlignment(Pos.BOTTOM_RIGHT);
+        parentClassTextField.setAlignment(Pos.BOTTOM_LEFT);
         parentClassTextField.setPromptText("Enter Java API Class");
         
         // Fifth row
@@ -447,8 +447,7 @@ public class Workspace extends AppWorkspaceComponent
             reloadWorkspace();
         });
         parentClassTextField.textProperty().addListener((observable, oldClassName, newParentName) -> {
-            if (selectedObject != null)
-                pageEditController.handleParentClassRequest(newParentName);
+            pageEditController.handleParentClassRequest(newParentName);
         });
         parentClassComboBox.setOnAction(e -> {
             if (parentClassComboBox.getValue() != null)
@@ -474,9 +473,12 @@ public class Workspace extends AppWorkspaceComponent
             pageEditController.handleRemoveVariableRequest(variable);
         });
         variablesTableView.getSelectionModel().selectedItemProperty().addListener(ov -> {
-            reloadWorkspace();
+            if (variablesTableView.getSelectionModel().getSelectedItem() != null) 
+            {
+                removeVariableButton.setDisable(false);
+                editVariableButton.setDisable(false);
+            }
         });
-        
         
         // AND THESE ARE THE SELECTION, RESIZING, DRAGGING HANDLERS
         canvas.setOnMouseMoved(e -> {
@@ -533,14 +535,12 @@ public class Workspace extends AppWorkspaceComponent
         // For View Toolbar
         zoomInButton.getStyleClass().add(CLASS_FILE_BUTTON);
         zoomOutButton.getStyleClass().add(CLASS_FILE_BUTTON);
-        gridRenderCheckBox.setFont(Font.font("Helvetica Neue", FontWeight.BOLD, FontPosture.REGULAR, 12));
-        gridSnapCheckBox.setFont(Font.font("Helvetica Neue", FontWeight.BOLD, FontPosture.REGULAR, 12));
+        //gridRenderCheckBox.setFont(Font.font("Helvetica Neue", FontWeight.BOLD, FontPosture.REGULAR, 12));
+        //gridSnapCheckBox.setFont(Font.font("Helvetica Neue", FontWeight.BOLD, FontPosture.REGULAR, 12));
         
         // For Component Toolbar
         classNameLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         packageLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
-        localParentClassRadioButton.getStyleClass().add(CLASS_SUBHEADING_LABEL);
-        apiParentClassRadioButton.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         parentClassComboBox.getStyleClass().add(CLASS_COMPONENT_BUTTON);
         localInterfacesLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         apiInterfacesLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);

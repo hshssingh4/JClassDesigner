@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -39,7 +40,8 @@ public class CanvasEditController
     DataManager dataManager;
     
     // HERE ARE THE CONSTANTS FOR RESIZING
-    double originalPressLocation, originalWidth, originalHeight;
+    double originalPressLocation, originalWidth, originalMainVBoxHeight,
+            originalClassVBoxHeight, originalVariablesVBoxHeight, originalMethodsVBoxHeight;
     
     // HERE ARE THE CONSTANTS FOR DRAGGING
     double originalX, originalY;
@@ -419,9 +421,15 @@ public class CanvasEditController
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         ClassObject selectedObject = workspace.getSelectedObject();
         VBox mainVBox = selectedObject.getBox().getMainVBox();
+        VBox classVBox = selectedObject.getBox().getClassVBox();
+        VBox variablesVBox = selectedObject.getBox().getVariablesVBox();
+        VBox methodsVBox = selectedObject.getBox().getMethodsVBox();
         this.originalPressLocation = originalPressLocation;
         this.originalWidth = mainVBox.getWidth();
-        this.originalHeight = mainVBox.getHeight();
+        this.originalMainVBoxHeight = mainVBox.getHeight();
+        this.originalClassVBoxHeight = classVBox.getHeight();
+        this.originalVariablesVBoxHeight = variablesVBox.getHeight();
+        this.originalMethodsVBoxHeight = methodsVBox.getHeight();
     }
     
     public void handleHorizontalResizeRequest(double newX)
@@ -440,11 +448,14 @@ public class CanvasEditController
         ClassObject selectedObject = workspace.getSelectedObject();
         Box box = selectedObject.getBox();
         double offsetHeight = newY - originalPressLocation;
-        double newHeight = originalHeight + offsetHeight;
+        double newMainVBoxHeight = originalMainVBoxHeight + offsetHeight;
+        double newClassVBoxHeight = originalClassVBoxHeight + (offsetHeight / 3);
+        double newVariablesVBoxHeight = originalVariablesVBoxHeight + (offsetHeight / 3);
+        double newMethodsVBoxHeight = originalMethodsVBoxHeight + (offsetHeight / 3);
         
-        box.getMainVBox().setMinHeight(newHeight);
-        box.getClassVBox().setMinHeight(newHeight / 3);
-        box.getVariablesVBox().setMinHeight(newHeight / 3);
-        box.getMethodsVBox().setMinHeight(newHeight / 3);
+        box.getMainVBox().setMinHeight(newMainVBoxHeight);
+        box.getClassVBox().setMinHeight(newClassVBoxHeight);
+        box.getVariablesVBox().setMinHeight(newVariablesVBoxHeight);
+        box.getMethodsVBox().setMinHeight(newMethodsVBoxHeight);
     }
 }
