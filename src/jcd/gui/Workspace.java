@@ -33,9 +33,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import jcd.JClassDesigner;
 import static jcd.PropertyType.ADD_CLASS_ICON;
 import static jcd.PropertyType.ADD_CLASS_TOOLTIP;
@@ -43,6 +40,8 @@ import static jcd.PropertyType.ADD_INTERFACE_ICON;
 import static jcd.PropertyType.ADD_INTERFACE_TOOLTIP;
 import static jcd.PropertyType.ADD_METHOD_TOOLTIP;
 import static jcd.PropertyType.ADD_VARIABLE_TOOLTIP;
+import static jcd.PropertyType.DEFAULT_ZOOM_ICON;
+import static jcd.PropertyType.DEFAULT_ZOOM_TOOLTIP;
 import static jcd.PropertyType.EDIT_ICON;
 import static jcd.PropertyType.EDIT_VARIABLE_TOOLTIP;
 import static jcd.PropertyType.MINUS_ICON;
@@ -79,8 +78,6 @@ import saf.ui.AppGUI;
  */
 public class Workspace extends AppWorkspaceComponent
 {
-    public static final String NONE = "None";
-        
     // HERE'S THE APP
     AppTemplate app;
     
@@ -103,7 +100,7 @@ public class Workspace extends AppWorkspaceComponent
             removeButton, undoButton, redoButton;
     
     // Buttons and other controls for view toolbar
-    Button zoomInButton, zoomOutButton;
+    Button zoomInButton, zoomOutButton, defaultZoomButton;
     CheckBox gridRenderCheckBox, gridSnapCheckBox;
     
     // Controls for the component toolbar
@@ -120,6 +117,7 @@ public class Workspace extends AppWorkspaceComponent
     
     // Third row (Parent)
     ToggleGroup parentClassGroup;
+    RadioButton noParentClassRadioButton;
     RadioButton localParentClassRadioButton;
     ComboBox<String> parentClassComboBox;
     RadioButton apiParentClassRadioButton;
@@ -206,6 +204,7 @@ public class Workspace extends AppWorkspaceComponent
         
         zoomInButton = gui.initChildButton(viewToolbarPane, ZOOM_IN_ICON.toString(), ZOOM_IN_TOOLTIP.toString(), true);
         zoomOutButton = gui.initChildButton(viewToolbarPane, ZOOM_OUT_ICON.toString(), ZOOM_OUT_TOOLTIP.toString(), true);
+        defaultZoomButton = gui.initChildButton(viewToolbarPane, DEFAULT_ZOOM_ICON.toString(), DEFAULT_ZOOM_TOOLTIP.toString(), true);
         
         gridRenderCheckBox = new CheckBox("Grid");
         gridSnapCheckBox = new CheckBox("Snap");
@@ -269,10 +268,12 @@ public class Workspace extends AppWorkspaceComponent
         // Third row
         parentClassGroup = new ToggleGroup();
         
+        noParentClassRadioButton = new RadioButton("No Parent");
+        noParentClassRadioButton.setToggleGroup(parentClassGroup);
+        
         localParentClassRadioButton = new RadioButton("Local Parent: ");
         localParentClassRadioButton.setToggleGroup(parentClassGroup);
         parentClassComboBox = new ComboBox<>();
-        parentClassComboBox.getItems().add(NONE);
         parentClassComboBox.setMaxWidth(Double.MAX_VALUE);
         parentClassComboBox.setTooltip(new Tooltip("Choose Local Parent Class"));
         
@@ -297,14 +298,15 @@ public class Workspace extends AppWorkspaceComponent
         gridPane.add(classNameTextField, 1, 0);
         gridPane.add(packageLabel, 0, 1);
         gridPane.add(packageNameTextField, 1, 1);
-        gridPane.add(localParentClassRadioButton, 0, 2);
-        gridPane.add(parentClassComboBox, 1, 2);
-        gridPane.add(apiParentClassRadioButton, 0, 3);
-        gridPane.add(parentClassTextField, 1, 3);
-        gridPane.add(localInterfacesLabel, 0, 4);
-        gridPane.add(addLocalInterfacesButton, 1, 4);
-        gridPane.add(apiInterfacesLabel, 0, 5);
-        gridPane.add(addApiInterfacesButton, 1, 5);
+        gridPane.add(noParentClassRadioButton, 0, 2);
+        gridPane.add(localParentClassRadioButton, 0, 3);
+        gridPane.add(parentClassComboBox, 1, 3);
+        gridPane.add(apiParentClassRadioButton, 0, 4);
+        gridPane.add(parentClassTextField, 1, 4);
+        gridPane.add(localInterfacesLabel, 0, 5);
+        gridPane.add(addLocalInterfacesButton, 1, 5);
+        gridPane.add(apiInterfacesLabel, 0, 6);
+        gridPane.add(addApiInterfacesButton, 1, 6);
         
         // Align the combo box to the right of the grid pane
         GridPane.setHalignment(parentClassComboBox, HPos.RIGHT);
@@ -415,6 +417,9 @@ public class Workspace extends AppWorkspaceComponent
         zoomOutButton.setOnAction(e -> {
             canvasEditController.handleZoomOutRequest();
         });
+        defaultZoomButton.setOnAction(e -> {
+            canvasEditController.handleDefaultZoomRequest();
+        });
         gridRenderCheckBox.setOnAction(e -> {
             reloadWorkspace();
         });
@@ -432,7 +437,30 @@ public class Workspace extends AppWorkspaceComponent
             if (selectedObject != null)
                 pageEditController.handlePackageNameChangeRequest(newClassName);
         });
-        parentClassGroup.selectedToggleProperty().addListener((observable, old_toggle, new_toggle) -> {
+        noParentClassRadioButton.setOnAction(e -> {
+            parentClassComboBox.setDisable(true);
+            parentClassTextField.setDisable(true);
+            parentClassComboBox.getItems().clear();
+            parentClassTextField.clear();
+            pageEditController.handleParentClassRequest(null);
+        });
+        localParentClassRadioButton.setOnAction(e -> {
+            parentClassComboBox.setDisable(false);
+            parentClassTextField.setDisable(true);
+            parentClassComboBox.getItems().clear();
+            parentClassTextField.clear();
+            for (ClassObject obj : dataManager.getClassesList())
+                if (!obj.equals(selectedObject) && !obj.isInterfaceType()
+                        && !parentClassComboBox.getItems().contains(obj.getClassName()))
+                    parentClassComboBox.getItems().add(obj.getClassName());
+        });
+        apiParentClassRadioButton.setOnAction(e -> {
+            parentClassComboBox.setDisable(true);
+            parentClassTextField.setDisable(false);
+            parentClassComboBox.getItems().clear();
+            parentClassTextField.clear();
+        });
+        /*parentClassGroup.selectedToggleProperty().addListener((observable, old_toggle, new_toggle) -> {
             if (localParentClassRadioButton.isSelected()) 
             {
                 if (!parentClassComboBox.getItems().contains(NONE))
@@ -445,13 +473,14 @@ public class Workspace extends AppWorkspaceComponent
                     parentClassComboBox.getItems().remove(selectedObject.getClassName());
             }
             reloadWorkspace();
-        });
-        parentClassTextField.textProperty().addListener((observable, oldClassName, newParentName) -> {
-            pageEditController.handleParentClassRequest(newParentName);
-        });
+        });*/
         parentClassComboBox.setOnAction(e -> {
             if (parentClassComboBox.getValue() != null)
                 pageEditController.handleParentClassRequest(parentClassComboBox.getValue());
+        });
+        parentClassTextField.textProperty().addListener((observable, oldClassName, newParentName) -> {
+            if (!newParentName.isEmpty())
+                pageEditController.handleParentClassRequest(newParentName);
         });
         addLocalInterfacesButton.setOnAction(e -> {
             pageEditController.handleOpenLocalInterfacesDialogRequest();
@@ -535,8 +564,7 @@ public class Workspace extends AppWorkspaceComponent
         // For View Toolbar
         zoomInButton.getStyleClass().add(CLASS_FILE_BUTTON);
         zoomOutButton.getStyleClass().add(CLASS_FILE_BUTTON);
-        //gridRenderCheckBox.setFont(Font.font("Helvetica Neue", FontWeight.BOLD, FontPosture.REGULAR, 12));
-        //gridSnapCheckBox.setFont(Font.font("Helvetica Neue", FontWeight.BOLD, FontPosture.REGULAR, 12));
+        defaultZoomButton.getStyleClass().add(CLASS_FILE_BUTTON);
         
         // For Component Toolbar
         classNameLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
@@ -582,6 +610,7 @@ public class Workspace extends AppWorkspaceComponent
         {
             classNameTextField.clear();
             packageNameTextField.clear();
+            noParentClassRadioButton.setSelected(false);
             localParentClassRadioButton.setSelected(false);
             apiParentClassRadioButton.setSelected(false);
             parentClassComboBox.getItems().clear();
@@ -599,8 +628,10 @@ public class Workspace extends AppWorkspaceComponent
     {
         classNameTextField.setText(selectedObject.getClassName());
         packageNameTextField.setText(selectedObject.getPackageName());
+        
         if (selectedObject.isInterfaceType())
         {
+            noParentClassRadioButton.setSelected(false);
             localParentClassRadioButton.setSelected(false);
             apiParentClassRadioButton.setSelected(false);
             parentClassComboBox.getItems().clear();
@@ -610,25 +641,26 @@ public class Workspace extends AppWorkspaceComponent
         {   
             if (selectedObject.getParentName() == null)
             {
-                parentClassComboBox.setValue(NONE);
+                noParentClassRadioButton.setSelected(true);
+                localParentClassRadioButton.setSelected(false);
+                apiParentClassRadioButton.setSelected(false);
+                parentClassComboBox.setValue(null);
                 parentClassTextField.clear();
             }
             else if (dataManager.getHashClasses().containsKey(selectedObject.getParentName()))
             {
+                noParentClassRadioButton.setSelected(false);
                 localParentClassRadioButton.setSelected(true);
                 apiParentClassRadioButton.setSelected(false);
                 parentClassComboBox.setValue(selectedObject.getParentName());
-                String tempParentName = selectedObject.getParentName();
                 parentClassTextField.clear();
-                selectedObject.setParentName(tempParentName);
             }
             else
             {
+                noParentClassRadioButton.setSelected(false);
                 localParentClassRadioButton.setSelected(false);
                 apiParentClassRadioButton.setSelected(true);
-                String tempParentName = selectedObject.getParentName();
-                parentClassComboBox.setValue(NONE);
-                selectedObject.setParentName(tempParentName);
+                parentClassComboBox.setValue(null);
                 parentClassTextField.setText(selectedObject.getParentName());
             }
         }
@@ -658,6 +690,7 @@ public class Workspace extends AppWorkspaceComponent
             
             if (selectedObject.isInterfaceType())
             {
+                noParentClassRadioButton.setDisable(true);
                 localParentClassRadioButton.setDisable(true);
                 apiParentClassRadioButton.setDisable(true);
                 parentClassComboBox.setDisable(true);
@@ -665,10 +698,17 @@ public class Workspace extends AppWorkspaceComponent
             }
             else
             {
+                noParentClassRadioButton.setDisable(false);
                 localParentClassRadioButton.setDisable(false);
                 apiParentClassRadioButton.setDisable(false);
             }
-            if (localParentClassRadioButton.isSelected())
+            
+            if (noParentClassRadioButton.isSelected())
+            {
+                parentClassComboBox.setDisable(true);
+                parentClassTextField.setDisable(true);
+            } 
+            else if (localParentClassRadioButton.isSelected())
             {
                 parentClassComboBox.setDisable(false);
                 parentClassTextField.setDisable(true);
@@ -678,6 +718,7 @@ public class Workspace extends AppWorkspaceComponent
                 parentClassComboBox.setDisable(true);
                 parentClassTextField.setDisable(false);
             }
+            
             addLocalInterfacesButton.setDisable(false);
             addApiInterfacesButton.setDisable(false);
             addVariableButton.setDisable(false);
@@ -700,6 +741,7 @@ public class Workspace extends AppWorkspaceComponent
         {
             classNameTextField.setDisable(true);
             packageNameTextField.setDisable(true);
+            noParentClassRadioButton.setDisable(true);
             localParentClassRadioButton.setDisable(true);
             apiParentClassRadioButton.setDisable(true);
             parentClassComboBox.setDisable(true);
@@ -725,6 +767,8 @@ public class Workspace extends AppWorkspaceComponent
             zoomOutButton.setDisable(true);
         else
             zoomOutButton.setDisable(false);
+        
+        defaultZoomButton.setDisable(false);
         
         // NOW CHECK WHETHER SNAP SHOULD BE ENABLED OR NOT
         if (gridRenderCheckBox.isSelected())

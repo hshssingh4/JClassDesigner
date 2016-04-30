@@ -12,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -187,9 +186,12 @@ public class CanvasEditController
         double newTranslateX = originalTranslateX + offsetX;
         double newTranslateY = originalTranslateY + offsetY;
         
-        box.setTranslateX(newTranslateX);
-        box.setTranslateY(newTranslateY);    
-        
+        // ONLY CHANGE IF BOTH ARE GREAETER THAN 5
+        if (newTranslateX > DEFAULT_OFFSET)
+            box.setTranslateX(newTranslateX);
+        if (newTranslateY > DEFAULT_OFFSET)
+            box.setTranslateY(newTranslateY);
+          
         resizeCanvasIfNeeded();
         
         app.getGUI().updateToolbarControls(false);
@@ -242,6 +244,20 @@ public class CanvasEditController
         
         canvas.setScaleX(canvas.getScaleX() * 0.8);
         canvas.setScaleY(canvas.getScaleY() * 0.8);
+
+        workspace.reloadWorkspace();
+    }
+    
+    /**
+     * This method helps in applying default zoom to the workspace currently being worked on.
+     */
+    public void handleDefaultZoomRequest()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+        
+        canvas.setScaleX(1);
+        canvas.setScaleY(1);
 
         workspace.reloadWorkspace();
     }

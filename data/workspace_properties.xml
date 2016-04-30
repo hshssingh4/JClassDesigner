@@ -16,6 +16,7 @@
 	<property name="REDO_ICON"		value="Redo.png"></property>
         <property name="ZOOM_IN_ICON"           value="ZoomIn.png"></property>
 	<property name="ZOOM_OUT_ICON"          value="ZoomOut.png"></property>
+        <property name="DEFAULT_ZOOM_ICON"      value="DefaultZoom.png"></property>
         <property name="PLUS_ICON"              value="Plus.png"></property>
 	<property name="MINUS_ICON"             value="Minus.png"></property>
         <property name="EDIT_ICON"              value="Edit.png"></property>
@@ -30,6 +31,7 @@
 	<property name="REDO_TOOLTIP"           value="Redo Action"></property>
 	<property name="ZOOM_IN_TOOLTIP"        value="Zoom In"></property>
 	<property name="ZOOM_OUT_TOOLTIP"	value="Zoom Out"></property>
+        <property name="DEAULT_ZOOM_TOOLTIP"	value="Zoom Default"></property>
         <property name="ADD_VARIABLE_TOOLTIP"   value="Add Variable"></property>
 	<property name="REMOVE_VARIABLE_TOOLTIP" value="Remove Variable"></property>
         <property name="EDIT_VARIABLE_TOOLTIP"  value="Edit Selected Variable"></property>

@@ -34,6 +34,8 @@ public enum PropertyType
     ZOOM_IN_TOOLTIP,
     ZOOM_OUT_ICON,
     ZOOM_OUT_TOOLTIP,
+    DEFAULT_ZOOM_ICON,
+    DEFAULT_ZOOM_TOOLTIP,
     
     PLUS_ICON,
     MINUS_ICON,

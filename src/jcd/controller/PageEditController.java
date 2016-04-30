@@ -233,13 +233,11 @@ public class PageEditController
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         ClassObject selectedObject = workspace.getSelectedObject();
-        if (selectedObject != null)
-        {
-            if (className.equals(NONE) || className.isEmpty())
-                selectedObject.setParentName(null);
-            else
-                selectedObject.setParentName(className);
-        }
+        
+        if (className == null)
+            selectedObject.setParentName(null);
+        else
+            selectedObject.setParentName(className);
     }
     
     /**

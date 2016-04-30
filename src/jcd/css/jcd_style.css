@@ -59,7 +59,7 @@ and open the template in the editor.
 .file_button
 {
     -fx-background-color: ghostwhite;
-    -fx-font-size: 20px;
+    -fx-font-size: 18px;
     
 }
 
@@ -245,9 +245,11 @@ and open the template in the editor.
 .list-cell:selected 
 {
     -fx-background-color: #29a0e3;
+    -fx-text-fill: white;
 }
 
 .list-cell:filled:hover 
 {
-    -fx-background-color: #29a0e3;
+    -fx-background-color: #a5d4ff;
+    -fx-text-fill: white;
 }
