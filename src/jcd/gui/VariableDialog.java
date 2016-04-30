@@ -5,6 +5,7 @@
  */
 package jcd.gui;
 
+import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -19,11 +20,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import static jcd.controller.PageEditController.PROTECTED;
 import jcd.data.ClassObject;
 import jcd.data.VariableObject;
-import static jcd.gui.Workspace.PRIVATE;
-import static jcd.gui.Workspace.PROTECTED;
-import static jcd.gui.Workspace.PUBLIC;
+import static jcd.file.FileManager.PRIVATE;
+import static jcd.file.FileManager.PUBLIC;
 import saf.AppTemplate;
 import static saf.components.AppStyleArbiter.CLASS_COMPONENT_BUTTON;
 import static saf.components.AppStyleArbiter.CLASS_COMPONENT_CHILD_ELEMENT;
@@ -45,6 +46,7 @@ public class VariableDialog extends Stage
     
     Scene dialogScene;
     ClassObject classObject;
+    VariableObject variable;
     
     // BELOW ARE THE PANES AND CONTROLS NECESSARY FOR ADDING A VARIABLE
     GridPane gridPane; // HOLDS IN EVERYTHING
@@ -77,22 +79,22 @@ public class VariableDialog extends Stage
     
     /**
      * Constructor for initializing this dialog box.
-     * @param primaryStage
-     * the stage to place this dialog box in.
+     * @param initApp
      * @param classObject 
      * the selected object of the workspace
-     * @param initApp
-     * current application
+     * @param variable
+     * the variable for which dialog box is opened, could be null
      */
-    public VariableDialog(Stage primaryStage, ClassObject classObject, 
-            AppTemplate initApp)
+    public VariableDialog(AppTemplate initApp, ClassObject classObject, 
+            VariableObject variable)
     {
         app = initApp;
         
         initModality(Modality.WINDOW_MODAL);
-        initOwner(primaryStage);
+        initOwner(app.getGUI().getWindow());
         
         this.classObject = classObject;
+        this.variable = variable;
         
         // Init all the rows of the grid pane
         initNameGroup();
@@ -104,6 +106,9 @@ public class VariableDialog extends Stage
         
         // NOW THAT WE HAVE ALL ROWS, INIT GRID PANE
         initGridPane();
+        
+        if (variable != null)
+            initValues();
         
         // AND PUT IT IN THE WINDOW
         dialogScene = new Scene(gridPane);
@@ -183,18 +188,18 @@ public class VariableDialog extends Stage
     private void initSubmitButton()
     {
         submitButton = new Button("Submit");
-        submitButton.setOnAction(e -> {
-            VariableObject variable = new VariableObject();
-            variable.setName(nameTextField.getText());
-            variable.setType(typeTextField.getText());
+        submitButton.setOnAction((ActionEvent e) -> {
+            VariableObject newVariable = new VariableObject();
+            newVariable.setName(nameTextField.getText());
+            newVariable.setType(typeTextField.getText());
             if (privateRadioButton.isSelected())
-                variable.setScope(PRIVATE);
+                newVariable.setScope(PRIVATE);
             else if (publicRadioButton.isSelected())
-                variable.setScope(PUBLIC);
+                newVariable.setScope(PUBLIC);
             else if (protectedRadioButton.isSelected())
-                variable.setScope(PROTECTED);
-            variable.setStaticType(staticCheckBox.isSelected());
-            variable.setFinalType(finalCheckBox.isSelected());
+                newVariable.setScope(PROTECTED);
+            newVariable.setStaticType(staticCheckBox.isSelected());
+            newVariable.setFinalType(finalCheckBox.isSelected());
             
             if (nameTextField.getText().isEmpty() || typeTextField.getText().isEmpty())
             {
@@ -203,7 +208,12 @@ public class VariableDialog extends Stage
             }
             else
             {
-                classObject.getVariables().add(variable);
+                Workspace workspace = (Workspace) app.getWorkspaceComponent();
+                if (variable == null)
+                    workspace.getPageEditController().handleAddVariableRequest(newVariable);
+                else
+                    workspace.getPageEditController().handleEditVariableRequest(
+                            classObject.getVariables().indexOf(variable), newVariable);
                 this.hide();
             }
         });
@@ -235,6 +245,36 @@ public class VariableDialog extends Stage
         
         // Align the combo box to the right of the grid pane
         GridPane.setHalignment(submitButton, HPos.RIGHT);
+    }
+    
+    /**
+     * This is a special method that is only called if it's called for
+     * editing purposes.
+     */
+    private void initValues()
+    {
+        nameTextField.setText(variable.getName());
+        typeTextField.setText(variable.getType());
+        
+        switch (variable.getScope())
+        {
+            case PRIVATE:
+                privateRadioButton.setSelected(true);
+                break;
+            case PUBLIC:
+                publicRadioButton.setSelected(true);
+                break;
+            case PROTECTED:
+                protectedRadioButton.setSelected(true);
+                break;
+            default:
+                break;
+        }
+        
+        if (variable.isStaticType())
+            staticCheckBox.setSelected(true);
+        if(variable.isFinalType())
+            finalCheckBox.setSelected(true);
     }
     
     /**

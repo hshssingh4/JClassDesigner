@@ -18,6 +18,7 @@
 	<property name="ZOOM_OUT_ICON"          value="ZoomOut.png"></property>
         <property name="PLUS_ICON"              value="Plus.png"></property>
 	<property name="MINUS_ICON"             value="Minus.png"></property>
+        <property name="EDIT_ICON"              value="Edit.png"></property>
         
         <!-- TOOLTIPS FOR BUTTONS -->
 	<property name="SELECTION_TOOL_TOOLTIP"	value="Select Element"></property>
@@ -31,8 +32,10 @@
 	<property name="ZOOM_OUT_TOOLTIP"	value="Zoom Out"></property>
         <property name="ADD_VARIABLE_TOOLTIP"   value="Add Variable"></property>
 	<property name="REMOVE_VARIABLE_TOOLTIP" value="Remove Variable"></property>
+        <property name="EDIT_VARIABLE_TOOLTIP"  value="Edit Selected Variable"></property>
 	<property name="ADD_METHOD_TOOLTIP"     value="Add Method"></property>
 	<property name="REMOVE_METHOD_TOOLTIP"	value="Remove Method"></property>
+        <property name="EDIT_METHOD_TOOLTIP"    value="Edit Selected Method"></property>
 	
 	<!-- MESSAGES -->
 	<property name="REMOVE_ELEMENT_MESSAGE"	    value="Are you sure you wish to remove that element?"></property>

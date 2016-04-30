@@ -6,6 +6,7 @@
 package jcd.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -15,7 +16,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
@@ -23,6 +23,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -31,7 +32,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -43,6 +43,8 @@ import static jcd.PropertyType.ADD_INTERFACE_ICON;
 import static jcd.PropertyType.ADD_INTERFACE_TOOLTIP;
 import static jcd.PropertyType.ADD_METHOD_TOOLTIP;
 import static jcd.PropertyType.ADD_VARIABLE_TOOLTIP;
+import static jcd.PropertyType.EDIT_ICON;
+import static jcd.PropertyType.EDIT_VARIABLE_TOOLTIP;
 import static jcd.PropertyType.MINUS_ICON;
 import static jcd.PropertyType.PLUS_ICON;
 import static jcd.PropertyType.REDO_ICON;
@@ -66,6 +68,7 @@ import jcd.controller.PageEditController;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
+import jcd.data.VariableObject;
 import saf.AppTemplate;
 import saf.components.AppWorkspaceComponent;
 import saf.ui.AppGUI;
@@ -76,21 +79,6 @@ import saf.ui.AppGUI;
  */
 public class Workspace extends AppWorkspaceComponent
 {
-    public static final String PRIVATE = "private";
-    public static final String PUBLIC = "public";
-    public static final String PROTECTED = "protected";
-    
-    public static final String INT = "int";
-    public static final String DOUBLE = "double";
-    public static final String BOOLEAN = "boolean";
-    public static final String CHAR = "char";
-    public static final String STRING = "String";
-    public static final String ARRAY_LIST = "ArrayList"; 
-    public static final String PLUS = "+";
-    public static final String MINUS = "-";
-    public static final String HASHTAG = "#";
-    public static final String COLON = ":";
-    public static final String SPACE = " ";
     public static final String NONE = "None";
         
     // HERE'S THE APP
@@ -149,6 +137,7 @@ public class Workspace extends AppWorkspaceComponent
     Label variablesLabel;
     Button addVariableButton;
     Button removeVariableButton;
+    Button editVariableButton;
     ScrollPane variablesTableViewScrollPane;
     TableView variablesTableView;
     
@@ -335,6 +324,8 @@ public class Workspace extends AppWorkspaceComponent
                 ADD_VARIABLE_TOOLTIP.toString(), false);
         removeVariableButton = gui.initChildButton(variablesHBox, MINUS_ICON.toString(),
                 REMOVE_VARIABLE_TOOLTIP.toString(), false);
+        editVariableButton = gui.initChildButton(variablesHBox, EDIT_ICON.toString(),
+                EDIT_VARIABLE_TOOLTIP.toString(), false);
         
         variablesTableView = new TableView();
         variablesTableView.setPrefHeight(200);
@@ -345,7 +336,18 @@ public class Workspace extends AppWorkspaceComponent
         TableColumn variableScopeCol = new TableColumn("Scope");
         TableColumn variableStaticCol = new TableColumn("Static");
         TableColumn variableFinalCol = new TableColumn("Final");
-        
+                
+        variableNameCol.setCellValueFactory(
+                new PropertyValueFactory<>("name"));
+        variableTypeCol.setCellValueFactory(
+                new PropertyValueFactory<>("type"));
+        variableScopeCol.setCellValueFactory(
+                new PropertyValueFactory<>("scope"));
+        variableStaticCol.setCellValueFactory(
+                new PropertyValueFactory<>("isStatic"));
+        variableFinalCol.setCellValueFactory(
+                new PropertyValueFactory<>("isFinal"));
+
         variablesTableView.getColumns().addAll(variableNameCol, variableTypeCol,
                 variableScopeCol, variableStaticCol, variableFinalCol);
         
@@ -459,8 +461,22 @@ public class Workspace extends AppWorkspaceComponent
             pageEditController.handleOpenApiInterfacesDialogRequest();
         });
         addVariableButton.setOnAction(e -> {
-            pageEditController.handleOpenVariableDialogRequest();
+            pageEditController.handleOpenVariableDialogRequest(null);
         });
+        editVariableButton.setOnAction(e -> {
+            int selectedIndex = variablesTableView.getSelectionModel().getSelectedIndex();
+            VariableObject variable = selectedObject.getVariables().get(selectedIndex);
+            pageEditController.handleOpenVariableDialogRequest(variable);
+        });
+        removeVariableButton.setOnAction(e -> {
+            int selectedIndex = variablesTableView.getSelectionModel().getSelectedIndex();
+            VariableObject variable = selectedObject.getVariables().get(selectedIndex);
+            pageEditController.handleRemoveVariableRequest(variable);
+        });
+        variablesTableView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+            reloadWorkspace();
+        });
+        
         
         // AND THESE ARE THE SELECTION, RESIZING, DRAGGING HANDLERS
         canvas.setOnMouseMoved(e -> {
@@ -535,6 +551,7 @@ public class Workspace extends AppWorkspaceComponent
         variablesLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         addVariableButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
         removeVariableButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        editVariableButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
         variablesVBox.getStyleClass().add(CLASS_COMPONENT_CHILD_ELEMENT);
         
         methodsLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
@@ -569,6 +586,7 @@ public class Workspace extends AppWorkspaceComponent
             apiParentClassRadioButton.setSelected(false);
             parentClassComboBox.getItems().clear();
             parentClassTextField.clear();
+            variablesTableView.getItems().clear();
         }
         
         // Now load all the childrens again
@@ -614,6 +632,15 @@ public class Workspace extends AppWorkspaceComponent
                 parentClassTextField.setText(selectedObject.getParentName());
             }
         }
+        
+        ArrayList<VariableObject> tempVariables = new ArrayList();
+        for (VariableObject variable: selectedObject.getVariables())
+            tempVariables.add(variable);
+        variablesTableView.getItems().clear();
+        selectedObject.getBox().getVariablesVBox().getChildren().clear();
+        selectedObject.getVariables().clear();
+        for (VariableObject variable: tempVariables)
+            pageEditController.handleAddVariableRequest(variable);
     }
     
     private void enableLegalButtons()
@@ -654,7 +681,16 @@ public class Workspace extends AppWorkspaceComponent
             addLocalInterfacesButton.setDisable(false);
             addApiInterfacesButton.setDisable(false);
             addVariableButton.setDisable(false);
-            removeVariableButton.setDisable(false);
+            if (variablesTableView.getSelectionModel().getSelectedItem() != null)
+            {
+                removeVariableButton.setDisable(false);
+                editVariableButton.setDisable(false);
+            }
+            else
+            {
+                removeVariableButton.setDisable(true);
+                editVariableButton.setDisable(true);
+            }
             addMethodButton.setDisable(false);
             removeMethodButton.setDisable(false);
             removeButton.setDisable(false);
@@ -672,6 +708,7 @@ public class Workspace extends AppWorkspaceComponent
             addApiInterfacesButton.setDisable(true);
             addVariableButton.setDisable(true);
             removeVariableButton.setDisable(true);
+            editVariableButton.setDisable(true);
             addMethodButton.setDisable(true);
             removeMethodButton.setDisable(true);
             removeButton.setDisable(true);
@@ -714,5 +751,15 @@ public class Workspace extends AppWorkspaceComponent
     public CanvasEditController getCanvasEditController() 
     {
         return canvasEditController;
+    }
+    
+    public PageEditController getPageEditController() 
+    {
+        return pageEditController;
+    }
+
+    public TableView getVariablesTableView() 
+    {
+        return variablesTableView;
     }
 }

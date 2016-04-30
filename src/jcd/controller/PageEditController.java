@@ -6,8 +6,11 @@
 package jcd.controller;
 
 import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import jcd.JClassDesigner;
@@ -15,12 +18,13 @@ import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
+import jcd.data.VariableObject;
 import jcd.gui.ApiInterfacesDialog;
 import jcd.gui.LocalInterfacesDialog;
 import jcd.gui.PackagesDialog;
 import jcd.gui.VariableDialog;
 import jcd.gui.Workspace;
-import static jcd.gui.Workspace.NONE;
+import jcd.model.VariableObjectModel;
 import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 import static saf.components.AppStyleArbiter.CLASS_TEXT_LABEL;
 
@@ -31,6 +35,24 @@ import static saf.components.AppStyleArbiter.CLASS_TEXT_LABEL;
  */
 public class PageEditController 
 {
+    // These are the values needed for adding text fields to the box
+    public static final String PRIVATE = "private";
+    public static final String PUBLIC = "public";
+    public static final String PROTECTED = "protected";
+    
+    public static final String INT = "int";
+    public static final String DOUBLE = "double";
+    public static final String BOOLEAN = "boolean";
+    public static final String CHAR = "char";
+    public static final String STRING = "String";
+    public static final String ARRAY_LIST = "ArrayList"; 
+    public static final String PLUS = "+";
+    public static final String MINUS = "-";
+    public static final String HASHTAG = "#";
+    public static final String COLON = ":";
+    public static final String SPACE = " ";
+    public static final String NONE = "None";
+    
     // These define the default height and width values for the rectangles inside vbox
     private static final double DEFAULT_WIDTH = 300.0;
     private static final double DEFAULT_HEIGHT = 150.0;
@@ -208,6 +230,20 @@ public class PageEditController
         }
     }
     
+    
+    public void handleParentClassRequest(String className)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        if (selectedObject != null)
+        {
+            if (className.equals(NONE) || className.isEmpty())
+                selectedObject.setParentName(null);
+            else
+                selectedObject.setParentName(className);
+        }
+    }
+    
     /**
      * Handles the request where the user changes the name of a class.
      * It makes sure that the name is not changed such that the classes
@@ -312,48 +348,41 @@ public class PageEditController
         }
     }
     
-    public void handleOpenVariableDialogRequest() 
+    public void handleOpenVariableDialogRequest(VariableObject variable) 
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         ClassObject selectedObject = workspace.getSelectedObject();
         if (selectedObject != null) 
         {
-            VariableDialog dialog = new VariableDialog(app.getGUI().getWindow(),
-                    selectedObject, app);
+            VariableDialog dialog = new VariableDialog(app,
+                    selectedObject, variable);
             dialog.makeVisible();
         }
     }
     
-    public void handleParentClassRequest(String className)
+    public void handleAddVariableRequest(VariableObject variable)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         ClassObject selectedObject = workspace.getSelectedObject();
-        if (selectedObject != null)
-        {
-            if (className.equals(NONE) || className.isEmpty())
-                selectedObject.setParentName(null);
-            else
-                selectedObject.setParentName(className);
-        }
+        
+        selectedObject.getVariables().add(variable);
+        addVariableTextField(variable);
+        addVariableToTableView(variable);
     }
     
-    
-    /*private void reloadVariablesTextFields(ClassObject classObject)
+    private void addVariableTextField(VariableObject variable)
     {
-        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
-        Box box = classObject.getBox();
-        // THEN CLEAR ITS CONTENTS
-        box.getVariablesVBox().getChildren().clear();
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
         
-        // NOW ADD IT AGAIN
-        for (VariableObject variable: classObject.getVariables())
-        {
-            Text text = getVariableTextField(variable);
-            text.getStyleClass().add(CLASS_TEXT_LABEL);
-            if (variable.isStaticType())
-                text.setUnderline(true);
-            box.getVariablesVBox().getChildren().add(text);
-        }
+        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
+        Box box = selectedObject.getBox();
+
+        Text text = getVariableTextField(variable);
+        text.getStyleClass().add(CLASS_TEXT_LABEL);
+        if (variable.isStaticType())
+            text.setUnderline(true);
+        box.getVariablesVBox().getChildren().add(text);
     }
     
     private Text getVariableTextField(VariableObject variable)
@@ -384,7 +413,79 @@ public class PageEditController
         return text;
     }
     
-    private void reloadMethodsTextFields(ClassObject classObject)
+    private void addVariableToTableView(VariableObject variable)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        TableView variablesTable = workspace.getVariablesTableView();
+        
+        String name = variable.getName();
+        String type = variable.getType();
+        String scope = variable.getScope();
+        String isStatic = String.valueOf(variable.isStaticType());
+        String isFinal = String.valueOf(variable.isFinalType());
+        
+        VariableObjectModel model = new VariableObjectModel(name, type, scope,
+                isStatic, isFinal);
+        
+        variablesTable.getItems().add(model);
+    }
+    
+    public void handleRemoveVariableRequest(VariableObject variable)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        
+        selectedObject.getVariables().remove(variable);
+        TableView variablesTable = workspace.getVariablesTableView();
+        int selectedIndex = variablesTable.getSelectionModel().getSelectedIndex();
+        variablesTable.getItems().remove(selectedIndex);
+        selectedObject.getBox().getVariablesVBox().getChildren().remove(selectedIndex);
+    }
+    
+    
+    public void handleEditVariableRequest(int index, VariableObject variable)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        
+        selectedObject.getVariables().set(index, variable);
+        editVariableTextField(index, variable);
+        editVariableInTableView(index, variable);
+    }
+    
+    private void editVariableTextField(int index, VariableObject variable)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        
+        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
+        Box box = selectedObject.getBox();
+
+        Text text = getVariableTextField(variable);
+        text.getStyleClass().add(CLASS_TEXT_LABEL);
+        if (variable.isStaticType())
+            text.setUnderline(true);
+        box.getVariablesVBox().getChildren().set(index, text);
+    }
+    
+    private void editVariableInTableView(int index, VariableObject variable)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        TableView variablesTable = workspace.getVariablesTableView();
+        
+        String name = variable.getName();
+        String type = variable.getType();
+        String scope = variable.getScope();
+        String isStatic = String.valueOf(variable.isStaticType());
+        String isFinal = String.valueOf(variable.isFinalType());
+        
+        VariableObjectModel model = new VariableObjectModel(name, type, scope,
+                isStatic, isFinal);
+        
+        variablesTable.getItems().set(index, model);
+    }
+    
+    /*private void reloadMethodsTextFields(ClassObject classObject)
     {
         // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
         Box box = classObject.getBox();
@@ -448,4 +549,6 @@ public class PageEditController
         
         return answer;
     }*/
+
+    
 }
