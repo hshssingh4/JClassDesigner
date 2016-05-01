@@ -217,7 +217,7 @@ public class CanvasEditController
      * Helper method to resize the canvas so that the user can scroll to see
      * where the objects are placed if required.
      */
-    private void resizeCanvasIfNeeded()
+    public void resizeCanvasIfNeeded()
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         Pane canvas = workspace.getCanvas();
@@ -246,6 +246,9 @@ public class CanvasEditController
         canvas.setScaleX(canvas.getScaleX() * 1.25);
         canvas.setScaleY(canvas.getScaleY() * 1.25);
         
+        dataManager.setCanvasZoomScaleX(canvas.getScaleX());
+        dataManager.setCanvasZoomScaleY(canvas.getScaleY());
+        
         workspace.reloadWorkspace();
         
         // Work has been edited!
@@ -262,6 +265,9 @@ public class CanvasEditController
         
         canvas.setScaleX(canvas.getScaleX() * 0.8);
         canvas.setScaleY(canvas.getScaleY() * 0.8);
+        
+        dataManager.setCanvasZoomScaleX(canvas.getScaleX());
+        dataManager.setCanvasZoomScaleY(canvas.getScaleY());
 
         workspace.reloadWorkspace();
         
@@ -279,6 +285,9 @@ public class CanvasEditController
         
         canvas.setScaleX(1);
         canvas.setScaleY(1);
+        
+        dataManager.setCanvasZoomScaleX(canvas.getScaleX());
+        dataManager.setCanvasZoomScaleY(canvas.getScaleY());
 
         workspace.reloadWorkspace();
         
@@ -286,10 +295,11 @@ public class CanvasEditController
         app.getGUI().updateToolbarControls(false);
     }
     
+    /**
+     * This method is called when the user selects/deselects the grid render check box.
+     */
     public void handleRenderLinesRequest()
     {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        
         renderLines();
         
         // Work has been edited!
@@ -538,6 +548,7 @@ public class CanvasEditController
         double newWidth = originalWidth + offsetWidth;
         mainVBox.setMinWidth(newWidth);
         
+        workspace.reloadWorkspace();
         // Work has been edited!
         app.getGUI().updateToolbarControls(false);
     }
@@ -564,6 +575,7 @@ public class CanvasEditController
         box.getVariablesVBox().setMinHeight(newVariablesVBoxHeight);
         box.getMethodsVBox().setMinHeight(newMethodsVBoxHeight);
         
+        workspace.reloadWorkspace();
         // Work has been edited!
         app.getGUI().updateToolbarControls(false);
     }

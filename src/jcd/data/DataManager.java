@@ -7,6 +7,7 @@ package jcd.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import static jcd.data.JClassDesignerMode.GRID_DEFAULT_MODE;
 import jcd.gui.Workspace;
 import saf.AppTemplate;
 import saf.components.AppDataComponent;
@@ -25,6 +26,11 @@ public class DataManager implements AppDataComponent
     
     // CURRENT STATE OF THE APP
     JClassDesignerState state;
+    
+    // Current mode of the app (grid render, grid snap etc.)
+    JClassDesignerMode mode;
+    double canvasZoomScaleX;
+    double canvasZoomScaleY;
     
     /**
      * Constructor to initialize the data manager.
@@ -225,6 +231,39 @@ public class DataManager implements AppDataComponent
     {
 	return state == testState;
     }
+
+    public JClassDesignerMode getMode() 
+    {
+        return mode;
+    }
+
+    public void setMode(JClassDesignerMode mode)
+    {
+        this.mode = mode;
+    }
+    
+    public boolean isInMode(JClassDesignerMode testMode)
+    {
+	return mode == testMode;
+    }
+
+    public double getCanvasZoomScaleX() {
+        return canvasZoomScaleX;
+    }
+
+    public void setCanvasZoomScaleX(double canvasZoomScaleX) 
+    {
+        this.canvasZoomScaleX = canvasZoomScaleX;
+    }
+
+    public double getCanvasZoomScaleY() {
+        return canvasZoomScaleY;
+    }
+
+    public void setCanvasZoomScaleY(double canvasZoomScaleY) 
+    {
+        this.canvasZoomScaleY = canvasZoomScaleY;
+    }
     
     /**
      * This method resets the whole workspace for a complete new application.
@@ -241,5 +280,8 @@ public class DataManager implements AppDataComponent
         hashClasses.clear();
         classesList.clear();
         state = null;
+        mode = GRID_DEFAULT_MODE;
+        canvasZoomScaleX = 1;
+        canvasZoomScaleY = 1;
     }
 }

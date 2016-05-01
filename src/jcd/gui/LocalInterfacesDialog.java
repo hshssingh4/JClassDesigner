@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -89,7 +90,9 @@ public class LocalInterfacesDialog extends Stage
     private void initLeftListView(ArrayList<String> localInterfaceNames)
     {
         localInterfaceNamesListView = new ListView<>();
-        localInterfaceNamesListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+        localInterfaceNamesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        localInterfaceNamesListView.setOnMousePressed(e -> {
+            classLocalInterfaceNamesListView.getSelectionModel().clearSelection();
             addButton.setDisable(false);
             removeButton.setDisable(true);
         });
@@ -105,7 +108,9 @@ public class LocalInterfacesDialog extends Stage
     private void initRightListView(ArrayList<String> classLocalInterfaceNames)
     {
         classLocalInterfaceNamesListView = new ListView<>();
-        classLocalInterfaceNamesListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+        classLocalInterfaceNamesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        classLocalInterfaceNamesListView.setOnMousePressed(e -> {
+            localInterfaceNamesListView.getSelectionModel().clearSelection();
             addButton.setDisable(true);
             removeButton.setDisable(false);
         });
@@ -132,14 +137,28 @@ public class LocalInterfacesDialog extends Stage
         
         // AND THEN REGISTER THEM TO RESPOND TO INTERACTIONS
         addButton.setOnAction(e -> {
-            String selectedInterfaceName = localInterfaceNamesListView.getSelectionModel().getSelectedItem();
-            localInterfaceNamesListView.getItems().remove(selectedInterfaceName);
-            classLocalInterfaceNamesListView.getItems().add(selectedInterfaceName);
+            ArrayList<String> selectedInterfaceNames = new ArrayList<>(); 
+            for (String interfaceName: 
+                    localInterfaceNamesListView.getSelectionModel().getSelectedItems())
+                selectedInterfaceNames.add(interfaceName);
+            localInterfaceNamesListView.getItems().removeAll(selectedInterfaceNames);
+            classLocalInterfaceNamesListView.getItems().addAll(selectedInterfaceNames);
+            
+            // Finally remove any selections and disable add button
+            localInterfaceNamesListView.getSelectionModel().clearSelection();
+            addButton.setDisable(true);
         });
         removeButton.setOnAction(e -> {
-            String selectedInterfaceName = classLocalInterfaceNamesListView.getSelectionModel().getSelectedItem();
-            classLocalInterfaceNamesListView.getItems().remove(selectedInterfaceName);
-            localInterfaceNamesListView.getItems().add(selectedInterfaceName);
+            ArrayList<String> selectedInterfaceNames = new ArrayList<>();
+            for (String interfaceName: 
+                    classLocalInterfaceNamesListView.getSelectionModel().getSelectedItems())
+                selectedInterfaceNames.add(interfaceName);
+            classLocalInterfaceNamesListView.getItems().removeAll(selectedInterfaceNames);
+            localInterfaceNamesListView.getItems().addAll(selectedInterfaceNames);
+            
+            // Finally remove any selections and disable remove button
+            classLocalInterfaceNamesListView.getSelectionModel().clearSelection();
+            removeButton.setDisable(true);
         });
         doneButton.setOnAction(e -> {
             for (String interfaceName: classLocalInterfaceNamesListView.getItems())

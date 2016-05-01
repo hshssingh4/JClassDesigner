@@ -432,7 +432,7 @@ public class PageEditController
     }
     
     /**
-     * This method does three thing. It first adds the variable object to the 
+     * This method does three things. It first adds the variable object to the 
      * selected class object list of variables. Then it adds a text field in the
      * box on the canvas. And lastly, it adds the variable to the table view.
      * @param variable 
@@ -472,40 +472,6 @@ public class PageEditController
     }
     
     /**
-     * Helper method to get the text field for the variable object that needs to be
-     * added to the box.
-     * @param variable
-     * @return 
-     */
-    private Text getVariableTextField(VariableObject variable)
-    {
-        Text text = new Text();
-        String textString = new String();
-        
-        String name = variable.getName();
-        String type = variable.getType();
-        String scope = variable.getScope();
-        
-        switch (scope)
-        {
-            case PUBLIC:
-                textString += PLUS;
-                break;
-            case PRIVATE:
-                textString += MINUS;
-                break;
-            case PROTECTED:
-                textString += HASHTAG;
-                break;
-        }
-        
-        textString += SPACE + name + COLON + SPACE + type;
-        text.setText(textString);
-        
-        return text;
-    }
-    
-    /**
      * Helper method to add the variable to table view.
      * @param variable 
      */
@@ -513,36 +479,8 @@ public class PageEditController
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         TableView variablesTable = workspace.getVariablesTableView();
-        
-        String name = variable.getName();
-        String type = variable.getType();
-        String scope = variable.getScope();
-        String isStatic = String.valueOf(variable.isStaticType());
-        String isFinal = String.valueOf(variable.isFinalType());
-        
-        VariableObjectModel model = new VariableObjectModel(name, type, scope,
-                isStatic, isFinal);
-        
+        VariableObjectModel model = getVariableObjectModel(variable);
         variablesTable.getItems().add(model);
-    }
-    
-    /**
-     * This method also does three things to remove a variable. It first removes
-     * it from the list of variables for the selected class object. It then removes it from
-     * the box on canvas. And finally, it removes it from the table view.
-     * @param variable 
-     * the variable that is to be removed
-     */
-    public void handleRemoveVariableRequest(VariableObject variable)
-    {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        ClassObject selectedObject = workspace.getSelectedObject();
-        
-        selectedObject.getVariables().remove(variable);
-        TableView variablesTable = workspace.getVariablesTableView();
-        int selectedIndex = variablesTable.getSelectionModel().getSelectedIndex();
-        variablesTable.getItems().remove(selectedIndex);
-        selectedObject.getBox().getVariablesVBox().getChildren().remove(selectedIndex);
     }
     
     /**
@@ -600,17 +538,80 @@ public class PageEditController
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         TableView variablesTable = workspace.getVariablesTableView();
+        VariableObjectModel model = getVariableObjectModel(variable);
+        variablesTable.getItems().set(index, model);
+    }
+    
+    /**
+     * Helper method to get the text field for the variable object that needs to be
+     * added to the box.
+     * @param variable
+     * @return 
+     */
+    private Text getVariableTextField(VariableObject variable)
+    {
+        Text text = new Text();
+        String textString = new String();
         
+        String name = variable.getName();
+        String type = variable.getType();
+        String scope = variable.getScope();
+        
+        switch (scope)
+        {
+            case PUBLIC:
+                textString += PLUS;
+                break;
+            case PRIVATE:
+                textString += MINUS;
+                break;
+            case PROTECTED:
+                textString += HASHTAG;
+                break;
+        }
+        
+        textString += SPACE + name + COLON + SPACE + type;
+        text.setText(textString);
+        
+        return text;
+    }
+    
+    /**
+     * Helper method to create a model representation of the variable object.
+     * @param variable
+     * the variable that is to be put in table view
+     * @return 
+     * the model representation of the variable object model
+     */
+    private VariableObjectModel getVariableObjectModel(VariableObject variable)
+    {
         String name = variable.getName();
         String type = variable.getType();
         String scope = variable.getScope();
         String isStatic = String.valueOf(variable.isStaticType());
         String isFinal = String.valueOf(variable.isFinalType());
         
-        VariableObjectModel model = new VariableObjectModel(name, type, scope,
+        return new VariableObjectModel(name, type, scope,
                 isStatic, isFinal);
+    }
+    
+    /**
+     * This method also does three things to remove a variable. It first removes
+     * it from the list of variables for the selected class object. It then removes it from
+     * the box on canvas. And finally, it removes it from the table view.
+     * @param variable 
+     * the variable that is to be removed
+     */
+    public void handleRemoveVariableRequest(VariableObject variable)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
         
-        variablesTable.getItems().set(index, model);
+        selectedObject.getVariables().remove(variable);
+        TableView variablesTable = workspace.getVariablesTableView();
+        int selectedIndex = variablesTable.getSelectionModel().getSelectedIndex();
+        variablesTable.getItems().remove(selectedIndex);
+        selectedObject.getBox().getVariablesVBox().getChildren().remove(selectedIndex);
     }
     
     /*private void reloadMethodsTextFields(ClassObject classObject)

@@ -66,6 +66,9 @@ import jcd.controller.CanvasEditController;
 import jcd.controller.PageEditController;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import static jcd.data.JClassDesignerMode.GRID_DEFAULT_MODE;
+import static jcd.data.JClassDesignerMode.GRID_RENDER_MODE;
+import static jcd.data.JClassDesignerMode.GRID_RENDER_SNAP_MODE;
 import jcd.data.JClassDesignerState;
 import jcd.data.VariableObject;
 import saf.AppTemplate;
@@ -487,11 +490,20 @@ public class Workspace extends AppWorkspaceComponent
             canvasEditController.handleDefaultZoomRequest();
         });
         gridRenderCheckBox.setOnAction(e -> {
+            if (gridRenderCheckBox.isSelected())
+                dataManager.setMode(GRID_RENDER_MODE);
+            else
+                dataManager.setMode(GRID_DEFAULT_MODE);
             reloadWorkspace();
         });
         gridSnapCheckBox.setOnAction(e -> {
             if (gridSnapCheckBox.isSelected())
+            {
+                dataManager.setMode(GRID_RENDER_SNAP_MODE);
                 canvasEditController.handleSnapRequest();
+            }
+            else
+                dataManager.setMode(GRID_RENDER_MODE);
         });
     }
     
@@ -668,17 +680,8 @@ public class Workspace extends AppWorkspaceComponent
     @Override
     public void reloadWorkspace() 
     {
-        canvas.getChildren().clear();
-        
-        // NOW CHECK THE GRID RENDER AND GRID SNAP
-        if (gridRenderCheckBox.isSelected())
-            canvasEditController.handleRenderLinesRequest();
-        if (gridSnapCheckBox.isSelected())
-            canvasEditController.handleSnapRequest();
-        
-        // Then add all the boxes to the canvas
-        for (ClassObject classObject: dataManager.getClassesList())
-            canvas.getChildren().add(classObject.getBox().getMainVBox());
+        loadViewToolbarSettings();
+        loadCanvasSettings();
         
         /* Now check whether the selected object is null or not, and load component
            toolbar accordingly. */
@@ -689,6 +692,53 @@ public class Workspace extends AppWorkspaceComponent
         
         // NOW ENABLE THE LEGAL BUTTONS ACCORDINGLY
         enableLegalButtons();
+    }
+    
+    /**
+     * Helper method to load view toolbar settings.
+     */
+    private void loadViewToolbarSettings()
+    {
+        // NOW CHECK THE GRID RENDER AND GRID SNAP
+        if (dataManager.isInMode(GRID_RENDER_MODE))
+        {
+            gridRenderCheckBox.setSelected(true);
+            gridSnapCheckBox.setSelected(false);
+        }
+        else if (dataManager.isInMode(GRID_RENDER_SNAP_MODE))
+        {
+            gridRenderCheckBox.setSelected(true);
+            gridSnapCheckBox.setSelected(true);
+        }
+        else if (dataManager.isInMode(GRID_DEFAULT_MODE))
+        {
+            gridRenderCheckBox.setSelected(false);
+            gridSnapCheckBox.setSelected(false);
+        }
+    }
+    
+    /**
+     * Helper method to load canvas settings.
+     */
+    private void loadCanvasSettings()
+    {
+        canvas.getChildren().clear();
+        
+        // NOW CHECK THE GRID RENDER AND GRID SNAP
+        if (dataManager.isInMode(GRID_RENDER_MODE))
+            canvasEditController.handleRenderLinesRequest();
+        else if (dataManager.isInMode(GRID_RENDER_SNAP_MODE))
+        {
+            canvasEditController.handleRenderLinesRequest();
+            canvasEditController.handleSnapRequest();
+        }
+        
+        canvas.setScaleX(dataManager.getCanvasZoomScaleX());
+        canvas.setScaleY(dataManager.getCanvasZoomScaleY());
+        
+        // Then add all the boxes to the canvas
+        for (ClassObject classObject: dataManager.getClassesList())
+            canvas.getChildren().add(classObject.getBox().getMainVBox());
     }
     
     /**

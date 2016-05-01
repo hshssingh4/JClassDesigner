@@ -191,17 +191,7 @@ public class VariableDialog extends Stage
     {
         submitButton = new Button("Submit");
         submitButton.setOnAction((ActionEvent e) -> {
-            VariableObject newVariable = new VariableObject();
-            newVariable.setName(nameTextField.getText());
-            newVariable.setType(typeTextField.getText());
-            if (privateRadioButton.isSelected())
-                newVariable.setScope(PRIVATE);
-            else if (publicRadioButton.isSelected())
-                newVariable.setScope(PUBLIC);
-            else if (protectedRadioButton.isSelected())
-                newVariable.setScope(PROTECTED);
-            newVariable.setStaticType(staticCheckBox.isSelected());
-            newVariable.setFinalType(finalCheckBox.isSelected());
+            VariableObject newVariable = createVariableObject();
             
             if (nameTextField.getText().isEmpty() || typeTextField.getText().isEmpty())
             {
@@ -219,6 +209,27 @@ public class VariableDialog extends Stage
                 this.hide();
             }
         });
+    }
+    
+    /**
+     * Helper method to create a variable object from values inside the field in dialog box.
+     */
+    private VariableObject createVariableObject() 
+    {
+        VariableObject newVariable = new VariableObject();
+        
+        newVariable.setName(nameTextField.getText());
+        newVariable.setType(typeTextField.getText());
+        if (privateRadioButton.isSelected()) 
+            newVariable.setScope(PRIVATE);
+        else if (publicRadioButton.isSelected())
+            newVariable.setScope(PUBLIC);
+        else if (protectedRadioButton.isSelected())
+            newVariable.setScope(PROTECTED);
+        newVariable.setStaticType(staticCheckBox.isSelected());
+        newVariable.setFinalType(finalCheckBox.isSelected());
+        
+        return newVariable;
     }
     
     /**

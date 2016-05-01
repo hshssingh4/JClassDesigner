@@ -274,3 +274,10 @@ and open the template in the editor.
     -fx-background-color: #a5d4ff;
     -fx-text-fill: white;
 }
+
+// CSS class for the selected cells in the list view
+.list-cell:selected:hover
+{
+    -fx-background-color: #29a0e3;
+    -fx-text-fill: white;
+}
