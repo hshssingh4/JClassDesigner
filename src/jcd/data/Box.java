@@ -14,8 +14,8 @@ import javafx.scene.layout.VBox;
  */
 public class Box 
 {
-    private static final double DEFAULT_WIDTH = 180.0;
-    private static final double DEFAULT_HEIGHT = 30.0;
+    public static final double DEFAULT_WIDTH = 180.0;
+    public static final double DEFAULT_HEIGHT = 30.0;
     
     private static final String CLASS_BOX_ELEMENTS = "box_elements";
     
@@ -34,7 +34,9 @@ public class Box
     /**
      * Constructor to initialize this box.
      * @param x
+     * the x value for this box on canvas
      * @param y
+     * the y value for this box on canvas
      */
     public Box(int x, int y)
     {

@@ -22,7 +22,8 @@ import static saf.components.AppStyleArbiter.CLASS_COMPONENT_BUTTON;
 import static saf.components.AppStyleArbiter.CLASS_COMPONENT_CHILD_ELEMENT;
 
 /**
- *
+ * This class is basically a dialog box that is shows to the user for helping
+ * user to add local interface names to the selected class object.
  * @author RaniSons
  */
 public class LocalInterfacesDialog extends Stage
@@ -46,6 +47,13 @@ public class LocalInterfacesDialog extends Stage
     ClassObject classObject;
     DataManager dataManager;
     
+    /**
+     * Constructor to initialize the dialog box before it is displayed.
+     * @param initApp
+     * the current application
+     * @param classObject 
+     * the selected class object
+     */
     public LocalInterfacesDialog(AppTemplate initApp, ClassObject classObject)
     {
         app = initApp;
@@ -73,6 +81,11 @@ public class LocalInterfacesDialog extends Stage
         initStyle();
     }
     
+    /**
+     * Helper method to initialize the list view on the left in the dialog box.
+     * @param localInterfaceNames 
+     * the names of the interfaces to be added to the left list view
+     */
     private void initLeftListView(ArrayList<String> localInterfaceNames)
     {
         localInterfaceNamesListView = new ListView<>();
@@ -83,6 +96,12 @@ public class LocalInterfacesDialog extends Stage
         localInterfaceNamesListView.getItems().addAll(localInterfaceNames);
     }
     
+    /**
+     * Helper method to initialize the list view on the right in the dialog box
+     * with the names of the interfaces that the selected object already has.
+     * @param classLocalInterfaceNames 
+     * the names of the interfaces to be added to the right list view
+     */
     private void initRightListView(ArrayList<String> classLocalInterfaceNames)
     {
         classLocalInterfaceNamesListView = new ListView<>();
@@ -94,6 +113,9 @@ public class LocalInterfacesDialog extends Stage
         localInterfaceNamesListView.getItems().removeAll(classLocalInterfaceNames);
     }
     
+    /**
+     * Helper method to initialize the buttons vbox.
+     */
     private void initButtonsBox()
     {
         buttonsBox = new VBox(10);
@@ -129,6 +151,9 @@ public class LocalInterfacesDialog extends Stage
         buttonsBox.getChildren().addAll(addButton, removeButton, doneButton);
     }
     
+    /**
+     * Helper method to initialize the border pane.
+     */
     private void initBorderPane()
     {
         // WE'LL PUT EVERYTHING HERE
@@ -150,6 +175,9 @@ public class LocalInterfacesDialog extends Stage
                 app.getGUI().getPrimaryScene().getStylesheets());
     }
     
+    /**
+     * This method initializes the style for the components of the dialog box.
+     */
     private void initStyle()
     {
         addButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
@@ -160,6 +188,9 @@ public class LocalInterfacesDialog extends Stage
         buttonsBox.setPadding(new Insets(20, 20, 20, 20));
     }
     
+    /**
+     * This method pops up the dialog box and waits for a user response.
+     */
     public void makeVisible()
     {
 	// AND OPEN UP THIS DIALOG, MAKING SURE THE APPLICATION

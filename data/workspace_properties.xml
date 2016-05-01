@@ -40,7 +40,8 @@
         <property name="EDIT_METHOD_TOOLTIP"    value="Edit Selected Method"></property>
 	
 	<!-- MESSAGES -->
-	<property name="REMOVE_ELEMENT_MESSAGE"	    value="Are you sure you wish to remove that element?"></property>
+        <property name="REMOVE_ELEMENT_MESSAGE"	    value="Are you sure you want to remove this element?"></property>
+        <property name="REMOVE_ELEMENT_TITLE"       value="Remove Element"></property>
 		
 	<!-- ERROR MESSAGES AND TITLES FOR THEIR DIALOGS -->
 	<property name="ATTRIBUTE_UPDATE_ERROR_MESSAGE"	    value="WARNING: An error occured updating the element's attribute."></property>

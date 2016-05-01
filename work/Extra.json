@@ -2,7 +2,43 @@
 {
     "classes":[
         {
-            "class_name":"DummyClass71",
+            "class_name":"DummyInterface70",
+            "package_name":"null",
+            "parent_name":"null",
+            "is_interface":true,
+            "interface_names":[
+            ],
+            "variables":[
+            ],
+            "methods":[
+            ],
+            "java_api_packages":[
+            ],
+            "box":{
+                "translate_x":518.0,
+                "translate_y":271.0,
+                "class_text_fields":[
+                    {
+                        "text":"DummyInterface70",
+                        "style_class":"subheading_label",
+                        "underlined":false
+                    },
+                    {
+                        "text":"<<interface>>",
+                        "style_class":"text_label",
+                        "underlined":false
+                    }
+                ],
+                "variables_text_fields":[
+                ],
+                "methods_text_fields":[
+                ]
+            },
+            "line_connectors":[
+            ]
+        },
+        {
+            "class_name":"DummyClass7",
             "package_name":"null",
             "parent_name":"null",
             "is_interface":false,
@@ -15,11 +51,11 @@
             "java_api_packages":[
             ],
             "box":{
-                "translate_x":69.0,
-                "translate_y":125.0,
+                "translate_x":166.0,
+                "translate_y":271.0,
                 "class_text_fields":[
                     {
-                        "text":"DummyClass71",
+                        "text":"DummyClass7",
                         "style_class":"subheading_label",
                         "underlined":false
                     }
@@ -33,10 +69,10 @@
             ]
         },
         {
-            "class_name":"DummyInterface26",
+            "class_name":"DummyClass3",
             "package_name":"null",
             "parent_name":"null",
-            "is_interface":true,
+            "is_interface":false,
             "interface_names":[
             ],
             "variables":[
@@ -46,17 +82,43 @@
             "java_api_packages":[
             ],
             "box":{
-                "translate_x":587.0,
-                "translate_y":146.0,
+                "translate_x":380.0,
+                "translate_y":271.0,
                 "class_text_fields":[
                     {
-                        "text":"DummyInterface26",
+                        "text":"DummyClass3",
                         "style_class":"subheading_label",
                         "underlined":false
-                    },
+                    }
+                ],
+                "variables_text_fields":[
+                ],
+                "methods_text_fields":[
+                ]
+            },
+            "line_connectors":[
+            ]
+        },
+        {
+            "class_name":"DummyClass42",
+            "package_name":"null",
+            "parent_name":"null",
+            "is_interface":false,
+            "interface_names":[
+            ],
+            "variables":[
+            ],
+            "methods":[
+            ],
+            "java_api_packages":[
+            ],
+            "box":{
+                "translate_x":392.0,
+                "translate_y":271.0,
+                "class_text_fields":[
                     {
-                        "text":"<<interface>>",
-                        "style_class":"text_label",
+                        "text":"DummyClass42",
+                        "style_class":"subheading_label",
                         "underlined":false
                     }
                 ],

@@ -123,17 +123,20 @@ and open the template in the editor.
     -fx-padding: 5, 5, 5, 5;
 }
 
+// CSS class for canvas (workspace basically)
 .canvas_class
 {
     -fx-background-color: #ebfaff;
 }
 
+// CSS class for almost every text label except special ones
 .text_label
 {
     -fx-font-family: "Helvetica";
     -fx-font-size: 12pt;
 }
 
+// CSS class for the table views in the application
 .table-view
 {
     -fx-height: 200px;
@@ -141,12 +144,14 @@ and open the template in the editor.
     -fx-text-alignment: center;
 }
 
+// CSS class for the columns inside the tables
 .table-column
 {
     -fx-alignment: center;
     -fx-font-size: 10pt;
 }
 
+// CSS class for the label inside the header of the tables
 .table-view .column-header-background .label
 {
     -fx-background-color: transparent;
@@ -156,36 +161,43 @@ and open the template in the editor.
     -fx-font-weight: bold;
 }
 
+// CSS class for the column header color in the tables
 .table-view .column-header 
 {
     -fx-background-color: #aaaaff;
 }
 
+// CSS class for the table row cells
 .table-row-cell
 {
     -fx-background-color: ghostwhite;
 }
 
+// CSS class for changing the odd cell background colors int the table
 .table-row-cell:odd
 {
     -fx-background-color: white; 
 }
 
+// CSS class for the selected row in the table
 .table-row-cell:selected 
 {
     -fx-background-color: #29a0e3;
 }
 
+// CSS class for the scroll bars in the application
 .scroll-bar
 {
     -fx-background-color: white;
 }
 
+// CSS class for the scroll bar thumbs in the application
 .scroll-bar .thumb
 {
     -fx-background-color: #a5d4ff;
 }
 
+// CSS class for the buttons of the radio buttons (not their labels) in the application
 .radio-button .radio 
 {
     -fx-border-width: 1px;
@@ -196,12 +208,14 @@ and open the template in the editor.
     -fx-size: 10px;
 }
 
+// CSS class for the dot inside the buttons of the radio buttons
 .radio-button .dot 
 {
     -fx-background-radius: 5px;
     -fx-padding: 4px;
 }
 
+// CSS class for the complete radion buttons including the label that come along
 .radio-button
 {
     -fx-font-family: "Helvetica";
@@ -209,6 +223,7 @@ and open the template in the editor.
     -fx-font-weight: bold;
 }
 
+// CSS class for the boxes of the check boxes in the application
 .check-box .box
 {
     -fx-border-width: 1px;
@@ -218,6 +233,7 @@ and open the template in the editor.
     -fx-size: 8px;
 }
 
+// CSS class for the check boxes themselves
 .check-box
 {
     -fx-font-family: "Helvetica";
@@ -225,6 +241,7 @@ and open the template in the editor.
     -fx-font-weight: bold;
 }
 
+// CSS class for the list views in the application
 .list-view
 {
     -fx-height: 200px;
@@ -232,22 +249,26 @@ and open the template in the editor.
     -fx-text-alignment: center;
 }
 
+// CSS class for the list view cells
 .list-cell
 {
     -fx-background-color: ghostwhite;
 }
 
+// CSS class for the background color of the odd cells in the list view
 .list-cell:odd
 {
     -fx-background-color: white; 
 }
 
+// CSS class for the selected cells in the list view
 .list-cell:selected 
 {
     -fx-background-color: #29a0e3;
     -fx-text-fill: white;
 }
 
+// CSS class for the hover detection over a list view cell
 .list-cell:filled:hover 
 {
     -fx-background-color: #a5d4ff;

@@ -33,13 +33,23 @@ import saf.components.AppDataComponent;
 import static jcd.file.FileManager.*;
 
 /**
- *
+ * This class helps write data to a json file.
  * @author RaniSons
  */
 public class FileSaver 
 {
     public FileSaver() {}
     
+    /**
+     * This method calls other methods to write data to a json file
+     * which data is present in the data component for this app.
+     * @param data
+     * the data component
+     * @param filePath
+     * the file path
+     * @throws IOException 
+     * if there is an issue writing data to file
+     */
     public void saveData(AppDataComponent data, String filePath) throws IOException 
     {
         // First create the string writer
@@ -81,6 +91,13 @@ public class FileSaver
 	pw.close();
     }
     
+    /**
+     * Helper method to make a Json class object from the actual class object.
+     * @param classObject
+     * actual class object
+     * @return 
+     * the json representation of the actual class object
+     */
     public JsonObject makeClassJsonObject(ClassObject classObject)
     {
         // First initialize all the objects that can possibly be null
@@ -106,6 +123,14 @@ public class FileSaver
 	return jso;
     }
     
+    /**
+     * Helper method to build interface names Json Array from the interface names
+     * list of the actual class object.
+     * @param interfaceNames
+     * the actual array of interface names
+     * @return 
+     * the json array of interface names
+     */
     private JsonArray buildInterfaceNamesJsonArray(ArrayList<String> interfaceNames)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -117,6 +142,14 @@ public class FileSaver
         return jA;
     }
     
+    /**
+     * Helper method to build json array of variable objects from actual variable
+     * objects.
+     * @param variables
+     * the actual array of variables
+     * @return 
+     * the json array of variables
+     */
     private JsonArray buildVariablesJsonArray(ArrayList<VariableObject> variables)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -137,6 +170,14 @@ public class FileSaver
 	return jA;
     }
     
+    /**
+     * Helper method to build the json array of method object from the actual
+     * method objects.
+     * @param methods
+     * the actual list of methods
+     * @return 
+     * the json array of methods
+     */
     private JsonArray buildMethodsJsonArray(ArrayList<MethodObject> methods)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -162,6 +203,14 @@ public class FileSaver
 	return jA;
     }
     
+    /**
+     * Helper methods to build json array of argument objects from the actual list
+     * of argument objects.
+     * @param arguments
+     * the actual list of arguments
+     * @return
+     * the json array of arguments
+     */
     private JsonArray buildArgumentsJsonArray(ArrayList<ArgumentObject> arguments)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -179,6 +228,13 @@ public class FileSaver
 	return jA;
     }
     
+    /**
+     * Helper method to build json array of java api packages list.
+     * @param javaApiPackages
+     * the list of actual java api packages
+     * @return 
+     * the json array of java api packages
+     */
     private JsonArray buildJavaApiPackagesJsonArray(ArrayList<String> javaApiPackages)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -190,6 +246,13 @@ public class FileSaver
         return jA;
     }
     
+    /**
+     * Helper method to build a json object from actual box object.
+     * @param box
+     * the actual box
+     * @return 
+     * the json box object
+     */
     private JsonObject buildBoxJsonObject(Box box)
     {
         JsonObject jso = Json.createObjectBuilder()
@@ -203,6 +266,13 @@ public class FileSaver
         return jso;
     }
     
+    /**
+     * Helper method to build a json array of class text fields.
+     * @param box
+     * the box with the class text fields
+     * @return 
+     * the json array of class text fields
+     */
     private JsonArray buildClassTextFieldsJsonArray(Box box)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -222,6 +292,13 @@ public class FileSaver
 	return jA;
     }
     
+    /**
+     * Helper method to build a json array of variable text fields.
+     * @param box
+     * the box with the variable text fields
+     * @return 
+     * the json array of variable text fields
+     */
     private JsonArray buildVariablesTextFieldsJsonArray(Box box)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -241,6 +318,13 @@ public class FileSaver
 	return jA;
     }
     
+    /**
+     * Helper method to build a json array of method text fields.
+     * @param box
+     * the box with the method text fields
+     * @return 
+     * the json array of method text fields
+     */
     private JsonArray buildMethodsTextFieldsJsonArray(Box box)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();

@@ -6,7 +6,8 @@
 package jcd.data;
 
 /**
- *
+ * This class represents a variable object. It has all the properties
+ * that a variable in Java usually has.
  * @author RaniSons
  */
 public class VariableObject 

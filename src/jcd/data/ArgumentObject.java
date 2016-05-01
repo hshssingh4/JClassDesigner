@@ -6,14 +6,18 @@
 package jcd.data;
 
 /**
- *
+ * This class represents the argument object in the application. It has all the
+ * properties that a usual argument inside a method has.
  * @author RaniSons
  */
 public class ArgumentObject 
 {
-    private String name;
-    private String type;
+    private String name; // name of the argument
+    private String type; // type of the argument
     
+    /**
+     * Default constructor
+     */
     public ArgumentObject() {}
 
     public String getName()

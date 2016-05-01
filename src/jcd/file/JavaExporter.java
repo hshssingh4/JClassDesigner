@@ -18,13 +18,23 @@ import static jcd.file.FileManager.*;
 import saf.components.AppDataComponent;
 
 /**
- *
+ * This class helps exporting data in our app into java classes.
  * @author RaniSons
  */
 public class JavaExporter 
 {
     public JavaExporter() {}
     
+    /**
+     * This is main method in this class that is called to export data to 
+     * .java files.
+     * @param data
+     * the data component
+     * @param filePath
+     * the place where the data is to written
+     * @throws IOException 
+     * if there is an issue writing data to .java files
+     */
     public void exportToSourceCode(AppDataComponent data, String filePath) throws IOException 
     {
         // First cast the data component to a data manager
@@ -111,12 +121,39 @@ public class JavaExporter
         pw.println(CLOSING_CURLY_BRACE);
     }
     
+    /**
+     * Helper method to write the java api package line
+     * @param classObject
+     * the class object for which the package name is to be written
+     * @param pw 
+     * print writer
+     */
+    private void writePackageNameLine(ClassObject classObject, PrintWriter pw)
+    {
+        String packageNameLine = PACKAGE + SPACE + classObject.getPackageName() + SEMI_COLON;
+        pw.println(packageNameLine); // Print package name followed by a newline
+    }
+    
+    /**
+     * Helper method to write the java api package import statements.
+     * @param classObject
+     * the class object for which the packages are to be written
+     * @param pw 
+     * print writer
+     */
     private void writeJavaApiPackageImports(ClassObject classObject, PrintWriter pw)
     {
         for (String importString: classObject.getJavaApiPackages())
             pw.println(fetchImportLine(importString));
     }
     
+    /**
+     * Helper method to write the local package import statements.
+     * @param classObject
+     * the class object for which the packages are to be written
+     * @param pw 
+     * print writer
+     */
     private void writeUserClassImports(DataManager dataManager, ClassObject classObject, PrintWriter pw)
     {
         // First get the relationship classes that this class object has
@@ -132,17 +169,25 @@ public class JavaExporter
         }
     }
     
+    /**
+     * Helper method that returns the import line to be written.
+     * @param importString
+     * the package name
+     * @return 
+     * the import statement
+     */
     private String fetchImportLine(String importString)
     {
         return IMPORT + SPACE + importString + SEMI_COLON;
     }
     
-    private void writePackageNameLine(ClassObject classObject, PrintWriter pw)
-    {
-        String packageNameLine = PACKAGE + SPACE + classObject.getPackageName() + SEMI_COLON;
-        pw.println(packageNameLine); // Print package name followed by a newline
-    }
-    
+    /**
+     * This method writes the class name line to the .java file.
+     * @param classObject
+     * the class object whose name is to be written
+     * @param pw 
+     * print writer
+     */
     private void writeClassNameLine(ClassObject classObject, PrintWriter pw)
     {
         String classNameLine = PUBLIC;
@@ -167,12 +212,26 @@ public class JavaExporter
         pw.println(classNameLine);
     }
     
+    /**
+     * This method writes the variable name lines to the .java file.
+     * @param classObject
+     * the class object whose variable lines are to be written
+     * @param pw 
+     * print writer
+     */
     private void writeVariables(ClassObject classObject, PrintWriter pw)
     {
         for (VariableObject variable: classObject.getVariables())
             writeVariable(variable, pw);
     }
     
+    /**
+     * Helper method to write a single variable line to .java file.
+     * @param variable
+     * the variable for which the line is to be written.
+     * @param pw 
+     * print writer
+     */
     private void writeVariable(VariableObject variable, PrintWriter pw)
     {
         String variableLine = SINGLE_TAB;
@@ -191,6 +250,13 @@ public class JavaExporter
         pw.println(variableLine);
     }
     
+    /**
+     * This helper method helps write the method lines to the .java file.
+     * @param classObject
+     * the class object for which these method lines are to be written
+     * @param pw 
+     * print writer
+     */
     private void writeMethods(ClassObject classObject, PrintWriter pw)
     {
         for (MethodObject method: classObject.getMethods())
@@ -200,6 +266,15 @@ public class JavaExporter
         }
     }
     
+    /**
+     * This helper method helps write the method lines to the .java file.
+     * @param classObject
+     * the class object for which these method lines are to be written
+     * @param method
+     * the method object for which the line is to written
+     * @param pw 
+     * print writer
+     */
     private void writeMethod(ClassObject classObject, MethodObject method, PrintWriter pw)
     {
         String methodLine = SINGLE_TAB;
@@ -246,12 +321,24 @@ public class JavaExporter
         }
     }
 
+    /**
+     * Helper method to write the method argument inside the parenthesis.
+     * @param arg
+     * the argument object to be written to the .java file
+     * @param pw 
+     * print writer
+     */
     private void writeMethodArgument(ArgumentObject arg, PrintWriter pw)
     {
         String argLine = arg.getType() + SPACE + arg.getName();
         pw.print(argLine);
     }
     
+    /**
+     * This helper method helps write the return line inside java methods.
+     * @param returnType
+     * @return 
+     */
     private String fetchReturnValue(String returnType)
     {
         switch (returnType)

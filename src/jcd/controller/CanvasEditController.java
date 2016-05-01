@@ -73,7 +73,9 @@ public class CanvasEditController
     /**
      * Handles the selection request. Highlights the object that is selected.
      * @param layoutX
+     * the x location for the click
      * @param layoutY
+     * the y location for the click
      */
     public void handleSelectionRequest(double layoutX, double layoutY)
     {
@@ -106,6 +108,9 @@ public class CanvasEditController
             }
             
             workspace.reloadWorkspace();
+            
+            // Work has been edited!
+            app.getGUI().updateToolbarControls(false);
         }
     }
     
@@ -127,11 +132,14 @@ public class CanvasEditController
             highlight(obj);
             
             workspace.reloadWorkspace();
+            
+            // Work has been edited!
+            app.getGUI().updateToolbarControls(false);
         }
     }
     
     /**
-     * Method to handle the deselect request by unhighlighting the object. 
+     * Method to handle the deselect request by un highlighting the object. 
      */
     public void handleDeselectRequest()
     {
@@ -146,11 +154,14 @@ public class CanvasEditController
                 workspace.setSelectedObject(null);
             }
             workspace.reloadWorkspace();
+            
+            // Work has been edited!
+            app.getGUI().updateToolbarControls(false);
         }
     }
     
     /**
-     * Helper method to unhighlight the object by setting the effect to null.
+     * Helper method to un highlight the object by setting the effect to null.
      * @param obj 
      * the object whose effect is to be set to null
      */
@@ -173,7 +184,9 @@ public class CanvasEditController
      * This method handles the request where the user tries to relocate or
      * reposition the selected object.
      * @param newX
+     * the new x location for this object
      * @param newY
+     * the new y location for this object
      */
     public void handlePositionChangeRequest(double newX, double newY)
     {
@@ -194,8 +207,10 @@ public class CanvasEditController
           
         resizeCanvasIfNeeded();
         
-        app.getGUI().updateToolbarControls(false);
         workspace.reloadWorkspace();
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
     }
     
     /**
@@ -232,6 +247,9 @@ public class CanvasEditController
         canvas.setScaleY(canvas.getScaleY() * 1.25);
         
         workspace.reloadWorkspace();
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
     }
     
     /**
@@ -246,6 +264,9 @@ public class CanvasEditController
         canvas.setScaleY(canvas.getScaleY() * 0.8);
 
         workspace.reloadWorkspace();
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
     }
     
     /**
@@ -260,20 +281,31 @@ public class CanvasEditController
         canvas.setScaleY(1);
 
         workspace.reloadWorkspace();
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
     }
     
     public void handleRenderLinesRequest()
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        Pane canvas = workspace.getCanvas();
         
-        renderLines(canvas);
+        renderLines();
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
     }
     
-    private void renderLines(Pane canvas)
+    /**
+     * Helper method to render the lines on the canvas.
+     */
+    private void renderLines()
     {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+        
         int numHorizontalLines = (int) canvas.getHeight();
-        for (int i = 0; i < numHorizontalLines; i = i + 20)
+        for (int i = 0; i < numHorizontalLines; i = i + 15)
         {
             Line horizontalLine = new Line();
             horizontalLine.setStartX(0);
@@ -283,7 +315,7 @@ public class CanvasEditController
             canvas.getChildren().addAll(horizontalLine);
         }
         int numVerticalLines = (int) canvas.getWidth();
-        for (int i = 0; i < numVerticalLines; i = i + 20)
+        for (int i = 0; i < numVerticalLines; i = i + 15)
         {
             Line verticalLine = new Line();
             verticalLine.setStartX(i);
@@ -294,6 +326,10 @@ public class CanvasEditController
        }
     }
     
+    /**
+     * This method handles the snapping of the object to the left/top corner of the 
+     * grid lines on the canvas.
+     */
     public void handleSnapRequest()
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
@@ -325,6 +361,14 @@ public class CanvasEditController
         }
     }
     
+    /**
+     * This is a helper method for snapping because it returns the closest vertical
+     * lines to any object.
+     * @param translateX
+     * the x location to which the line is closest
+     * @return 
+     * the line that is closest to the translateX
+     */
     private Line fetchClosestVerticalLine(int translateX)
     {
         Line closestLine = null;
@@ -349,6 +393,14 @@ public class CanvasEditController
         return closestLine;
     }
     
+    /**
+     * Another helper method for snapping and this returns the closest horizontal
+     * line to the class object.
+     * @param translateY
+     * the y location to which the line is closest
+     * @return 
+     * the closest line object
+     */
     private Line fetchClosestHorizontalLine(int translateY)
     {
         Line closestLine = null;
@@ -377,6 +429,14 @@ public class CanvasEditController
         return closestLine;
     }
 
+    /**
+     * This method is continuously called when data manager is in resizing mode
+     * as it looks for the mouse location on top of selected object.
+     * @param mouseXLocation
+     * the current x location of the mouse
+     * @param mouseYLocation 
+     * the current y location of the mouse
+     */
     public void handleCheckResizeRequest(int mouseXLocation, int mouseYLocation) 
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
@@ -414,24 +474,39 @@ public class CanvasEditController
         }
     }
     
+    /**
+     * Helper method to change cursor for Horizontal resizing.
+     */
     private void changeCursorToHorizontalResize() 
     {
         Scene scene = app.getGUI().getPrimaryScene();
         scene.setCursor(Cursor.E_RESIZE);
     }
     
+    /**
+     * Helper method to change cursor for Vertical resizing.
+     */
     private void changeCursorToVerticalResize() 
     {
         Scene scene = app.getGUI().getPrimaryScene();
         scene.setCursor(Cursor.S_RESIZE);
     }
 
+    /**
+     * Helper method to change cursor for Normal.
+     */
     private void changeCursorToNormal() 
     {
         Scene scene = app.getGUI().getPrimaryScene();
         scene.setCursor(Cursor.DEFAULT);
     }
     
+    /**
+     * This method is called to initialize values when a press is detected for
+     * resizing the selected object.
+     * @param originalPressLocation
+     * current press location
+     */
     public void handleResizePressDetected(double originalPressLocation)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
@@ -448,6 +523,12 @@ public class CanvasEditController
         this.originalMethodsVBoxHeight = methodsVBox.getHeight();
     }
     
+    /**
+     * This method handles the horizontal resizing as it changes
+     * the width of the selected object accordingly.
+     * @param newX
+     * the new x location of the mouse after press
+     */
     public void handleHorizontalResizeRequest(double newX)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
@@ -456,8 +537,17 @@ public class CanvasEditController
         double offsetWidth = newX - originalPressLocation;
         double newWidth = originalWidth + offsetWidth;
         mainVBox.setMinWidth(newWidth);
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
     }
     
+    /**
+     * This method handles the vertical resizing as it changes
+     * the height of the selected object accordingly.
+     * @param newY
+     * the new y location of the mouse after press
+     */
     public void handleVerticalResizeRequest(double newY)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
@@ -473,5 +563,8 @@ public class CanvasEditController
         box.getClassVBox().setMinHeight(newClassVBoxHeight);
         box.getVariablesVBox().setMinHeight(newVariablesVBoxHeight);
         box.getMethodsVBox().setMinHeight(newMethodsVBoxHeight);
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
     }
 }

@@ -23,7 +23,8 @@ import static saf.components.AppStyleArbiter.CLASS_COMPONENT_BUTTON;
 import static saf.components.AppStyleArbiter.CLASS_COMPONENT_CHILD_ELEMENT;
 
 /**
- *
+ * This class is basically a dialog box that helps user to add
+ * java api packages to the class object.
  * @author RaniSons
  */
 public class PackagesDialog extends Stage
@@ -45,6 +46,13 @@ public class PackagesDialog extends Stage
     TextField selectedTextField;
     ClassObject classObject;
     
+    /**
+     * Constructor to initialize the dialog box before it is displayed.
+     * @param initApp
+     * the current application
+     * @param object 
+     * the selected class object
+     */
     public PackagesDialog(AppTemplate initApp, ClassObject object)
     {
         app = initApp;
@@ -69,6 +77,11 @@ public class PackagesDialog extends Stage
         initStyle();
     }
     
+    /**
+     * Helper method to initialize the text fields VBox in the dialog box.
+     * @param javaApipackageNames 
+     * the names of the packages to be added to the text fields in the box
+     */
     private void initTextFieldsVBox(ArrayList<String> javaApiPackageNames)
     {
         textFieldsVBox = new VBox(10);
@@ -83,6 +96,9 @@ public class PackagesDialog extends Stage
         }
     }
     
+    /**
+     * Helper method to initialize the buttons box in the dialog.
+     */
     private void initButtonsBox()
     {
         buttonsBox = new HBox(10);
@@ -118,6 +134,9 @@ public class PackagesDialog extends Stage
         buttonsBox.getChildren().add(doneButton);
     }
     
+    /**
+     * Helper method to initialize the border pane.
+     */
     private void initBorderPane()
     {
         // WE'LL PUT EVERYTHING HERE
@@ -127,6 +146,10 @@ public class PackagesDialog extends Stage
         borderPane.setPrefHeight(300);
     }
     
+    /**
+     * This method is called when the user presses done and this method adds
+     * them to the list of packages for this class.
+     */
     private void addPackageNames()
     {
         for (Node a : textFieldsVBox.getChildren())
@@ -149,6 +172,9 @@ public class PackagesDialog extends Stage
                 app.getGUI().getPrimaryScene().getStylesheets());
     }
     
+    /**
+     * This method initializes the style for the components of the dialog box.
+     */
     private void initStyle()
     {
         addButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
@@ -160,6 +186,9 @@ public class PackagesDialog extends Stage
         textFieldsVBox.setPadding(new Insets(5, 20, 20, 20));
     }
     
+    /**
+     * This method pops up the dialog box and waits for a user response.
+     */
     public void makeVisible()
     {
 	// AND OPEN UP THIS DIALOG, MAKING SURE THE APPLICATION

@@ -44,6 +44,16 @@ public class ClassObject
                 packageName == null : this.packageName.equals(packageName)));
     }
     
+    /**
+     * This is an overloaded method that check whether this class object
+     * has the same name and package as the passed arguments.
+     * @param className
+     * the class name for the other object
+     * @param packageName
+     * the package name for the other object
+     * @return 
+     * true if both objects are equal, false otherwise
+     */
     public boolean equals(String className, String packageName)
     {
         return (this.className.equalsIgnoreCase(className) && 
@@ -51,6 +61,12 @@ public class ClassObject
                 packageName == null : this.packageName.equals(packageName)));
     }
     
+    /**
+     * This methods checks whether there is an abstract method in the file and if
+     * there is then it return true indicating that this class is abstract.
+     * @return 
+     * true if this class is abstract, false otherwise
+     */
     public boolean isAbstractType()
     {
         for (MethodObject method: this.getMethods())
@@ -69,8 +85,6 @@ public class ClassObject
         this.className = className;
     }
     
-    
-
     public String getPackageName()
     {
         return packageName;

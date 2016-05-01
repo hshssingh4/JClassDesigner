@@ -8,7 +8,8 @@ package jcd.data;
 import java.util.ArrayList;
 
 /**
- *
+ * This class represents a method object. It has all the properties that a
+ * method in java usual has.
  * @author RaniSons
  */
 public class MethodObject 
@@ -23,6 +24,11 @@ public class MethodObject
 
     public MethodObject() {}
     
+    /**
+     * Checks whether this method has a return type other than void.
+     * @return 
+     * true if it does have a return type other than void, false otherwise
+     */
     public boolean isReturnable()
     {
         return !(type.equalsIgnoreCase("void"));

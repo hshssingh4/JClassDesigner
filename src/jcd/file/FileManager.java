@@ -11,7 +11,7 @@ import saf.components.AppDataComponent;
 import saf.components.AppFileComponent;
 
 /**
- *
+ * This is the file manager for our app which manages file I/O for our data.
  * @author RaniSons
  */
 public class FileManager implements AppFileComponent
@@ -94,6 +94,15 @@ public class FileManager implements AppFileComponent
             "/*\n* Author:\n* Co-Author:\n* To change this license header, "
             + "choose License Headers in Project Properties.\n*/";
 
+    /**
+     * This method is called from SAF and it saves the data to a json file.
+     * @param data
+     * the data component
+     * @param filePath
+     * the file path where the data is to saved
+     * @throws IOException
+     * if there is an issue writing data to file
+     */
     @Override
     public void saveData(AppDataComponent data, String filePath) throws IOException 
     {
@@ -102,6 +111,15 @@ public class FileManager implements AppFileComponent
         fileSaver.saveData((DataManager) data, filePath);
     }
 
+    /**
+     * This method helps load the data from a given json file.
+     * @param data
+     * the data component
+     * @param filePath
+     * the file path of the json file
+     * @throws IOException 
+     * if there is an issue reading data from the file
+     */
     @Override
     public void loadData(AppDataComponent data, String filePath) throws IOException
     {
@@ -110,6 +128,15 @@ public class FileManager implements AppFileComponent
         fileLoader.loadData((DataManager) data, filePath);
     }
     
+    /**
+     * This method helps export data to a java format.
+     * @param data
+     * the data component
+     * @param filePath
+     * the path of the file
+     * @throws IOException 
+     * if there is an issue writing to the java file
+     */
     @Override
     public void exportData(AppDataComponent data, String filePath) throws IOException 
     {
@@ -118,6 +145,12 @@ public class FileManager implements AppFileComponent
         javaExporter.exportToSourceCode(data, filePath);
     }
     
+    /**
+     * This method is here just to satisfy the compiler.
+     * @param data
+     * @param filePath
+     * @throws IOException 
+     */
     @Override
     public void importData(AppDataComponent data, String filePath) throws IOException
     {

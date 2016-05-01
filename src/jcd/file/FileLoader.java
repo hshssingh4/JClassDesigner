@@ -26,7 +26,7 @@ import saf.components.AppDataComponent;
 import static jcd.file.FileManager.*;
 
 /**
- *
+ * This class loads the data file and populates the data manager with the right data.
  * @author RaniSons
  */
 public class FileLoader 
@@ -89,6 +89,13 @@ public class FileLoader
         }
     }
     
+    /**
+     * Helper method to make and return a class object from a Json Class Object.
+     * @param jsoClass
+     * the json class object
+     * @return 
+     * the class object to be added to data manager
+     */
     private ClassObject loadClassObject(JsonObject jsoClass)
     {
         ClassObject classObject;
@@ -124,6 +131,13 @@ public class FileLoader
         return classObject;
     }
     
+    /**
+     * Helper method to load the interface names
+     * @param jsoClass
+     * the json class object from which the interface names are to be loaded
+     * @return 
+     * list of interface names
+     */
     private ArrayList<String> loadInterfaceNames(JsonObject jsoClass)
     {
         ArrayList<String> interfaceNames = new ArrayList<>();
@@ -138,6 +152,13 @@ public class FileLoader
         return interfaceNames;
     }
     
+    /**
+     * Loads the variable object from the json class object.
+     * @param jsoClass
+     * the json class object
+     * @return 
+     * the list of variable objects
+     */
     private ArrayList<VariableObject> loadVariables(JsonObject jsoClass)
     {
         ArrayList<VariableObject> variables = new ArrayList<>();
@@ -158,6 +179,13 @@ public class FileLoader
         return variables;
     }
     
+    /**
+     * Helper method to load all the method inside the json class object.
+     * @param jsoClass
+     * the json class object
+     * @return 
+     * the array list of method objects.
+     */
     private ArrayList<MethodObject> loadMethods(JsonObject jsoClass)
     {
         ArrayList<MethodObject> methods = new ArrayList<>();
@@ -183,6 +211,13 @@ public class FileLoader
         return methods;
     }
     
+    /**
+     * Helper method to load the argument objects from the json class object.
+     * @param jsoMethod
+     * the json method object
+     * @return 
+     * list of argument objects
+     */
     private ArrayList<ArgumentObject> loadMethodArguments(JsonObject jsoMethod)
     {
         ArrayList<ArgumentObject> arguments = new ArrayList<>();
@@ -200,6 +235,13 @@ public class FileLoader
         return arguments;
     }
     
+    /**
+     * Helper metho to load the java api package names from the json class object.
+     * @param jsoClass
+     * the json class object
+     * @return 
+     * list of api packages
+     */
     private ArrayList<String> loadJavaApiPackages(JsonObject jsoClass)
     {
         ArrayList<String> javaApiPackages = new ArrayList<>();
@@ -214,6 +256,13 @@ public class FileLoader
         return javaApiPackages;
     }
     
+    /**
+     * Helper method to load and initialize the box from json class object.
+     * @param jsoClass
+     * the json class object
+     * @return 
+     * the box object itself
+     */
     private Box loadBoxObject(JsonObject jsoClass)
     {
         // ALSO GET THE X AND Y COORDINATES FOR THE BOX
@@ -229,6 +278,13 @@ public class FileLoader
         return box;
     }
     
+    /**
+     * Helper method to load the class text field to be added to the box object
+     * @param jsoBox
+     * the box object
+     * @return 
+     * the list of text field inside the class box
+     */
     private ArrayList<Text> loadClassTextFields(JsonObject jsoBox)
     {
         ArrayList<Text> classTextFields = new ArrayList<>();
@@ -250,6 +306,13 @@ public class FileLoader
         return classTextFields;
     }
     
+    /**
+     * Helper method to load the variable text field to be added to the box object
+     * @param jsoBox
+     * the box object
+     * @return 
+     * the list of text field inside the variables box
+     */
     private ArrayList<Text> loadVariablesTextFields(JsonObject jsoBox)
     {
         ArrayList<Text> variablesTextFields = new ArrayList<>();
@@ -271,6 +334,13 @@ public class FileLoader
         return variablesTextFields;
     }
     
+    /**
+     * Helper method to load the methods text field to be added to the box object
+     * @param jsoBox
+     * the box object
+     * @return 
+     * the list of text field inside the methods box
+     */ 
     private ArrayList<Text> loadMethodsTextFields(JsonObject jsoBox)
     {
         ArrayList<Text> methodsTextFields = new ArrayList<>();

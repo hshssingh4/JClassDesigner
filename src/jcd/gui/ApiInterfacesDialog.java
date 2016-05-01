@@ -24,7 +24,8 @@ import static saf.components.AppStyleArbiter.CLASS_COMPONENT_BUTTON;
 import static saf.components.AppStyleArbiter.CLASS_COMPONENT_CHILD_ELEMENT;
 
 /**
- *
+ * This class is basically a dialog box that asks user to enter the 
+ * names of the API interfaces for a selected class object.
  * @author RaniSons
  */
 public class ApiInterfacesDialog extends Stage
@@ -48,6 +49,13 @@ public class ApiInterfacesDialog extends Stage
     
     DataManager dataManager;
     
+    /**
+     * Constructor to initialize the dialog box before it is displayed.
+     * @param initApp
+     * the current application
+     * @param object 
+     * the selected class object
+     */
     public ApiInterfacesDialog(AppTemplate initApp, ClassObject object)
     {
         app = initApp;
@@ -73,6 +81,11 @@ public class ApiInterfacesDialog extends Stage
         initStyle();
     }
     
+    /**
+     * Helper method to initialize the text fields VBox in the dialog box.
+     * @param interfaceNames 
+     * the names of the interfaces to be added to the text field
+     */
     private void initTextFieldsVBox(ArrayList<String> interfaceNames)
     {
         textFieldsVBox = new VBox(10);
@@ -90,6 +103,9 @@ public class ApiInterfacesDialog extends Stage
         }
     }
     
+    /**
+     * Helper method to initialize the buttons box in the dialog.
+     */
     private void initButtonsBox()
     {
         buttonsBox = new HBox(10);
@@ -125,6 +141,9 @@ public class ApiInterfacesDialog extends Stage
         buttonsBox.getChildren().add(doneButton);
     }
     
+    /**
+     * Helper method to initialize the border pane.
+     */
     private void initBorderPane()
     {
         // WE'LL PUT EVERYTHING HERE
@@ -134,6 +153,10 @@ public class ApiInterfacesDialog extends Stage
         borderPane.setPrefHeight(300);
     }
     
+    /**
+     * This method is called when the user presses done and this method adds
+     * them to the list of interfaces for this class.
+     */
     private void addInterfaceNames()
     {
         for (Node a : textFieldsVBox.getChildren())
@@ -156,6 +179,9 @@ public class ApiInterfacesDialog extends Stage
                 app.getGUI().getPrimaryScene().getStylesheets());
     }
     
+    /**
+     * This method initializes the style for the components of the dialog box.
+     */
     private void initStyle()
     {
         addButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
@@ -167,6 +193,9 @@ public class ApiInterfacesDialog extends Stage
         textFieldsVBox.setPadding(new Insets(5, 20, 20, 20));
     }
     
+    /**
+     * This method pops up the dialog box and waits for a user response.
+     */
     public void makeVisible()
     {
 	// AND OPEN UP THIS DIALOG, MAKING SURE THE APPLICATION

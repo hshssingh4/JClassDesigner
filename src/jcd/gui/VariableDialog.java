@@ -32,7 +32,8 @@ import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
 import saf.ui.AppMessageDialogSingleton;
 
 /**
- * This class provides the dialog box functionality for adding a variable.
+ * This class provides the dialog box functionality for adding a variable
+ * by displaying a dialog box.
  * @author RaniSons
  */
 public class VariableDialog extends Stage
@@ -220,6 +221,9 @@ public class VariableDialog extends Stage
         });
     }
     
+    /**
+     * Helper method to initialize the grid panes.
+     */
     private void initGridPane()
     {
         gridPane = new GridPane();
@@ -289,6 +293,9 @@ public class VariableDialog extends Stage
                 app.getGUI().getPrimaryScene().getStylesheets());
     }
     
+    /**
+     * Helper method to add style classes for the components inside this dialog box.
+     */
     private void initStyle()
     {
         gridPane.getStyleClass().add(CLASS_COMPONENT_CHILD_ELEMENT);
