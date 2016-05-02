@@ -96,7 +96,10 @@ public class LocalInterfacesDialog extends Stage
             addButton.setDisable(false);
             removeButton.setDisable(true);
         });
-        localInterfaceNamesListView.getItems().addAll(localInterfaceNames);
+        
+        for (String interfaceName: localInterfaceNames)
+            if (!classObject.getClassName().equals(interfaceName))
+                localInterfaceNamesListView.getItems().add(interfaceName);
     }
     
     /**
@@ -161,9 +164,9 @@ public class LocalInterfacesDialog extends Stage
             removeButton.setDisable(true);
         });
         doneButton.setOnAction(e -> {
+            dataManager.clearLocalInterfaceNames(classObject);
             for (String interfaceName: classLocalInterfaceNamesListView.getItems())
-                if (!classObject.getInterfaceNames().contains(interfaceName))
-                    classObject.getInterfaceNames().add(interfaceName);
+                classObject.getInterfaceNames().add(interfaceName);
             this.hide();
         });
         

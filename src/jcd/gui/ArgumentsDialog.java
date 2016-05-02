@@ -17,20 +17,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import jcd.data.ClassObject;
-import jcd.data.DataManager;
+import jcd.data.ArgumentObject;
 import saf.AppTemplate;
 import static saf.components.AppStyleArbiter.CLASS_COMPONENT_BUTTON;
 import static saf.components.AppStyleArbiter.CLASS_COMPONENT_CHILD_ELEMENT;
 
 /**
- * This class is basically a dialog box that asks user to enter the 
- * names of the API interfaces for a selected class object.
+ * This class is basically a dialog box that helps user to add
+ * arguments to a method object.
  * @author RaniSons
  */
-public class ApiInterfacesDialog extends Stage
+public class ArgumentsDialog extends Stage
 {
-    public static final String TITLE = "Java API Interfaces: ";
+    public static final String TITLE = "Add/Edit Arguments";
+    
+    ArrayList<ArgumentObject> arguments;
     
     // This is our app
     AppTemplate app;
@@ -44,37 +45,33 @@ public class ApiInterfacesDialog extends Stage
     HBox buttonsBox;
     
     Scene dialogScene;
-    TextField selectedTextField;
-    ClassObject classObject;
-    
-    DataManager dataManager;
+    HBox selectedHBox;
     
     /**
      * Constructor to initialize the dialog box before it is displayed.
      * @param initApp
      * the current application
-     * @param object 
+     * @param arguments 
      * the selected class object
      */
-    public ApiInterfacesDialog(AppTemplate initApp, ClassObject object)
+    public ArgumentsDialog(AppTemplate initApp, ArrayList<ArgumentObject> arguments)
     {
         app = initApp;
         
         initModality(Modality.WINDOW_MODAL);
         initOwner(app.getGUI().getWindow());
         
-        this.classObject = object;
-        this.dataManager = (DataManager) app.getDataComponent();
+        this.arguments = arguments;
         
         // Initialize the text field and buttons
-        initTextFieldsVBox(classObject.getInterfaceNames());
+        initTextFieldsVBox(arguments);
         initButtonsBox();
         initBorderPane();
         
         // AND PUT IT IN THE WINDOW
         dialogScene = new Scene(borderPane);
         this.setScene(dialogScene);
-        this.setTitle(TITLE + classObject.getClassName());
+        this.setTitle(TITLE);
         
         // AND NOW THE STYLE
         initStylesheet();
@@ -83,25 +80,27 @@ public class ApiInterfacesDialog extends Stage
     
     /**
      * Helper method to initialize the text fields VBox in the dialog box.
-     * @param interfaceNames 
-     * the names of the interfaces to be added to the text field
+     * @param arguments 
+     * the names of the arguments to be added to the text fields in the box
      */
-    private void initTextFieldsVBox(ArrayList<String> interfaceNames)
+    private void initTextFieldsVBox(ArrayList<ArgumentObject> arguments)
     {
         textFieldsVBox = new VBox(10);
-        for (String interfaceName: interfaceNames)
+        for (ArgumentObject argument: arguments)
         {
-            if (!dataManager.containsClassObject(interfaceName))
-            {
-                TextField textField = new TextField(interfaceName);
-                textField.setPromptText("Enter Interface Name! (eg. Runnable)");
-                textField.setAlignment(Pos.BOTTOM_LEFT);
-                textField.focusedProperty().addListener(e1 -> {
-                    if (textField.isFocused()) 
-                        selectedTextField = textField;
-                });
-                textFieldsVBox.getChildren().add(textField);
-            }
+            TextField nameTextField = new TextField(argument.getName());
+            TextField typeTextField = new TextField(argument.getType());
+            HBox box = new HBox(10);
+            box.getChildren().addAll(nameTextField, typeTextField);
+            nameTextField.focusedProperty().addListener(e1 -> {
+                if (nameTextField.isFocused())
+                    selectedHBox = box;
+            });
+            typeTextField.focusedProperty().addListener(e1 -> {
+                if (typeTextField.isFocused())
+                    selectedHBox = box;
+            });
+            textFieldsVBox.getChildren().add(box);
         }
     }
     
@@ -111,27 +110,37 @@ public class ApiInterfacesDialog extends Stage
     private void initButtonsBox()
     {
         buttonsBox = new HBox(10);
-        addButton = new Button("Add Interface");
-        deleteButton = new Button("Delete Interface");
+        addButton = new Button("Add Argument");
+        deleteButton = new Button("Delete Argument");
         doneButton = new Button("Done");
         
         // AND THEN REGISTER THEM TO RESPOND TO INTERACTIONS
         addButton.setOnAction(e -> {
-            TextField textField = new TextField();
-            textField.setPromptText("Enter Interface Name! (eg. Runnable)");
-            textField.setAlignment(Pos.BOTTOM_LEFT);
-            textField.focusedProperty().addListener(e1 -> {
-                if (textField.isFocused())
-                    selectedTextField = textField;
+            TextField nameTextField = new TextField();
+            nameTextField.setPromptText("Enter Arg Name! (eg. x)");
+            nameTextField.setAlignment(Pos.BOTTOM_LEFT);
+            TextField typeTextField = new TextField();
+            typeTextField.setPromptText("Enter Arg Type! (eg. int)");
+            typeTextField.setAlignment(Pos.BOTTOM_LEFT);
+            HBox box = new HBox(10);
+            box.getChildren().addAll(nameTextField, typeTextField);
+            nameTextField.focusedProperty().addListener(e1 -> {
+                if (nameTextField.isFocused())
+                    selectedHBox = box;
             });
-            textFieldsVBox.getChildren().add(textField);
+            typeTextField.focusedProperty().addListener(e1 -> {
+                if (typeTextField.isFocused())
+                    selectedHBox = box;
+            });
+            
+            textFieldsVBox.getChildren().add(box);
         });
         deleteButton.setOnAction(e -> {
-            if (selectedTextField != null)
-                textFieldsVBox.getChildren().remove(selectedTextField);
+            if (selectedHBox != null)
+                textFieldsVBox.getChildren().remove(selectedHBox);
         });
         doneButton.setOnAction(e -> {
-            addInterfaceNames();
+            addArguments();
             this.hide();
         });
         
@@ -154,19 +163,26 @@ public class ApiInterfacesDialog extends Stage
     
     /**
      * This method is called when the user presses done and this method adds
-     * them to the list of interfaces for this class.
+     * them to the list of arguments.
      */
-    private void addInterfaceNames()
+    private void addArguments()
     {
-        // First clear out old api names
-        dataManager.clearApiInterfaceNames(classObject);
-        
-        for (Node a : textFieldsVBox.getChildren())
+        arguments.clear();
+        for (Node box: textFieldsVBox.getChildren())
         {
-            TextField interfaceTextField = (TextField) a;
-            String interfaceName = interfaceTextField.getText();
-            if (!interfaceName.isEmpty())
-                classObject.getInterfaceNames().add(interfaceName);
+            HBox argumentsBox = (HBox) box;
+            TextField nameTextField = (TextField) argumentsBox.getChildren().get(0);
+            String argumentName = nameTextField.getText();
+            TextField typeTextField = (TextField) argumentsBox.getChildren().get(1);
+            String argumentType = typeTextField.getText();
+            
+            if (!argumentName.isEmpty() && !argumentType.isEmpty())
+            {
+                ArgumentObject argumentObject = new ArgumentObject();
+                argumentObject.setName(argumentName);
+                argumentObject.setType(argumentType);
+                arguments.add(argumentObject);
+            }
         }
     }
     

@@ -88,6 +88,8 @@ public class PackagesDialog extends Stage
         for (String packageName: javaApiPackageNames)
         {
             TextField textField = new TextField(packageName);
+            textField.setPromptText("Enter Package Name! (eg. javafx.stage.Stage)");
+            textField.setAlignment(Pos.BOTTOM_LEFT);
             textField.focusedProperty().addListener(e1 -> {
                 if (textField.isFocused())
                     selectedTextField = textField;
@@ -119,10 +121,7 @@ public class PackagesDialog extends Stage
         });
         deleteButton.setOnAction(e -> {
             if (selectedTextField != null)
-            {
-                classObject.getJavaApiPackages().remove(selectedTextField.getText());
                 textFieldsVBox.getChildren().remove(selectedTextField);
-            }
         });
         doneButton.setOnAction(e -> {
             addPackageNames();
@@ -152,11 +151,14 @@ public class PackagesDialog extends Stage
      */
     private void addPackageNames()
     {
+        // First clear out the old names
+        classObject.getJavaApiPackages().clear();
+        
         for (Node a : textFieldsVBox.getChildren())
         {
             TextField packageTextField = (TextField) a;
             String packageName = packageTextField.getText();
-            if (!packageName.isEmpty() && !classObject.getJavaApiPackages().contains(packageName))
+            if (!packageName.isEmpty())
                 classObject.getJavaApiPackages().add(packageName);
         }
     }

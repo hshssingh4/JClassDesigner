@@ -43,6 +43,7 @@ import static jcd.PropertyType.ADD_VARIABLE_TOOLTIP;
 import static jcd.PropertyType.DEFAULT_ZOOM_ICON;
 import static jcd.PropertyType.DEFAULT_ZOOM_TOOLTIP;
 import static jcd.PropertyType.EDIT_ICON;
+import static jcd.PropertyType.EDIT_METHOD_TOOLTIP;
 import static jcd.PropertyType.EDIT_VARIABLE_TOOLTIP;
 import static jcd.PropertyType.MINUS_ICON;
 import static jcd.PropertyType.PLUS_ICON;
@@ -70,6 +71,7 @@ import static jcd.data.JClassDesignerMode.GRID_DEFAULT_MODE;
 import static jcd.data.JClassDesignerMode.GRID_RENDER_MODE;
 import static jcd.data.JClassDesignerMode.GRID_RENDER_SNAP_MODE;
 import jcd.data.JClassDesignerState;
+import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import saf.AppTemplate;
 import saf.components.AppWorkspaceComponent;
@@ -150,6 +152,7 @@ public class Workspace extends AppWorkspaceComponent
     Label methodsLabel;
     Button addMethodButton;
     Button removeMethodButton;
+    Button editMethodButton;
     TableView methodsTableView;
     
     // Selected Object
@@ -410,22 +413,38 @@ public class Workspace extends AppWorkspaceComponent
         methodsHBox.setAlignment(Pos.CENTER_LEFT);
         methodsLabel = new Label("Methods:");
         methodsHBox.getChildren().add(methodsLabel);
-        addMethodButton = gui.initChildButton(methodsHBox, PLUS_ICON.toString(), ADD_METHOD_TOOLTIP.toString(), false);
-        removeMethodButton = gui.initChildButton(methodsHBox, MINUS_ICON.toString(), REMOVE_METHOD_TOOLTIP.toString(), false);
+        addMethodButton = gui.initChildButton(methodsHBox, PLUS_ICON.toString(), 
+                ADD_METHOD_TOOLTIP.toString(), false);
+        removeMethodButton = gui.initChildButton(methodsHBox, MINUS_ICON.toString(), 
+                REMOVE_METHOD_TOOLTIP.toString(), false);
+        editMethodButton = gui.initChildButton(methodsHBox, EDIT_ICON.toString(),
+                EDIT_METHOD_TOOLTIP.toString(), false);
         
         methodsTableView = new TableView();
         methodsTableView.setPrefHeight(200);
         
-        TableColumn variableNameCol = new TableColumn("Name");
-        TableColumn variableTypeCol = new TableColumn("Type");
-        TableColumn variableScopeCol = new TableColumn("Scope");
-        TableColumn variableStaticCol = new TableColumn("Static");
-        TableColumn variableFinalCol = new TableColumn("Final");
-        TableColumn variableAbstractCol = new TableColumn("Abstract");
-        TableColumn variableArgumentsCol = new TableColumn("Arguments");
+        TableColumn methodNameCol = new TableColumn("Name");
+        TableColumn methodTypeCol = new TableColumn("Type");
+        TableColumn methodScopeCol = new TableColumn("Scope");
+        TableColumn methodStaticCol = new TableColumn("Static");
+        TableColumn methodFinalCol = new TableColumn("Final");
+        TableColumn methodAbstractCol = new TableColumn("Abstract");
+                
+        methodNameCol.setCellValueFactory(
+                new PropertyValueFactory<>("name"));
+        methodTypeCol.setCellValueFactory(
+                new PropertyValueFactory<>("type"));
+        methodScopeCol.setCellValueFactory(
+                new PropertyValueFactory<>("scope"));
+        methodStaticCol.setCellValueFactory(
+                new PropertyValueFactory<>("isStatic"));
+        methodFinalCol.setCellValueFactory(
+                new PropertyValueFactory<>("isFinal"));
+        methodAbstractCol.setCellValueFactory(
+                new PropertyValueFactory<>("isAbstract"));
 
-        methodsTableView.getColumns().addAll(variableNameCol, variableTypeCol, variableScopeCol,
-                variableStaticCol, variableFinalCol, variableAbstractCol, variableArgumentsCol);
+        methodsTableView.getColumns().addAll(methodNameCol, methodTypeCol, methodScopeCol,
+                methodStaticCol, methodFinalCol, methodAbstractCol);
         
         methodsVBox.getChildren().addAll(methodsHBox, methodsTableView);
     }
@@ -574,6 +593,23 @@ public class Workspace extends AppWorkspaceComponent
             removeVariableButton.setDisable(false);
             editVariableButton.setDisable(false);
         });
+        addMethodButton.setOnAction(e -> {
+            pageEditController.handleOpenMethodDialogRequest(null);
+        });
+        editMethodButton.setOnAction(e -> {
+            int selectedIndex = methodsTableView.getSelectionModel().getSelectedIndex();
+            MethodObject method = selectedObject.getMethods().get(selectedIndex);
+            pageEditController.handleOpenMethodDialogRequest(method);
+        });
+        removeMethodButton.setOnAction(e -> {
+            int selectedIndex = methodsTableView.getSelectionModel().getSelectedIndex();
+            MethodObject method = selectedObject.getMethods().get(selectedIndex);
+            pageEditController.handleRemoveMethodRequest(method);
+        });
+        methodsTableView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+            removeMethodButton.setDisable(false);
+            editMethodButton.setDisable(false);
+        });
     }
     
     /**
@@ -667,6 +703,7 @@ public class Workspace extends AppWorkspaceComponent
         methodsLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         addMethodButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
         removeMethodButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
+        editMethodButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
         methodsVBox.getStyleClass().add(CLASS_COMPONENT_CHILD_ELEMENT);
         
         // FINALLY THE COMPONENT TOOLBAR ITSELF
@@ -780,6 +817,7 @@ public class Workspace extends AppWorkspaceComponent
         localParentClassRadioButton.setSelected(false);
         apiParentClassRadioButton.setSelected(false);
         parentClassComboBox.getItems().clear();
+        parentClassComboBox.setValue(null);
         parentClassTextField.clear();
     }
     
@@ -798,7 +836,7 @@ public class Workspace extends AppWorkspaceComponent
             parentClassComboBox.setValue(null);
             parentClassTextField.clear();
         } 
-        else if (dataManager.getHashClasses().containsKey(selectedObject.getParentName())) 
+        else if (dataManager.containsClassObject(selectedObject.getParentName())) 
         {
             noParentClassRadioButton.setSelected(false);
             localParentClassRadioButton.setSelected(true);
@@ -806,7 +844,7 @@ public class Workspace extends AppWorkspaceComponent
             parentClassComboBox.setValue(selectedObject.getParentName());
             parentClassTextField.clear();
         } 
-        else 
+        else
         {
             noParentClassRadioButton.setSelected(false);
             localParentClassRadioButton.setSelected(false);
@@ -829,7 +867,6 @@ public class Workspace extends AppWorkspaceComponent
         // Now clear the variables stuff.
         selectedObject.getVariables().clear();
         variablesTableView.getItems().clear();
-        selectedObject.getBox().getVariablesVBox().getChildren().clear();
         
         // And finally add it again.
         for (VariableObject variable: tempVariables)
@@ -837,11 +874,22 @@ public class Workspace extends AppWorkspaceComponent
     }
     
     /**
-     * Helper method to lod the setting for the methods vbox.
+     * Helper method to load the setting for the methods vbox.
      */
     private void loadMethodsVBoxSettings()
     {
+        // First store all the methods temporarily.
+        ArrayList<MethodObject> tempMethods = new ArrayList();
+        for (MethodObject method: selectedObject.getMethods())
+            tempMethods.add(method);
         
+        // Now clear the methods stuff.
+        selectedObject.getMethods().clear();
+        methodsTableView.getItems().clear();
+        
+        // And finally add it again.
+        for (MethodObject method: tempMethods)
+            pageEditController.handleAddMethodRequest(method);
     }
     
     /**
@@ -856,8 +904,10 @@ public class Workspace extends AppWorkspaceComponent
         localParentClassRadioButton.setSelected(false);
         apiParentClassRadioButton.setSelected(false);
         parentClassComboBox.getItems().clear();
+        parentClassComboBox.setValue(null);
         parentClassTextField.clear();
         variablesTableView.getItems().clear();
+        methodsTableView.getItems().clear();
     }
     
     /**
@@ -878,7 +928,12 @@ public class Workspace extends AppWorkspaceComponent
         
         // Now enable/disable controls in the component toolbar.
         if (selectedObject != null)
+        {
             enableComponentToolbarButtons();
+            // Also enable the two buttons below in edit toolbar.
+            removeButton.setDisable(false);
+            resizeButton.setDisable(false);
+        }
         else
         {
             disableComponentToolbarButtons();
@@ -953,6 +1008,7 @@ public class Workspace extends AppWorkspaceComponent
 
         addLocalInterfacesButton.setDisable(false);
         addApiInterfacesButton.setDisable(false);
+        
         addVariableButton.setDisable(false);
         if (variablesTableView.getSelectionModel().getSelectedItem() != null) 
         {
@@ -964,10 +1020,18 @@ public class Workspace extends AppWorkspaceComponent
             removeVariableButton.setDisable(true);
             editVariableButton.setDisable(true);
         }
+        
         addMethodButton.setDisable(false);
-        removeMethodButton.setDisable(false);
-        removeButton.setDisable(false);
-        resizeButton.setDisable(false);
+        if (methodsTableView.getSelectionModel().getSelectedItem() != null) 
+        {
+            removeMethodButton.setDisable(false);
+            editMethodButton.setDisable(false);
+        } 
+        else
+        {
+            removeMethodButton.setDisable(true);
+            editMethodButton.setDisable(true);
+        }
     }
     
     /**
@@ -990,6 +1054,7 @@ public class Workspace extends AppWorkspaceComponent
         editVariableButton.setDisable(true);
         addMethodButton.setDisable(true);
         removeMethodButton.setDisable(true);
+        editMethodButton.setDisable(true);
     }
 
     public Pane getCanvas() 
@@ -1020,5 +1085,10 @@ public class Workspace extends AppWorkspaceComponent
     public TableView getVariablesTableView() 
     {
         return variablesTableView;
+    }
+
+    public TableView getMethodsTableView() 
+    {
+        return methodsTableView;
     }
 }

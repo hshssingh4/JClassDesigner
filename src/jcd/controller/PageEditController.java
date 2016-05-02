@@ -8,22 +8,27 @@ package jcd.controller;
 import java.util.ArrayList;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import jcd.JClassDesigner;
+import jcd.data.ArgumentObject;
 import jcd.data.Box;
 import static jcd.data.Box.DEFAULT_HEIGHT;
 import static jcd.data.Box.DEFAULT_WIDTH;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
+import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import jcd.gui.ApiInterfacesDialog;
 import jcd.gui.LocalInterfacesDialog;
+import jcd.gui.MethodDialog;
 import jcd.gui.PackagesDialog;
 import jcd.gui.VariableDialog;
 import jcd.gui.Workspace;
+import jcd.model.MethodObjectModel;
 import jcd.model.VariableObjectModel;
 import properties_manager.PropertiesManager;
 import static saf.components.AppStyleArbiter.CLASS_SUBHEADING_LABEL;
@@ -432,9 +437,8 @@ public class PageEditController
     }
     
     /**
-     * This method does three things. It first adds the variable object to the 
-     * selected class object list of variables. Then it adds a text field in the
-     * box on the canvas. And lastly, it adds the variable to the table view.
+     * This method does two things. It first adds the variable object to the 
+     * selected class object list of variables. Then, it adds the variable to the table view.
      * @param variable 
      * the variable object to be added
      */
@@ -444,7 +448,6 @@ public class PageEditController
         ClassObject selectedObject = workspace.getSelectedObject();
         
         selectedObject.getVariables().add(variable);
-        addVariableTextField(variable);
         addVariableToTableView(variable);
         
         // Work has been edited!
@@ -456,7 +459,7 @@ public class PageEditController
      * @param variable 
      * the variable for which the text field is to be added
      */
-    private void addVariableTextField(VariableObject variable)
+    public void handleAddVariableTextFieldRequest(VariableObject variable)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         ClassObject selectedObject = workspace.getSelectedObject();
@@ -497,7 +500,6 @@ public class PageEditController
         ClassObject selectedObject = workspace.getSelectedObject();
         
         selectedObject.getVariables().set(index, variable);
-        editVariableTextField(index, variable);
         editVariableInTableView(index, variable);
         
         // Work has been edited!
@@ -511,7 +513,7 @@ public class PageEditController
      * @param variable 
      * the variable for which the text field needs to be edited
      */
-    private void editVariableTextField(int index, VariableObject variable)
+    public void handleEditVariableTextFieldRequest(int index, VariableObject variable)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         ClassObject selectedObject = workspace.getSelectedObject();
@@ -614,22 +616,157 @@ public class PageEditController
         selectedObject.getBox().getVariablesVBox().getChildren().remove(selectedIndex);
     }
     
-    /*private void reloadMethodsTextFields(ClassObject classObject)
+    /**
+     * This method makes visible a dialog box to let user enter info about
+     * a method that needs to be added or edited to/for the selected class object.
+     * @param method
+     * the method that needs to be edited (or null if we are adding)
+     */
+    public void handleOpenMethodDialogRequest(MethodObject method) 
     {
-        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
-        Box box = classObject.getBox();
-        // THEN CLEAR ITS CONTENTS
-        box.getMethodsVBox().getChildren().clear();
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
         
-        // NOW ADD IT AGAIN
-        for (MethodObject method: classObject.getMethods())
+        if (selectedObject != null) 
         {
-            Text text = getMethodTextField(method);
-            text.getStyleClass().add(CLASS_TEXT_LABEL);
-            if (method.isStaticType())
-                text.setUnderline(true);
-            box.getMethodsVBox().getChildren().add(text);
+            MethodDialog dialog = new MethodDialog(app,
+                    selectedObject, method);
+            dialog.makeVisible();
         }
+        
+        workspace.reloadWorkspace();
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
+    }
+    
+    /**
+     * This method does three things. It first adds the method object to the 
+     * selected class object list of method. Then it adds a text field in the
+     * box on the canvas. And lastly, it adds the method to the table view.
+     * @param method 
+     * the method object to be added
+     */
+    public void handleAddMethodRequest(MethodObject method)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        
+        selectedObject.getMethods().add(method);
+        addMethodToTableView(method);
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
+    }
+    
+    /**
+     * Helper method to add the method text field the box on canvas.
+     * @param method 
+     * the method for which the text field is to be added
+     */
+    public void handleAddMethodTextFieldRequest(MethodObject method)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        
+        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
+        Box box = selectedObject.getBox();
+
+        Text text = getMethodTextField(method);
+        text.getStyleClass().add(CLASS_TEXT_LABEL);
+        if (method.isStaticType())
+            text.setUnderline(true);
+        box.getMethodsVBox().getChildren().add(text);
+    }
+    
+    /**
+     * Helper method to add the method to table view.
+     * @param method
+     * method to be added to table view
+     */
+    private void addMethodToTableView(MethodObject method)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        TableView methodsTable = workspace.getMethodsTableView();
+        MethodObjectModel model = getMethodObjectModel(method);
+        methodsTable.getItems().add(model);
+    }
+    
+    /**
+     * Helper method for editing a method that is selected in the table view.
+     * Note that this method is called from the dialog box GUI.
+     * @param index
+     * the index of the variable that is selected in the table
+     * @param method 
+     * the method object itself
+     */
+    public void handleEditMethodRequest(int index, MethodObject method)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        
+        selectedObject.getMethods().set(index, method);
+        editMethodInTableView(index, method);
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
+    }
+    
+    /**
+     * Helper method to edit the method text field in the box on canvas.
+     * @param index
+     * the index of the selected method
+     * @param method 
+     * the method for which the text field needs to be edited
+     */
+    public void handleEditMethodTextFieldRequest(int index, MethodObject method)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        
+        // GET THE BOX OF THIS PARTICULAR CLASS OBJECT
+        Box box = selectedObject.getBox();
+
+        Text text = getMethodTextField(method);
+        text.getStyleClass().add(CLASS_TEXT_LABEL);
+        if (method.isStaticType())
+            text.setUnderline(true);
+        box.getMethodsVBox().getChildren().set(index, text);
+    }
+    
+    /**
+     * This helper method edits the values for the selected method in the table
+     * view itself.
+     * @param index
+     * index of the selected method in the table view
+     * @param method 
+     * the method that is to edited in the table view
+     */
+    private void editMethodInTableView(int index, MethodObject method)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        TableView methodsTable = workspace.getMethodsTableView();
+        MethodObjectModel model = getMethodObjectModel(method);
+        methodsTable.getItems().set(index, model);
+    }
+    
+    /**
+     * This method also does three things to remove a method. It first removes
+     * it from the list of methods for the selected class object. It then removes it from
+     * the box on canvas. And finally, it removes it from the table view.
+     * @param method 
+     * the method that is to be removed
+     */
+    public void handleRemoveMethodRequest(MethodObject method)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        ClassObject selectedObject = workspace.getSelectedObject();
+        
+        selectedObject.getMethods().remove(method);
+        TableView methodsTable = workspace.getMethodsTableView();
+        int selectedIndex = methodsTable.getSelectionModel().getSelectedIndex();
+        methodsTable.getItems().remove(selectedIndex);
+        selectedObject.getBox().getMethodsVBox().getChildren().remove(selectedIndex);
     }
     
     private Text getMethodTextField(MethodObject method)
@@ -677,5 +814,25 @@ public class PageEditController
         }
         
         return answer;
-    }*/
+    }
+    
+    /**
+     * Helper method to create a model representation of the method object.
+     * @param method
+     * the method that is to be put in table view
+     * @return 
+     * the model representation of the method object model
+     */
+    private MethodObjectModel getMethodObjectModel(MethodObject method)
+    {
+        String name = method.getName();
+        String type = method.getType();
+        String scope = method.getScope();
+        String isStatic = String.valueOf(method.isStaticType());
+        String isFinal = String.valueOf(method.isFinalType());
+        String isAbstract = String.valueOf(method.isAbstractType());
+        
+        return new MethodObjectModel(name, type, scope,
+                isStatic, isFinal, isAbstract);
+    }
 }

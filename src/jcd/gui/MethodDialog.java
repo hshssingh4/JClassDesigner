@@ -5,6 +5,7 @@
  */
 package jcd.gui;
 
+import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -21,8 +22,9 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import static jcd.controller.PageEditController.PROTECTED;
+import jcd.data.ArgumentObject;
 import jcd.data.ClassObject;
-import jcd.data.VariableObject;
+import jcd.data.MethodObject;
 import static jcd.file.FileManager.PRIVATE;
 import static jcd.file.FileManager.PUBLIC;
 import saf.AppTemplate;
@@ -36,11 +38,11 @@ import saf.ui.AppMessageDialogSingleton;
  * by displaying a dialog box.
  * @author RaniSons
  */
-public class VariableDialog extends Stage
+public class MethodDialog extends Stage
 {
-    public static final String TITLE = "Add/Edit Variable";
-    public static final String VARIABLE_ADD_ERROR_TITLE = "Add/Edit Variable Error";
-    public static final String VARIABLE_ADD_ERROR_MESSAGE = "Make sure text fields are "
+    public static final String TITLE = "Add/Edit Method";
+    public static final String METHOD_ADD_ERROR_TITLE = "Add/Edit Method Error";
+    public static final String METHOD_ADD_ERROR_MESSAGE = "Make sure text fields are "
             + "not empty!";
     
     // This is our app
@@ -48,33 +50,42 @@ public class VariableDialog extends Stage
     
     Scene dialogScene;
     ClassObject classObject;
-    VariableObject variable;
+    MethodObject method;
+    ArrayList<ArgumentObject> arguments;
     
-    // BELOW ARE THE PANES AND CONTROLS NECESSARY FOR ADDING A VARIABLE
+    // BELOW ARE THE PANES AND CONTROLS NECESSARY FOR ADDING A METHOD
     GridPane gridPane; // HOLDS IN EVERYTHING
     
-    // For adding name of the variable object
+    // For adding name of the method object
     Label nameLabel;
     TextField nameTextField;
     
-    // For adding type of the variable object
+    // For adding type of the method object
     Label typeLabel;
     TextField typeTextField;
     
-    // For choosing scope of the variable object
+    // For choosing scope of the method object
     Label scopeLabel;
     ToggleGroup scopeGroup;
     RadioButton privateRadioButton;
     RadioButton publicRadioButton;
     RadioButton protectedRadioButton;
     
-    // For choosing whether variable is static or not
+    // For choosing whether method is static or not
     Label staticLabel;
     CheckBox staticCheckBox;
     
-    // For choosing whether variable is final or not
+    // For choosing whether method is final or not
     Label finalLabel;
     CheckBox finalCheckBox;
+    
+    // For choosing whether method is abstract or not
+    Label abstractLabel;
+    CheckBox abstractCheckBox;
+    
+    // For adding arguments to the method object
+    Label argumentsLabel;
+    Button addEditArgumentsButton;
     
     // Button for submitting the choices
     Button submitButton;
@@ -84,11 +95,11 @@ public class VariableDialog extends Stage
      * @param initApp
      * @param classObject 
      * the selected object of the workspace
-     * @param variable
-     * the variable for which dialog box is opened, could be null
+     * @param method
+     * the method for which dialog box is opened, could be null
      */
-    public VariableDialog(AppTemplate initApp, ClassObject classObject, 
-            VariableObject variable)
+    public MethodDialog(AppTemplate initApp, ClassObject classObject, 
+            MethodObject method)
     {
         app = initApp;
         
@@ -96,7 +107,8 @@ public class VariableDialog extends Stage
         initOwner(app.getGUI().getWindow());
         
         this.classObject = classObject;
-        this.variable = variable;
+        this.method = method;
+        this.arguments = new ArrayList<>();
         
         // Init all the rows of the grid pane
         initNameGroup();
@@ -104,12 +116,14 @@ public class VariableDialog extends Stage
         initScopeGroup();
         initStaticGroup();
         initFinalGroup();
+        initAbstractGroup();
+        initArgumentsGroup();
         initSubmitButton();
         
         // NOW THAT WE HAVE ALL ROWS, INIT GRID PANE
         initGridPane();
         
-        if (variable != null)
+        if (method != null)
             initValues();
         
         // AND PUT IT IN THE WINDOW
@@ -123,31 +137,31 @@ public class VariableDialog extends Stage
     }
     
     /**
-     * Helper method to help initialize the grid pane row for naming a variable object.
+     * Helper method to help initialize the grid pane row for naming a method object.
      */
     private void initNameGroup()
     {
         nameLabel = new Label("Name:");
         nameTextField = new TextField();
         nameTextField.setAlignment(Pos.BOTTOM_RIGHT);
-        nameTextField.setPromptText("Enter Variable Name");
+        nameTextField.setPromptText("Enter Method Name");
     }
     
     /**
      * Helper method to help initialize the grid pane row for specifying type
-     * of a variable object.
+     * of a method object.
      */
     private void initTypeGroup()
     {
         typeLabel = new Label("Type:");
         typeTextField = new TextField();
         typeTextField.setAlignment(Pos.BOTTOM_RIGHT);
-        typeTextField.setPromptText("Enter Variable Type");
+        typeTextField.setPromptText("Enter Method Type");
     }
     
     /**
      * Helper method to help initialize the grid pane row for choosing scope
-     * of a variable object.
+     * of a method object.
      */
     private void initScopeGroup()
     {
@@ -166,7 +180,7 @@ public class VariableDialog extends Stage
     
     /**
      * Helper method to help initialize the grid pane row for choosing static 
-     * type of a variable object.
+     * type of a method object.
      */
     private void initStaticGroup()
     {
@@ -176,12 +190,37 @@ public class VariableDialog extends Stage
     
     /**
      * Helper method to help initialize the grid pane row for choosing final 
-     * type of a variable object.
+     * type of a method object.
      */
     private void initFinalGroup()
     {
         finalLabel = new Label("Final:");
         finalCheckBox = new CheckBox();
+    }
+    
+    /**
+     * Helper method to help initialize the grid pane row for choosing abstract 
+     * type of a method object.
+     */
+    private void initAbstractGroup()
+    {
+        abstractLabel = new Label("Abstract:");
+        abstractCheckBox = new CheckBox();
+    }
+    
+    /**
+     * Helper method to help initialize the grid pane row for adding arguments 
+     * to the method object.
+     */
+    private void initArgumentsGroup()
+    {
+        argumentsLabel = new Label("Arguments:");
+        addEditArgumentsButton = new Button("Add/Edit Arguments");
+        
+        addEditArgumentsButton.setOnAction(e -> {
+            ArgumentsDialog argumentsDialog = new ArgumentsDialog(app, arguments);
+            argumentsDialog.makeVisible();
+        });
     }
     
     /**
@@ -191,28 +230,28 @@ public class VariableDialog extends Stage
     {
         submitButton = new Button("Submit");
         submitButton.setOnAction((ActionEvent e) -> {
-            VariableObject newVariable = createVariableObject();
+            MethodObject newMethod = createMethodObject();
             
             if (nameTextField.getText().isEmpty() || typeTextField.getText().isEmpty())
             {
                 AppMessageDialogSingleton messageDialog = AppMessageDialogSingleton.getSingleton();
-                messageDialog.show(VARIABLE_ADD_ERROR_TITLE, VARIABLE_ADD_ERROR_MESSAGE);
+                messageDialog.show(METHOD_ADD_ERROR_TITLE, METHOD_ADD_ERROR_MESSAGE);
             }
             else
             {
                 Workspace workspace = (Workspace) app.getWorkspaceComponent();
-                if (variable == null)
+                if (method == null)
                 {
-                    workspace.getPageEditController().handleAddVariableRequest(newVariable);
-                    workspace.getPageEditController().handleAddVariableTextFieldRequest(newVariable);
+                    workspace.getPageEditController().handleAddMethodRequest(newMethod);
+                    workspace.getPageEditController().handleAddMethodTextFieldRequest(newMethod);
                 }
                 else
                 {
-                    int selectedIndex = classObject.getVariables().indexOf(variable);
-                    workspace.getPageEditController().handleEditVariableRequest(
-                            selectedIndex, newVariable);
-                    workspace.getPageEditController().handleEditVariableTextFieldRequest(
-                            selectedIndex, newVariable);
+                    int selectedIndex = classObject.getMethods().indexOf(method);
+                    workspace.getPageEditController().handleEditMethodRequest(
+                            selectedIndex, newMethod);
+                    workspace.getPageEditController().handleEditMethodTextFieldRequest(
+                        selectedIndex, newMethod);
                 }
                 this.hide();
             }
@@ -220,24 +259,26 @@ public class VariableDialog extends Stage
     }
     
     /**
-     * Helper method to create a variable object from values inside the field in dialog box.
+     * Helper method to create a method object from values inside the field in dialog box.
      */
-    private VariableObject createVariableObject() 
+    private MethodObject createMethodObject() 
     {
-        VariableObject newVariable = new VariableObject();
+        MethodObject newMethod = new MethodObject();
         
-        newVariable.setName(nameTextField.getText());
-        newVariable.setType(typeTextField.getText());
+        newMethod.setName(nameTextField.getText());
+        newMethod.setType(typeTextField.getText());
         if (privateRadioButton.isSelected()) 
-            newVariable.setScope(PRIVATE);
+            newMethod.setScope(PRIVATE);
         else if (publicRadioButton.isSelected())
-            newVariable.setScope(PUBLIC);
+            newMethod.setScope(PUBLIC);
         else if (protectedRadioButton.isSelected())
-            newVariable.setScope(PROTECTED);
-        newVariable.setStaticType(staticCheckBox.isSelected());
-        newVariable.setFinalType(finalCheckBox.isSelected());
+            newMethod.setScope(PROTECTED);
+        newMethod.setStaticType(staticCheckBox.isSelected());
+        newMethod.setFinalType(finalCheckBox.isSelected());
+        newMethod.setAbstractType(abstractCheckBox.isSelected());
+        newMethod.setArguments(arguments);
         
-        return newVariable;
+        return newMethod;
     }
     
     /**
@@ -265,7 +306,11 @@ public class VariableDialog extends Stage
         gridPane.add(staticCheckBox, 1, 5);
         gridPane.add(finalLabel, 0, 6);
         gridPane.add(finalCheckBox, 1, 6);
-        gridPane.add(submitButton, 1, 7);
+        gridPane.add(abstractLabel, 0, 7);
+        gridPane.add(abstractCheckBox, 1, 7);
+        gridPane.add(argumentsLabel, 0, 8);
+        gridPane.add(addEditArgumentsButton, 1, 8);
+        gridPane.add(submitButton, 1, 9);
         
         // Align the combo box to the right of the grid pane
         GridPane.setHalignment(submitButton, HPos.RIGHT);
@@ -277,10 +322,10 @@ public class VariableDialog extends Stage
      */
     private void initValues()
     {
-        nameTextField.setText(variable.getName());
-        typeTextField.setText(variable.getType());
+        nameTextField.setText(method.getName());
+        typeTextField.setText(method.getType());
         
-        switch (variable.getScope())
+        switch (method.getScope())
         {
             case PRIVATE:
                 privateRadioButton.setSelected(true);
@@ -295,10 +340,13 @@ public class VariableDialog extends Stage
                 break;
         }
         
-        if (variable.isStaticType())
+        if (method.isStaticType())
             staticCheckBox.setSelected(true);
-        if(variable.isFinalType())
+        if(method.isFinalType())
             finalCheckBox.setSelected(true);
+        if(method.isAbstractType())
+            abstractCheckBox.setSelected(true);
+        this.arguments = method.getArguments();
     }
     
     /**
@@ -323,9 +371,12 @@ public class VariableDialog extends Stage
         scopeLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         staticLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         finalLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        abstractLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        argumentsLabel.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         privateRadioButton.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         publicRadioButton.getStyleClass().add(CLASS_SUBHEADING_LABEL);
         protectedRadioButton.getStyleClass().add(CLASS_SUBHEADING_LABEL);
+        addEditArgumentsButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
         submitButton.getStyleClass().add(CLASS_COMPONENT_BUTTON);
     }
     

@@ -21,7 +21,7 @@ public class DataManager implements AppDataComponent
     // THIS IS A SHARED REFERENCE TO THE APPLICATION
     AppTemplate app;
     
-    HashMap<String, ClassObject> hashClasses;
+    //HashMap<String, ClassObject> hashClasses;
     ArrayList<ClassObject> classesList;
     
     // CURRENT STATE OF THE APP
@@ -44,14 +44,14 @@ public class DataManager implements AppDataComponent
 	// KEEP THE APP FOR LATER
 	app = initApp;
         
-        hashClasses = new HashMap();
+        //hashClasses = new HashMap();
         classesList = new ArrayList();
     }
 
     // EXTRA CONSTRUCOTR FOR TEST BED DRIVER CLASS
     public DataManager() 
     {
-        hashClasses = new HashMap();
+        //hashClasses = new HashMap();
         classesList = new ArrayList();
     }
     
@@ -62,7 +62,7 @@ public class DataManager implements AppDataComponent
      */
     public void addClassObject(ClassObject obj)
     {
-        hashClasses.put(obj.getClassName(), obj);
+        //hashClasses.put(obj.getClassName(), obj);
         classesList.add(obj);
     }
     
@@ -73,7 +73,7 @@ public class DataManager implements AppDataComponent
      */
     public void removeClassObject(ClassObject obj)
     {
-        hashClasses.remove(obj.getClassName());
+        //hashClasses.remove(obj.getClassName());
         classesList.remove(obj);
     }
 
@@ -108,6 +108,22 @@ public class DataManager implements AppDataComponent
             if (c.equals(className, packageName))
                     return false;
         return true;
+    }
+    
+    /**
+     * This method check whether there is a class object with name same
+     * as the argument name.
+     * @param name
+     * the name to look for
+     * @return 
+     * true if found, false otherwise
+     */
+    public boolean containsClassObject(String name)
+    {
+        for (ClassObject classObject: classesList)
+            if (classObject.getClassName().equals(name))
+                return true;
+        return false;
     }
     
     /**
@@ -201,16 +217,34 @@ public class DataManager implements AppDataComponent
         ArrayList<String> classLocalInterfaceNames = new ArrayList<>();
         
         for (String interfaceName: classObject.getInterfaceNames())
-            if (hashClasses.containsKey(interfaceName))
+            if (containsClassObject(interfaceName))
                 classLocalInterfaceNames.add(interfaceName);
         
         return classLocalInterfaceNames;
     }
     
-    public HashMap<String, ClassObject> getHashClasses()
+    public void clearLocalInterfaceNames(ClassObject classObject)
+    {
+        ArrayList<String> interfaceNames = new ArrayList<>();
+        for (String interfaceName: classObject.getInterfaceNames())
+            if (containsClassObject(interfaceName))
+                interfaceNames.add(interfaceName);
+            
+        for (String interfaceName: interfaceNames)
+            classObject.getInterfaceNames().remove(interfaceName);
+    }
+    
+    public void clearApiInterfaceNames(ClassObject classObject)
+    {
+        for (String interfaceName: classObject.getInterfaceNames())
+            if (!containsClassObject(interfaceName))
+                classObject.getInterfaceNames().remove(interfaceName);
+    }
+    
+    /*public HashMap<String, ClassObject> getHashClasses()
     {
         return hashClasses;
-    }
+    }*/
 
     public ArrayList<ClassObject> getClassesList() 
     {
@@ -277,7 +311,7 @@ public class DataManager implements AppDataComponent
             workspace.setSelectedObject(null);
             workspace.getCanvas().getChildren().clear();
         }
-        hashClasses.clear();
+        //hashClasses.clear();
         classesList.clear();
         state = null;
         mode = GRID_DEFAULT_MODE;
