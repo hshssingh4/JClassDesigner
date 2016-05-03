@@ -210,10 +210,11 @@ public class VariableDialog extends Stage
                 {
                     workspace.getPageEditController().handleAddVariableRequest(newVariable);
                     workspace.getPageEditController().handleAddVariableTextFieldRequest(newVariable);
-                    ClassObject toClassObject = dataManager.fetchClassObject(newVariable.getType());
-                    if (toClassObject != null)
+                    
+                    if (dataManager.containsClassObject(newVariable.getType()))
                         workspace.getCanvasEditController().handleAddDiamondLineConnector(
-                                classObject.getBox(), toClassObject.getBox());
+                                classObject.getBox(), 
+                                dataManager.fetchClassObject(newVariable.getType()).getBox());
                 }
                 else
                 {

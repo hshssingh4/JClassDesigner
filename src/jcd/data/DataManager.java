@@ -7,6 +7,7 @@ package jcd.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import javafx.scene.shape.Line;
 import static jcd.data.JClassDesignerMode.GRID_DEFAULT_MODE;
 import jcd.gui.Workspace;
 import saf.AppTemplate;
@@ -270,6 +271,29 @@ public class DataManager implements AppDataComponent
         for (ClassObject classObject: classesList)
             if (classObject.getClassName().equals(className))
                 return classObject;
+        return null;
+    }
+    
+    /**
+     * This method takes in as an argument a line segment, and searches through
+     * all the line connectors to see which has a this line inside.
+     * @param line
+     * the line to look for
+     * @return 
+     * the line connector that has that line
+     * @Note: This method should never return null!
+     */
+    public LineConnector fetchLineConnector(Line line)
+    {
+        for (ClassObject classObject: classesList)
+        {
+            Box box = classObject.getBox();
+            
+            for(LineConnector lineConnector: box.getLineConnectors())
+                if (lineConnector.getLines().contains(line))
+                    return lineConnector;
+        }
+        
         return null;
     }
 

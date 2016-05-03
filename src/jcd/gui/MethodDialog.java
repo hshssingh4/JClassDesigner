@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import static jcd.controller.PageEditController.PROTECTED;
 import jcd.data.ArgumentObject;
 import jcd.data.ClassObject;
+import jcd.data.DataManager;
 import jcd.data.MethodObject;
 import static jcd.file.FileManager.PRIVATE;
 import static jcd.file.FileManager.PUBLIC;
@@ -47,6 +48,7 @@ public class MethodDialog extends Stage
     
     // This is our app
     AppTemplate app;
+    DataManager dataManager;
     
     Scene dialogScene;
     ClassObject classObject;
@@ -102,6 +104,7 @@ public class MethodDialog extends Stage
             MethodObject method)
     {
         app = initApp;
+        dataManager = (DataManager) initApp.getDataComponent();
         
         initModality(Modality.WINDOW_MODAL);
         initOwner(app.getGUI().getWindow());
@@ -244,6 +247,19 @@ public class MethodDialog extends Stage
                 {
                     workspace.getPageEditController().handleAddMethodRequest(newMethod);
                     workspace.getPageEditController().handleAddMethodTextFieldRequest(newMethod);
+                    
+                    // NOW IN ORDER TO RENDER LINES, GET ALL THE LOCAL RELATIVES
+                    ArrayList<ClassObject> list = new ArrayList<>();
+                    
+                    if (dataManager.containsClassObject(newMethod.getType()))
+                        list.add(dataManager.fetchClassObject(newMethod.getType()));
+                    
+                    for (ArgumentObject arg: newMethod.getArguments())
+                        if (dataManager.containsClassObject(arg.getType()))
+                            list.add(dataManager.fetchClassObject(arg.getType()));
+                    for (ClassObject obj: list)
+                        workspace.getCanvasEditController().handleAddDiamondLineConnector(
+                                classObject.getBox(), obj.getBox());
                 }
                 else
                 {

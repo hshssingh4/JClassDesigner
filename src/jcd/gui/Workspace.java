@@ -5,6 +5,7 @@
  */
 package jcd.gui;
 
+import javafx.scene.input.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import javafx.geometry.HPos;
@@ -24,6 +25,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -33,6 +35,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import jcd.JClassDesigner;
 import static jcd.PropertyType.ADD_CLASS_ICON;
 import static jcd.PropertyType.ADD_CLASS_TOOLTIP;
@@ -157,6 +160,7 @@ public class Workspace extends AppWorkspaceComponent
     
     // Selected Object
     ClassObject selectedObject;
+    Line selectedLine;
     
     // HERE IS THE CONTROLLER
     PageEditController pageEditController;
@@ -659,7 +663,18 @@ public class Workspace extends AppWorkspaceComponent
                     }
                 });
             }
+            
+            // Check if the mouse press was on a line segment
+            if (e.getTarget() instanceof Line)
+                canvasEditController.handleLineSelectionRequest((Line) e.getTarget());
+            else
+                canvasEditController.handleLineSelectionRequest(null);
          });
+        app.getGUI().getPrimaryScene().setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.S && selectedLine != null)
+                canvasEditController.handleLineSplitRequest();
+        });
+        
     }
     
     /**
@@ -1072,6 +1087,16 @@ public class Workspace extends AppWorkspaceComponent
         this.selectedObject = selectedObject;
     }
 
+    public Line getSelectedLine() 
+    {
+        return selectedLine;
+    }
+
+    public void setSelectedLine(Line selectedLine)
+    {
+        this.selectedLine = selectedLine;
+    }
+    
     public CanvasEditController getCanvasEditController() 
     {
         return canvasEditController;

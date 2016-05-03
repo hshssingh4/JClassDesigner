@@ -134,20 +134,20 @@ public class Box
      * @return 
      * x coordinate
      */
-    /*public double getCenterX()
+    public double getCenterX()
     {
         return mainVBox.getTranslateX() + (mainVBox.getWidth() / 2);
-    }*/
+    }
     
     /**
      * Returns the bottom center y coordinate of the main box.
      * @return 
      * y coordinate
      */
-    /*public double getCenterY()
+    public double getCenterY()
     {
         return mainVBox.getTranslateY() + (mainVBox.getHeight() / 2);
-    }*/
+    }
     
     public VBox getMainVBox() 
     {
