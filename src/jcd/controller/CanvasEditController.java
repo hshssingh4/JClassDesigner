@@ -6,7 +6,13 @@
 package jcd.controller;
 
 import java.util.ArrayList;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.effect.BlurType;
@@ -15,11 +21,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import jcd.JClassDesigner;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
+import jcd.data.LineConnector;
+import jcd.data.LineConnectorType;
 import jcd.gui.Workspace;
 
 /**
@@ -369,6 +379,9 @@ public class CanvasEditController
                 mainVBox.setTranslateY(horizontalLine.getStartY());
             }
         }
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
     }
     
     /**
@@ -578,5 +591,130 @@ public class CanvasEditController
         workspace.reloadWorkspace();
         // Work has been edited!
         app.getGUI().updateToolbarControls(false);
+    }
+    
+    
+    // BELOW WILL BE ALL THE METHODS FOR ADDING API BOXES AND LINE CONNECTORS
+    
+    /**
+     * This method adds a single diamond line connector from one box
+     * to another.
+     * @param fromBox
+     * add a line from this box
+     * @param toBox
+     * add a line to this box
+     */
+    public void handleAddDiamondLineConnector(Box fromBox, Box toBox) 
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+        
+        VBox fromMainVBox = fromBox.getMainVBox();
+        VBox toMainVBox = toBox.getMainVBox();
+        final int DIAMOND_HEIGHT = 10;
+        final int DIAMOND_WIDTH = 10;
+        
+        Rectangle rect = new Rectangle(DIAMOND_HEIGHT,DIAMOND_WIDTH);
+        rect.xProperty().bind(fromMainVBox.translateXProperty().add(fromMainVBox.widthProperty().divide(2)));
+        rect.yProperty().bind(fromMainVBox.translateYProperty().subtract(DIAMOND_HEIGHT));
+        rect.setStroke(Color.BLACK);
+        rect.setFill(Color.TRANSPARENT);
+        rect.setRotate(45);
+        
+        Line line1 = new Line();
+        line1.startXProperty().bind(rect.xProperty().add(DIAMOND_WIDTH/2));
+        line1.startYProperty().bind(rect.yProperty());
+        line1.endXProperty().bind(rect.xProperty().add(DIAMOND_WIDTH/2));
+        line1.endYProperty().bind(toMainVBox.translateYProperty().add(toMainVBox.heightProperty().divide(2)));
+        
+        Line line2 = new Line();
+        line2.startXProperty().bind(line1.endXProperty());
+        line2.startYProperty().bind(line1.endYProperty());
+        line2.endXProperty().bind(toMainVBox.translateXProperty());
+        line2.endYProperty().bind(toMainVBox.translateYProperty().add(toMainVBox.heightProperty().divide(2)));
+        
+        ArrayList<Line> lines = new ArrayList<>();
+        lines.add(line1);
+        lines.add(line2);
+        
+        LineConnector lineConnector = new LineConnector();
+        lineConnector.setLines(lines);
+        lineConnector.setShape(rect);
+        lineConnector.setFromBox(fromBox);
+        lineConnector.setToBox(toBox);
+        lineConnector.setType(LineConnectorType.DIAMOND);
+        
+        // ONLY ADD IF IT IS UNIQUE
+        if (!fromBox.containsLineConnector(lineConnector))
+        {
+            canvas.getChildren().addAll(lines);
+            canvas.getChildren().add(rect);
+            fromBox.getLineConnectors().add(lineConnector);
+        }
+    }
+    
+    /**
+     * This method adds a single triangle line connector from one box
+     * to another.
+     * @param fromBox
+     * add a line from this box
+     * @param toBox
+     * add a line to this box
+     */
+    public void handleAddTriangleLineConnector(Box fromBox, Box toBox) 
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+        
+        VBox fromMainVBox = fromBox.getMainVBox();
+        VBox toMainVBox = toBox.getMainVBox();
+        final int TRIANGLE_HEIGHT = 10;
+        final int TRIANGLE_HALF_WIDTH = 5;
+        
+        Point2D endPoint = toBox.getLeftCenterPoint();
+        
+        Line line1 = new Line();
+        line1.startXProperty().bind(fromMainVBox.translateXProperty().add(fromMainVBox.widthProperty().divide(2)));
+        line1.startYProperty().bind(fromMainVBox.translateYProperty());
+        line1.endXProperty().bind(fromMainVBox.translateXProperty().add(fromMainVBox.widthProperty().divide(2)));
+        line1.endYProperty().bind(toMainVBox.translateYProperty().add(toMainVBox.heightProperty().divide(2)));
+        
+        Line line2 = new Line();
+        line2.startXProperty().bind(line1.endXProperty());
+        line2.startYProperty().bind(line1.endYProperty());
+        line2.endXProperty().bind(toMainVBox.translateXProperty());
+        line2.endYProperty().bind(toMainVBox.translateYProperty().add(toMainVBox.heightProperty().divide(2)));
+        
+        Polygon triangle = new Polygon();
+        triangle.getPoints().addAll(endPoint.getX(), endPoint.getY());
+        triangle.getPoints().addAll(endPoint.getX() - TRIANGLE_HEIGHT,
+                endPoint.getY() - TRIANGLE_HALF_WIDTH);
+        triangle.getPoints().addAll(endPoint.getX() - TRIANGLE_HEIGHT, 
+                endPoint.getY() + TRIANGLE_HALF_WIDTH);
+        triangle.setStroke(Color.BLACK);
+        triangle.setFill(Color.TRANSPARENT);
+        
+        /*
+        Binding required
+        */
+        
+        ArrayList<Line> lines = new ArrayList<>();
+        lines.add(line1);
+        lines.add(line2);
+        
+        LineConnector lineConnector = new LineConnector();
+        lineConnector.setLines(lines);
+        lineConnector.setShape(triangle);
+        lineConnector.setFromBox(fromBox);
+        lineConnector.setToBox(toBox);
+        lineConnector.setType(LineConnectorType.TRIANGLE);
+        
+        // ONLY ADD IF IT IS UNIQUE
+        if (!fromBox.containsLineConnector(lineConnector))
+        {
+            canvas.getChildren().addAll(lines);
+            canvas.getChildren().add(triangle);
+            fromBox.getLineConnectors().add(lineConnector);
+        }
     }
 }

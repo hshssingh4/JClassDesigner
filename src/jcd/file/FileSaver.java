@@ -70,6 +70,9 @@ public class FileSaver
         JsonArray nodesArray = arrayBuilder.build();
         // THEN PUT IT ALL TOGETHER IN A JsonObject
 	JsonObject dataManagerJSO = Json.createObjectBuilder()
+                .add(JSON_CANVAS_ZOOM_SCALE_X, dataManager.getCanvasZoomScaleX())
+                .add(JSON_CANVAS_ZOOM_SCALE_Y, dataManager.getCanvasZoomScaleY())
+                .add(JSON_GRID_MODE, dataManager.getMode().toString())
 		.add(JSON_CLASSES_ARRAY, nodesArray)
 		.build();
         
@@ -118,7 +121,6 @@ public class FileSaver
                 .add(JSON_METHODS_ARRAY, buildMethodsJsonArray(classObject.getMethods()))
                 .add(JSON_JAVA_API_PACKAGES_ARRAY, buildJavaApiPackagesJsonArray(classObject.getJavaApiPackages()))
                 .add(JSON_BOX_OBJECT, buildBoxJsonObject(classObject.getBox()))
-                .add(JSON_LINE_CONNECTORS_ARRAY, buildLineConnectorsJsonArray(classObject.getLineConnectors()))
 		.build();
 	return jso;
     }
@@ -344,7 +346,7 @@ public class FileSaver
 	return jA;
     }
     
-    private JsonArray buildLineConnectorsJsonArray(ArrayList<LineConnector> lineConnectors)
+    /*private JsonArray buildLineConnectorsJsonArray(ArrayList<LineConnector> lineConnectors)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         
@@ -373,5 +375,5 @@ public class FileSaver
         
         JsonArray jA = arrayBuilder.build();
 	return jA;
-    }
+    }*/
 }

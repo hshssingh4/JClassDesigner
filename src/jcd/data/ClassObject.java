@@ -22,7 +22,6 @@ public class ClassObject
     private ArrayList<VariableObject> variables;
     private ArrayList<MethodObject> methods;
     private ArrayList<String> javaApiPackages;
-    private ArrayList<LineConnector> lineConnectors;
     private Box box;
     
     /**
@@ -163,15 +162,5 @@ public class ClassObject
     public void setJavaApiPackages(ArrayList<String> javaApiPackages)
     {
         this.javaApiPackages = javaApiPackages;
-    }
-
-    public ArrayList<LineConnector> getLineConnectors() 
-    {
-        return lineConnectors;
-    }
-
-    public void setLineConnectors(ArrayList<LineConnector> lineConnectors) 
-    {
-        this.lineConnectors = lineConnectors;
     }
 }

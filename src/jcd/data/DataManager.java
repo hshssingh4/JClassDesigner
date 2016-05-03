@@ -223,6 +223,12 @@ public class DataManager implements AppDataComponent
         return classLocalInterfaceNames;
     }
     
+    /**
+     * This method clears out all the local interface names for a particular
+     * class object.
+     * @param classObject 
+     * object whose local interface names are to be removed
+     */
     public void clearLocalInterfaceNames(ClassObject classObject)
     {
         ArrayList<String> interfaceNames = new ArrayList<>();
@@ -234,17 +240,38 @@ public class DataManager implements AppDataComponent
             classObject.getInterfaceNames().remove(interfaceName);
     }
     
+    /**
+     * This method clears out all the api interface names for this
+     * class object.
+     * @param classObject
+     * object whose api interface names are to be removed
+     */
     public void clearApiInterfaceNames(ClassObject classObject)
     {
+        ArrayList<String> interfaceNames = new ArrayList<>();
         for (String interfaceName: classObject.getInterfaceNames())
             if (!containsClassObject(interfaceName))
-                classObject.getInterfaceNames().remove(interfaceName);
+                interfaceNames.add(interfaceName);
+            
+        for (String interfaceName: interfaceNames)
+            classObject.getInterfaceNames().remove(interfaceName);
     }
     
-    /*public HashMap<String, ClassObject> getHashClasses()
+    /**
+     * This method basically returns the class object that has a class name similar
+     * to the argument provided.
+     * @param className
+     * the name of the object to look for
+     * @return 
+     * class object with the given argument name if found, null otherwise
+     */
+    public ClassObject fetchClassObject(String className) 
     {
-        return hashClasses;
-    }*/
+        for (ClassObject classObject: classesList)
+            if (classObject.getClassName().equals(className))
+                return classObject;
+        return null;
+    }
 
     public ArrayList<ClassObject> getClassesList() 
     {

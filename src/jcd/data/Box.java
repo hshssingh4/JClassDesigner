@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package jcd.data;
+import java.util.ArrayList;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
@@ -30,6 +32,9 @@ public class Box
     
     // Box to put all methods in
     private VBox methodsVBox;
+    
+    // These will be all of its line connectors
+    private ArrayList<LineConnector> lineConnectors;
 
     /**
      * Constructor to initialize this box.
@@ -43,6 +48,7 @@ public class Box
         initClassVBox();
         initVariablesVBox();
         initMethodsVBox();
+        initLineConnectors();
         mainVBox = new VBox(classVBox, variablesVBox, methodsVBox);
         mainVBox.setTranslateX(x);
         mainVBox.setTranslateY(y);
@@ -80,7 +86,69 @@ public class Box
         methodsVBox.setAlignment(Pos.TOP_LEFT);
         methodsVBox.getStyleClass().add(CLASS_BOX_ELEMENTS);
     }
-
+    
+    private void initLineConnectors()
+    {
+        lineConnectors = new ArrayList();
+    }
+    
+    // HERE ARE THE SPECFIC METHODS USED BY OTHER CLASSES
+    
+    public boolean containsLineConnector(LineConnector lineConnector)
+    {
+        for (LineConnector lc: lineConnectors)
+            if (lc.getFromBox() == lineConnector.getFromBox() &&
+                    lc.getToBox() == lineConnector.getToBox() && 
+                    lc.getType() == lineConnector.getType())
+                return true;
+        return false;
+    }
+    
+    
+    /**
+     * This function return the top center point in 2D of mainVbox.
+     * @return 
+     * top center point
+     */
+    public Point2D getTopCenterPoint()
+    {
+        double x = mainVBox.getTranslateX() + (mainVBox.getWidth() / 2);
+        double y = mainVBox.getTranslateY();
+        return new Point2D(x, y);
+    }
+    
+    /**
+     * This function return the left center point in 2D of mainVbox.
+     * @return 
+     * top center point
+     */
+    public Point2D getLeftCenterPoint()
+    {
+        double x = mainVBox.getTranslateX();
+        double y = mainVBox.getTranslateY() + (mainVBox.getHeight() / 2);
+        return new Point2D(x, y);
+    }
+    
+    /**
+     * Returns the top center x coordinate of the main box.
+     * @return 
+     * x coordinate
+     */
+    /*public double getCenterX()
+    {
+        return mainVBox.getTranslateX() + (mainVBox.getWidth() / 2);
+    }*/
+    
+    /**
+     * Returns the bottom center y coordinate of the main box.
+     * @return 
+     * y coordinate
+     */
+    /*public double getCenterY()
+    {
+        return mainVBox.getTranslateY() + (mainVBox.getHeight() / 2);
+    }*/
+    
     public VBox getMainVBox() 
     {
         return mainVBox;
@@ -99,5 +167,10 @@ public class Box
     public VBox getMethodsVBox() 
     {
         return methodsVBox;
+    }
+
+    public ArrayList<LineConnector> getLineConnectors() 
+    {
+        return lineConnectors;
     }
 }

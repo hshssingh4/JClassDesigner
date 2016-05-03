@@ -22,6 +22,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import static jcd.controller.PageEditController.PROTECTED;
 import jcd.data.ClassObject;
+import jcd.data.DataManager;
 import jcd.data.VariableObject;
 import static jcd.file.FileManager.PRIVATE;
 import static jcd.file.FileManager.PUBLIC;
@@ -45,6 +46,8 @@ public class VariableDialog extends Stage
     
     // This is our app
     AppTemplate app;
+    
+    DataManager dataManager;
     
     Scene dialogScene;
     ClassObject classObject;
@@ -91,6 +94,8 @@ public class VariableDialog extends Stage
             VariableObject variable)
     {
         app = initApp;
+        dataManager = (DataManager) initApp.getDataComponent();
+        
         
         initModality(Modality.WINDOW_MODAL);
         initOwner(app.getGUI().getWindow());
@@ -205,6 +210,10 @@ public class VariableDialog extends Stage
                 {
                     workspace.getPageEditController().handleAddVariableRequest(newVariable);
                     workspace.getPageEditController().handleAddVariableTextFieldRequest(newVariable);
+                    ClassObject toClassObject = dataManager.fetchClassObject(newVariable.getType());
+                    if (toClassObject != null)
+                        workspace.getCanvasEditController().handleAddDiamondLineConnector(
+                                classObject.getBox(), toClassObject.getBox());
                 }
                 else
                 {

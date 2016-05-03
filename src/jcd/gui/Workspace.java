@@ -759,7 +759,7 @@ public class Workspace extends AppWorkspaceComponent
      */
     private void loadCanvasSettings()
     {
-        canvas.getChildren().clear();
+        /*canvas.getChildren().clear();
         
         // NOW CHECK THE GRID RENDER AND GRID SNAP
         if (dataManager.isInMode(GRID_RENDER_MODE))
@@ -775,7 +775,7 @@ public class Workspace extends AppWorkspaceComponent
         
         // Then add all the boxes to the canvas
         for (ClassObject classObject: dataManager.getClassesList())
-            canvas.getChildren().add(classObject.getBox().getMainVBox());
+            canvas.getChildren().add(classObject.getBox().getMainVBox());*/
     }
     
     /**

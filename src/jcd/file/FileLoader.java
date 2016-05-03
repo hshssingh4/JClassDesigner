@@ -19,6 +19,7 @@ import jcd.data.ArgumentObject;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.JClassDesignerMode;
 import jcd.data.LineConnector;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
@@ -53,6 +54,14 @@ public class FileLoader
         
         // LOAD THE JSON FILE WITH ALL THE DATA
 	JsonObject json = loadTestJSONFile(filePath);
+        
+        // First get all the canvas values
+        double canvasZoomScaleX = json.getJsonNumber(JSON_CANVAS_ZOOM_SCALE_X).doubleValue();
+        double canvasZoomScaleY = json.getJsonNumber(JSON_CANVAS_ZOOM_SCALE_Y).doubleValue();
+        String mode = json.getString(JSON_GRID_MODE);
+        dataManager.setCanvasZoomScaleX(canvasZoomScaleX);
+        dataManager.setCanvasZoomScaleY(canvasZoomScaleY);
+        dataManager.setMode(JClassDesignerMode.valueOf(mode));
         
         // NOW GET THE CLASSES ARRAY
         JsonArray jsonClassesArray = json.getJsonArray(JSON_CLASSES_ARRAY);
@@ -126,7 +135,6 @@ public class FileLoader
         classObject.setVariables(variables);
         classObject.setMethods(methods);
         classObject.setJavaApiPackages(javaApiPackages);
-        classObject.setLineConnectors(lineConnectors);
         
         return classObject;
     }

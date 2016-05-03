@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -34,6 +35,7 @@ public class PackagesDialog extends Stage
     // This is our app
     AppTemplate app;
     
+    ScrollPane scrollPane;
     BorderPane borderPane;
     VBox textFieldsVBox;
     
@@ -66,9 +68,10 @@ public class PackagesDialog extends Stage
         initTextFieldsVBox(classObject.getJavaApiPackages());
         initButtonsBox();
         initBorderPane();
+        initScrollPane();
         
         // AND PUT IT IN THE WINDOW
-        dialogScene = new Scene(borderPane);
+        dialogScene = new Scene(scrollPane);
         this.setScene(dialogScene);
         this.setTitle(TITLE + classObject.getClassName());
         
@@ -143,6 +146,14 @@ public class PackagesDialog extends Stage
         borderPane.setTop(buttonsBox);
         borderPane.setCenter(textFieldsVBox);
         borderPane.setPrefHeight(300);
+    }
+    
+    /**
+     * Helper method to initialize the scroll pane.
+     */
+    private void initScrollPane()
+    {
+        scrollPane = new ScrollPane(borderPane);
     }
     
     /**

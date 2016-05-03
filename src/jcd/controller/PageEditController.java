@@ -8,7 +8,6 @@ package jcd.controller;
 import java.util.ArrayList;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -151,7 +150,6 @@ public class PageEditController
         obj.setVariables(new ArrayList<>());
         obj.setMethods(new ArrayList<>());
         obj.setJavaApiPackages(new ArrayList<>());
-        obj.setLineConnectors(new ArrayList<>());
         addClassTextFields(obj);
         
         if (dataManager.checkIfUnique(obj))
@@ -197,7 +195,6 @@ public class PageEditController
         obj.setVariables(new ArrayList<>());
         obj.setMethods(new ArrayList<>());
         obj.setJavaApiPackages(new ArrayList<>());
-        obj.setLineConnectors(new ArrayList<>());
         addClassTextFields(obj);
         
         if (dataManager.checkIfUnique(obj))

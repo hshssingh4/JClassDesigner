@@ -16,6 +16,11 @@ import saf.components.AppFileComponent;
  */
 public class FileManager implements AppFileComponent
 {
+    // CONSTANTS FOR THE VALUES RELATED TO CANVAS
+    public static final String JSON_CANVAS_ZOOM_SCALE_X = "canvas_zoom_scale_x";
+    public static final String JSON_CANVAS_ZOOM_SCALE_Y = "canvas_zoom_scale_y";
+    public static final String JSON_GRID_MODE = "grid_mode";
+    
     // CONSTANTS FOR FILE SAVING AND LOADING
     public static final String JSON_CLASS_NAME = "class_name";
     public static final String JSON_PACKAGE_NAME = "package_name";
