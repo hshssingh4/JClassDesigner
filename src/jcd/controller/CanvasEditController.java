@@ -6,13 +6,13 @@
 package jcd.controller;
 
 import java.util.ArrayList;
+import java.util.List;
+import javafx.beans.Observable;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.effect.BlurType;
@@ -21,10 +21,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
 import jcd.JClassDesigner;
+import jcd.Shapes.Triangle;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
@@ -32,6 +31,7 @@ import jcd.data.JClassDesignerState;
 import jcd.data.LineConnector;
 import jcd.data.LineConnectorType;
 import jcd.gui.Workspace;
+import saf.ui.AppMessageDialogSingleton;
 
 /**
  * This class handles all the activity (user interactions) with the
@@ -43,7 +43,12 @@ public class CanvasEditController
     /* This offset if for the extra space that we need to show for the
     scroll pane */
     private static final double DEFAULT_OFFSET = 20;
+    private static final double SIDE = 10.0;
+    private static final String MERGE_LINE_TITLE = "Merge Error";
+    private static final String MERGE_LINE_ERROR = "Please make sure consecutive"
+            + " lines are selected!";
     DropShadow dropShadowEffect; // Effect for highlighting the shape
+    DropShadow lineShadowEffect; // Effect for highlighting the line
     
     // HERE'S THE FULL APP, WHICH GIVES US ACCESS TO OTHER STUFF
     JClassDesigner app;
@@ -56,7 +61,16 @@ public class CanvasEditController
     // HERE ARE THE CONSTANTS FOR DRAGGING
     double originalX, originalY;
     double originalTranslateX, originalTranslateY;
+    
+    double originalLineStartX, originalLineStartY, 
+            originalLineEndX, originalLineEndY, 
+            originalCenterX, originalCenterY;
+    DoubleProperty originalStartXProperty, originalEndXProperty;
+    DoubleProperty originalStartYProperty, originalEndYProperty;
+    DoubleBinding originalSpecialStartXProperty, originalSpecialEndYProperty;
   
+    ObjectBinding<List<Double>> binding;
+    ObjectBinding<List<Double>> arrowBinding;
     
     /**
      * Constructor to set up the application.
@@ -77,6 +91,15 @@ public class CanvasEditController
 	dropShadowEffect.setColor(Color.LIGHTGREEN);
 	dropShadowEffect.setBlurType(BlurType.GAUSSIAN);
 	dropShadowEffect.setRadius(5);
+        
+        // Now initialize the highlighting effect.
+        lineShadowEffect = new DropShadow();
+        lineShadowEffect.setOffsetX(0.0f);
+	lineShadowEffect.setOffsetY(0.0f);
+	lineShadowEffect.setSpread(1.0);
+	lineShadowEffect.setColor(Color.LIGHTGRAY);
+	lineShadowEffect.setBlurType(BlurType.GAUSSIAN);
+	lineShadowEffect.setRadius(5);
     }
     
     // Page Edit Requests
@@ -604,41 +627,48 @@ public class CanvasEditController
      * add a line from this box
      * @param toBox
      * add a line to this box
+     * @param type
+     * Line Connector
      */
-    public void handleAddDiamondLineConnector(Box fromBox, Box toBox) 
+    public void handleAddLineConnector(Box fromBox, Box toBox, LineConnectorType type) 
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         Pane canvas = workspace.getCanvas();
         
         VBox fromMainVBox = fromBox.getMainVBox();
         VBox toMainVBox = toBox.getMainVBox();
-        final double DIAMOND_SIDE = 10.0;
-        final double DIAMOND_DIAGONAL = DIAMOND_SIDE * Math.sqrt(2);
         
         Line line1 = new Line();
         line1.setEndX(fromBox.getCenterX());
         line1.setEndY(toBox.getCenterY());
         line1.setStrokeWidth(3);
-        //line1.endXProperty().bind(rect.xProperty().add(DIAMOND_WIDTH/2));
-        //line1.endYProperty().bind(toMainVBox.translateYProperty().add(toMainVBox.heightProperty().divide(2)));
         
         Line line2 = new Line();
         line2.setStrokeWidth(3);
         
         line1.startXProperty().bind(fromMainVBox.translateXProperty().add(fromMainVBox.widthProperty().divide(2)));
-        line1.startYProperty().bind(fromMainVBox.translateYProperty().subtract(DIAMOND_DIAGONAL));
+
+        switch (type) 
+        {
+            case DIAMOND:
+                line1.startYProperty().bind(fromMainVBox.translateYProperty().subtract(SIDE));
+                line2.endXProperty().bind(toMainVBox.translateXProperty());
+                break;
+            case TRIANGLE:
+                line1.startYProperty().bind(fromMainVBox.translateYProperty());
+                line2.endXProperty().bind(toMainVBox.translateXProperty().subtract(SIDE));
+                break;
+            case ARROW:
+                line1.startYProperty().bind(fromMainVBox.translateYProperty());
+                line2.endXProperty().bind(toMainVBox.translateXProperty().subtract(SIDE));
+                break;
+            default:
+                break;
+        }
         line2.startXProperty().bind(line1.endXProperty());
         line2.startYProperty().bind(line1.endYProperty());
-        line2.endXProperty().bind(toMainVBox.translateXProperty());
         line2.endYProperty().bind(toMainVBox.translateYProperty().add(toMainVBox.heightProperty().divide(2)));
         
-        Rectangle rect = new Rectangle(DIAMOND_SIDE, DIAMOND_SIDE);
-        rect.xProperty().bind(line1.startXProperty().subtract(DIAMOND_SIDE/2));
-        rect.yProperty().bind(line1.startYProperty());
-        rect.setStroke(Color.BLACK);
-        rect.setStrokeWidth(3);
-        rect.setFill(Color.TRANSPARENT);
-        rect.setRotate(45);
         
         ArrayList<Line> lines = new ArrayList<>();
         lines.add(line1);
@@ -646,90 +676,159 @@ public class CanvasEditController
         
         LineConnector lineConnector = new LineConnector();
         lineConnector.setLines(lines);
-        lineConnector.setShape(rect);
+        
+        switch (type) 
+        {
+            case DIAMOND:
+                lineConnector.setShape(addRect(line1));
+                lineConnector.setType(LineConnectorType.DIAMOND);
+                break;
+            case TRIANGLE:
+                lineConnector.setShape(addTriangle(line2));
+                lineConnector.setType(LineConnectorType.TRIANGLE);
+                break;
+            case ARROW:
+                lineConnector.setShape(addArrowTriangle(line2));
+                lineConnector.setType(LineConnectorType.ARROW);
+                break;
+            default:
+                break;
+        }
         lineConnector.setFromBox(fromBox);
         lineConnector.setToBox(toBox);
-        lineConnector.setType(LineConnectorType.DIAMOND);
         
         // ONLY ADD IF IT IS UNIQUE
         if (!fromBox.containsLineConnector(lineConnector))
         {
-            canvas.getChildren().addAll(lines);
-            canvas.getChildren().add(rect);
+            canvas.getChildren().addAll(lineConnector.getLines());
+            canvas.getChildren().add(lineConnector.getShape());
             fromBox.getLineConnectors().add(lineConnector);
         }
     }
     
     /**
-     * This method adds a single triangle line connector from one box
-     * to another.
-     * @param fromBox
-     * add a line from this box
-     * @param toBox
-     * add a line to this box
+     * Helper method to add rect to a line connector object
+     * @param line
+     * the line with which to bind its properties
+     * @return
+     * rectangle object
      */
-    /*public void handleAddTriangleLineConnector(Box fromBox, Box toBox) 
+    private Rectangle addRect(Line line)
     {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        Pane canvas = workspace.getCanvas();
+        Rectangle rect = new Rectangle(SIDE, SIDE);
+        rect.xProperty().bind(line.startXProperty().subtract(SIDE/2));
+        rect.yProperty().bind(line.startYProperty());
+        rect.setStroke(Color.BLACK);
+        rect.setStrokeWidth(3);
+        rect.setFill(Color.BLACK);
+        rect.setRotate(45);
         
-        VBox fromMainVBox = fromBox.getMainVBox();
-        VBox toMainVBox = toBox.getMainVBox();
-        final int TRIANGLE_HEIGHT = 10;
-        final int TRIANGLE_HALF_WIDTH = 5;
+        return rect;
+    }
+    
+    /**
+     * Helper method to add triangle to a line connector object.
+     * @param line
+     * the line with which to bind its properties
+     * @return
+     * triangle object
+     */
+    private Triangle addTriangle(Line line) 
+    {
+        Triangle triangle = new Triangle(line.getEndX() + SIDE, line.getEndY(), SIDE);
+
+        binding = new ObjectBinding<List<Double>>() {
+
+            {
+                super.bind(line.endXProperty(), line.endYProperty());
+            }
+
+            @Override
+            protected List<Double> computeValue() 
+            {
+                double x = line.getEndX() + SIDE;
+                double y = line.getEndY();
+                double height = SIDE;
+                
+                List<Double> list = new ArrayList<>();
+                list.add(x);
+                list.add(y);
+
+                list.add(x - height);
+                list.add(y - height);
+
+                list.add(x - height);
+                list.add(y + height);
+
+                return list;
+            }
+        };
         
-        Point2D endPoint = toBox.getLeftCenterPoint();
-        
-        Line line1 = new Line();
-        line1.startXProperty().bind(fromMainVBox.translateXProperty().add(fromMainVBox.widthProperty().divide(2)));
-        line1.startYProperty().bind(fromMainVBox.translateYProperty());
-        line1.endXProperty().bind(fromMainVBox.translateXProperty().add(fromMainVBox.widthProperty().divide(2)));
-        line1.endYProperty().bind(toMainVBox.translateYProperty().add(toMainVBox.heightProperty().divide(2)));
-        
-        Line line2 = new Line();
-        line2.startXProperty().bind(line1.endXProperty());
-        line2.startYProperty().bind(line1.endYProperty());
-        line2.endXProperty().bind(toMainVBox.translateXProperty());
-        line2.endYProperty().bind(toMainVBox.translateYProperty().add(toMainVBox.heightProperty().divide(2)));
-        
-        Polygon triangle = new Polygon();
-        triangle.getPoints().addAll(endPoint.getX(), endPoint.getY());
-        triangle.getPoints().addAll(endPoint.getX() - TRIANGLE_HEIGHT,
-                endPoint.getY() - TRIANGLE_HALF_WIDTH);
-        triangle.getPoints().addAll(endPoint.getX() - TRIANGLE_HEIGHT, 
-                endPoint.getY() + TRIANGLE_HALF_WIDTH);
-        triangle.setStroke(Color.BLACK);
+        binding.addListener((Observable observable) -> {
+            triangle.getPoints().setAll(binding.get());
+        });
+
+        return triangle;
+    }
+    
+    /**
+     * Helper method to add arrow triangle to a line connector object.
+     * @param line
+     * the line with which to bind its properties
+     * @return
+     * triangle object
+     */
+    private Triangle addArrowTriangle(Line line) 
+    {
+        Triangle triangle = new Triangle(line.getEndX() + SIDE, line.getEndY(), SIDE);
         triangle.setFill(Color.TRANSPARENT);
+        triangle.setStroke(Color.BLACK);
+        triangle.setStrokeWidth(3);
         
+        arrowBinding = new ObjectBinding<List<Double>>() {
+
+            {
+                super.bind(line.endXProperty(), line.endYProperty());
+            }
+
+            @Override
+            protected List<Double> computeValue() 
+            {
+                double x = line.getEndX() + SIDE;
+                double y = line.getEndY();
+                double height = SIDE;
+                
+                List<Double> list = new ArrayList<>();
+                list.add(x);
+                list.add(y);
+
+                list.add(x - height);
+                list.add(y - height);
+
+                list.add(x - height);
+                list.add(y + height);
+
+                return list;
+            }
+        };
         
-        //Binding required
-        
-        ArrayList<Line> lines = new ArrayList<>();
-        lines.add(line1);
-        lines.add(line2);
-        
-        LineConnector lineConnector = new LineConnector();
-        lineConnector.setLines(lines);
-        lineConnector.setShape(triangle);
-        lineConnector.setFromBox(fromBox);
-        lineConnector.setToBox(toBox);
-        lineConnector.setType(LineConnectorType.TRIANGLE);
-        
-        // ONLY ADD IF IT IS UNIQUE
-        if (!fromBox.containsLineConnector(lineConnector))
-        {
-            canvas.getChildren().addAll(lines);
-            canvas.getChildren().add(triangle);
-            fromBox.getLineConnectors().add(lineConnector);
-        }
-    }*/
+        arrowBinding.addListener((Observable observable) -> {
+            triangle.getPoints().setAll(arrowBinding.get());
+        });
+
+        return triangle;
+    }
     
     /**
      * This method is used to split a line segment into two separate line segments.
      * @param line 
      * the line to be split into two
+     * @param x
+     * mouse press x location
+     * @param y
+     * mouse press y location
      */
-    public void handleLineSelectionRequest(Line line) 
+    public void handleLineSelectionRequest(Line line, double x, double y) 
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
 
@@ -744,6 +843,25 @@ public class CanvasEditController
             handleDeselectLineRequest();
         else 
         {
+            LineConnector lineConnector = dataManager.fetchLineConnector(line);
+            VBox fromMainVBox = lineConnector.getFromBox().getMainVBox();
+            VBox toMainVBox = lineConnector.getToBox().getMainVBox();
+            originalX = x;
+            originalY = y;
+            originalLineStartX = line.getStartX();
+            originalLineStartY = line.getStartY();
+            originalLineEndX = line.getEndX();
+            originalLineEndY = line.getEndY();
+            originalCenterX = (originalLineStartX + originalLineEndX) / 2;
+            originalCenterY = (originalLineStartY + originalLineEndY) / 2;
+            originalStartXProperty = new SimpleDoubleProperty(line.startXProperty().getValue());
+            originalStartYProperty = new SimpleDoubleProperty(line.startYProperty().getValue());
+            originalEndXProperty = new SimpleDoubleProperty(line.endXProperty().getValue());
+            originalEndYProperty = new SimpleDoubleProperty(line.endYProperty().getValue());
+            originalSpecialStartXProperty = fromMainVBox.translateXProperty().add(line.getStartX()
+                    - fromMainVBox.getTranslateX());
+            originalSpecialEndYProperty = toMainVBox.translateYProperty().add(line.getEndY()
+                    - toMainVBox.getTranslateY());
             // And now select the object
             workspace.setSelectedLine(line);
             highlightLine(line);
@@ -772,7 +890,7 @@ public class CanvasEditController
      */
     private void highlightLine(Line line)
     {
-            line.setEffect(dropShadowEffect);
+            line.setEffect(lineShadowEffect);
     }
     
     /**
@@ -821,9 +939,10 @@ public class CanvasEditController
         setSplitLineProperties(line1, line2);
 
         LineConnector lineConnector = dataManager.fetchLineConnector(selectedLine);
+        int index = lineConnector.getLines().indexOf(selectedLine);
         lineConnector.getLines().remove(selectedLine);
-        lineConnector.getLines().add(line1);
-        lineConnector.getLines().add(line2);
+        lineConnector.getLines().add(index, line2);
+        lineConnector.getLines().add(index, line1);
         
         canvas.getChildren().remove(selectedLine);
         canvas.getChildren().addAll(line1, line2);
@@ -846,13 +965,213 @@ public class CanvasEditController
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         
         Line selectedLine = workspace.getSelectedLine();
+        
         line1.startXProperty().bind(selectedLine.startXProperty());
         line1.startYProperty().bind(selectedLine.startYProperty());
         line2.startXProperty().bind(line1.endXProperty());
         line2.startYProperty().bind(line1.endYProperty());
         line2.endXProperty().bind(selectedLine.endXProperty());
         line2.endYProperty().bind(selectedLine.endYProperty());
+        
+        // Check if there is a next line. If yes, then bind its properties
+        LineConnector lineConnector = dataManager.fetchLineConnector(selectedLine);
+        int index = lineConnector.getLines().indexOf(selectedLine);
+        int nextLineIndex = index + 1;
+        if (nextLineIndex != lineConnector.getLines().size())
+        {
+            Line nextLine = lineConnector.getLines().get(nextLineIndex);
+            nextLine.startXProperty().bind(line2.endXProperty());
+            nextLine.startYProperty().bind(line2.endYProperty());
+        }
     }
     
+    // Below is the code for mergind lines
+    /**
+     * This method is used to split a line segment into two separate line segments.
+     * @param line 
+     * the line to be split into two
+     */
+    public void handleDoubleLineSelectionRequest(Line line) 
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+
+        if (workspace.getSelectedLine() == null)
+        {
+            workspace.setSelectedLine(line);
+            highlightLine(line);
+        }
+        else if (workspace.getSelectedLine2() == null)
+        {
+            workspace.setSelectedLine2(line);
+            highlightLine(line);
+        }
+        
+        // Work has been edited!
+        app.getGUI().updateToolbarControls(false);
+    }
     
+    public void handleMergeLinesRequest()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+        
+        Line selectedLine = workspace.getSelectedLine();
+        Line selectedLine2 = workspace.getSelectedLine2();
+        
+        int startX1 = (int) selectedLine.getStartX();
+        int startY1 = (int) selectedLine.getStartY();
+        int endX1 = (int) selectedLine.getEndX();
+        int endY1 = (int) selectedLine.getEndY();
+        
+        int startX2 = (int) selectedLine2.getStartX();
+        int startY2 = (int) selectedLine2.getStartY();
+        int endX2 = (int) selectedLine2.getEndX();
+        int endY2 = (int) selectedLine2.getEndY();
+        
+        Line mergedLine = null;
+        
+        // Check if these lines are right next to each other
+        if (endX1 == startX2 && endY1 == startY2)
+        {
+            mergedLine = mergeLines(selectedLine, selectedLine2);
+            mergedLine.setStrokeWidth(3);
+            
+        }
+        else if (endX2 == startX1 && endY2 == startY1)
+        {
+            mergedLine = mergeLines(selectedLine2, selectedLine);
+            mergedLine.setStrokeWidth(3);
+        }
+        else
+        {
+            AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+            dialog.show(MERGE_LINE_TITLE, MERGE_LINE_ERROR);
+        }
+        
+        workspace.setSelectedLine(null);
+        workspace.setSelectedLine2(null);
+        unhighlightLine(selectedLine);
+        unhighlightLine(selectedLine2);
+        
+        if (mergedLine != null)
+        {
+            LineConnector lineConnector = dataManager.fetchLineConnector(selectedLine);
+            lineConnector.getLines().add(lineConnector.getLines().indexOf(selectedLine),
+                    mergedLine);
+            lineConnector.getLines().remove(selectedLine);
+            lineConnector.getLines().remove(selectedLine2);
+            canvas.getChildren().removeAll(selectedLine, selectedLine2);
+            canvas.getChildren().add(mergedLine);
+        }
+    }
+    
+    /**
+     * Helper method to merge the two lines.
+     * @param line1
+     * first line
+     * @param line2
+     * second line
+     * @ return 
+     * merged line
+     */
+    private Line mergeLines(Line line1, Line line2)
+    {
+        Line line = new Line();
+        line.startXProperty().bind(line1.startXProperty());
+        line.startYProperty().bind(line1.startYProperty());
+        line.endXProperty().bind(line2.endXProperty());
+        line.endYProperty().bind(line2.endYProperty());
+        
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Pane canvas = workspace.getCanvas();
+        
+        Line selectedLine = workspace.getSelectedLine();
+        Line selectedLine2 = workspace.getSelectedLine2();
+         // Check if there is a next line. If yes, then bind its properties
+        LineConnector lineConnector = dataManager.fetchLineConnector(selectedLine);
+        int indexOne = lineConnector.getLines().indexOf(selectedLine);
+        int indexTwo = lineConnector.getLines().indexOf(selectedLine2);
+        int index = Math.max(indexOne, indexTwo);
+        int nextLineIndex = index + 1;
+        if (nextLineIndex != lineConnector.getLines().size())
+        {
+            Line nextLine = lineConnector.getLines().get(nextLineIndex);
+            nextLine.startXProperty().bind(line.endXProperty());
+            nextLine.startYProperty().bind(line.endYProperty());
+        }
+        
+        return line;
+    }
+    
+    // Moving lines request is handled below
+    
+    public void handleMoveLineRequest(double newX, double newY)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Line line = workspace.getSelectedLine();
+        LineConnector lineConnector = dataManager.fetchLineConnector(line);
+        int indexOfLine = lineConnector.getLines().indexOf(line);
+        
+        double offsetX = newX - originalX;
+        double offsetY = newY - originalY;
+        //double newStartX = originalLineStartX + offsetX;
+        //double newStartY = originalLineStartY + offsetY;
+        //double newEndX = originalLineEndX + offsetX;
+        //double newEndY = originalLineEndY + offsetY;
+        if (indexOfLine == 0)
+            moveFromBoxLine(lineConnector, offsetX);
+        else if (indexOfLine == (lineConnector.getLines().size() - 1))
+            moveToBoxLine(lineConnector, offsetY);
+        else
+            moveLineEndPoint(offsetX, offsetY);
+    }
+    
+    /*private void moveLineStartPoint(double offsetX, double offsetY)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Line line = workspace.getSelectedLine();
+        LineConnector lineConnector = dataManager.fetchLineConnector(line);
+        int indexOfLine = lineConnector.getLines().indexOf(line);
+        if (indexOfLine != 0)
+        {
+            line.startXProperty().bind(originalStartXProperty.add(offsetX));
+            line.startYProperty().bind(originalStartYProperty.add(offsetY));
+        }
+    }*/
+    
+    private void moveFromBoxLine(LineConnector lineConnector, double offsetX)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        VBox fromMainVBox = lineConnector.getFromBox().getMainVBox();
+        Line line = workspace.getSelectedLine();
+        int OFFSET = 5;
+        double leftBoundary = fromMainVBox.getTranslateX() + OFFSET;
+        double rightBoundary = fromMainVBox.getTranslateX() + fromMainVBox.getWidth() - OFFSET;
+        DoubleBinding newProperty = originalSpecialStartXProperty.add(offsetX);
+        if (newProperty.getValue() > leftBoundary
+                && newProperty.getValue() < rightBoundary)
+            line.startXProperty().bind(newProperty);
+    }
+    
+    private void moveToBoxLine(LineConnector lineConnector, double offsetY)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        VBox toMainVBox = lineConnector.getToBox().getMainVBox();
+        Line line = workspace.getSelectedLine();
+        int OFFSET = 5;
+        double topBoundary = toMainVBox.getTranslateY() + OFFSET;
+        double bottomBoundary = toMainVBox.getTranslateY() + toMainVBox.getHeight() - OFFSET;
+        DoubleBinding newProperty = originalSpecialEndYProperty.add(offsetY);
+        if (newProperty.getValue() > topBoundary
+                && newProperty.getValue() < bottomBoundary)
+            line.endYProperty().bind(newProperty);
+    }
+    
+    private void moveLineEndPoint(double offsetX, double offsetY)
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        Line line = workspace.getSelectedLine();
+        line.endXProperty().bind(originalEndXProperty.add(offsetX));
+        line.endYProperty().bind(originalEndYProperty.add(offsetY));
+    }
 }

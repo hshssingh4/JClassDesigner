@@ -25,6 +25,7 @@ import static jcd.controller.PageEditController.PROTECTED;
 import jcd.data.ArgumentObject;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.LineConnectorType;
 import jcd.data.MethodObject;
 import static jcd.file.FileManager.PRIVATE;
 import static jcd.file.FileManager.PUBLIC;
@@ -258,8 +259,8 @@ public class MethodDialog extends Stage
                         if (dataManager.containsClassObject(arg.getType()))
                             list.add(dataManager.fetchClassObject(arg.getType()));
                     for (ClassObject obj: list)
-                        workspace.getCanvasEditController().handleAddDiamondLineConnector(
-                                classObject.getBox(), obj.getBox());
+                        workspace.getCanvasEditController().handleAddLineConnector(
+                                classObject.getBox(), obj.getBox(), LineConnectorType.ARROW);
                 }
                 else
                 {

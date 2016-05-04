@@ -74,6 +74,7 @@ import static jcd.data.JClassDesignerMode.GRID_DEFAULT_MODE;
 import static jcd.data.JClassDesignerMode.GRID_RENDER_MODE;
 import static jcd.data.JClassDesignerMode.GRID_RENDER_SNAP_MODE;
 import jcd.data.JClassDesignerState;
+import jcd.data.LineConnectorType;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import saf.AppTemplate;
@@ -161,6 +162,7 @@ public class Workspace extends AppWorkspaceComponent
     // Selected Object
     ClassObject selectedObject;
     Line selectedLine;
+    Line selectedLine2;
     
     // HERE IS THE CONTROLLER
     PageEditController pageEditController;
@@ -568,7 +570,13 @@ public class Workspace extends AppWorkspaceComponent
         });
         parentClassComboBox.setOnAction(e -> {
             if (parentClassComboBox.getValue() != null)
+            {
                 pageEditController.handleParentClassRequest(parentClassComboBox.getValue());
+                canvasEditController.handleAddLineConnector(selectedObject.getBox(),
+                        dataManager.fetchClassObject(parentClassComboBox.getValue()).getBox(), 
+                        LineConnectorType.TRIANGLE);
+            }
+            
         });
         parentClassTextField.textProperty().addListener((observable, oldClassName, newParentName) -> {
             if (!newParentName.isEmpty())
@@ -664,17 +672,28 @@ public class Workspace extends AppWorkspaceComponent
                 });
             }
             
+            
             // Check if the mouse press was on a line segment
-            if (e.getTarget() instanceof Line)
-                canvasEditController.handleLineSelectionRequest((Line) e.getTarget());
+            boolean isControlDown = e.isControlDown();
+            if (e.getTarget() instanceof Line && !isControlDown)
+            {
+                    canvasEditController.handleLineSelectionRequest((Line) e.getTarget(), e.getX(), e.getY());
+                    canvas.setOnMouseDragged(e1 -> {
+                        canvasEditController.handleMoveLineRequest(e1.getX(), e1.getY());
+                    });
+            }
+            else if (e.getTarget() instanceof Line && isControlDown)
+                canvasEditController.handleDoubleLineSelectionRequest((Line) e.getTarget());
             else
-                canvasEditController.handleLineSelectionRequest(null);
+                canvasEditController.handleLineSelectionRequest(null, e.getX(), e.getY());
          });
         app.getGUI().getPrimaryScene().setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.S && selectedLine != null)
                 canvasEditController.handleLineSplitRequest();
+            
+            if (e.getCode() == KeyCode.M && selectedLine != null && selectedLine2 != null)
+                canvasEditController.handleMergeLinesRequest();
         });
-        
     }
     
     /**
@@ -1095,6 +1114,16 @@ public class Workspace extends AppWorkspaceComponent
     public void setSelectedLine(Line selectedLine)
     {
         this.selectedLine = selectedLine;
+    }
+
+    public Line getSelectedLine2() 
+    {
+        return selectedLine2;
+    }
+
+    public void setSelectedLine2(Line selectedLine2) 
+    {
+        this.selectedLine2 = selectedLine2;
     }
     
     public CanvasEditController getCanvasEditController() 

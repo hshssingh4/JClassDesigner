@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import static jcd.controller.PageEditController.PROTECTED;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.LineConnectorType;
 import jcd.data.VariableObject;
 import static jcd.file.FileManager.PRIVATE;
 import static jcd.file.FileManager.PUBLIC;
@@ -212,9 +213,9 @@ public class VariableDialog extends Stage
                     workspace.getPageEditController().handleAddVariableTextFieldRequest(newVariable);
                     
                     if (dataManager.containsClassObject(newVariable.getType()))
-                        workspace.getCanvasEditController().handleAddDiamondLineConnector(
-                                classObject.getBox(), 
-                                dataManager.fetchClassObject(newVariable.getType()).getBox());
+                        workspace.getCanvasEditController().handleAddLineConnector(
+                                classObject.getBox(), dataManager.fetchClassObject(
+                                        newVariable.getType()).getBox(), LineConnectorType.DIAMOND);
                 }
                 else
                 {
