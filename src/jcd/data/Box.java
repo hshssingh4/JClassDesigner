@@ -96,7 +96,12 @@ public class Box
     
     public boolean containsLineConnector(LineConnector lineConnector)
     {
-        return lineConnectors.contains(lineConnector);
+        for (LineConnector lc: lineConnectors)
+            if (lc.getEndClassObjectName().equals(
+                    lineConnector.getEndClassObjectName()) &&
+                    lc.isType(lineConnector.getType()))
+                return true;
+        return false;
     }
     
     
@@ -144,6 +149,10 @@ public class Box
         return mainVBox.getTranslateY() + (mainVBox.getHeight() / 2);
     }
     
+    /**
+     * This method goes through all the line connectors
+     * and removes the one that is for the parent.
+     */
     public void removeParentLineConnector()
     {
         LineConnector parentLineConnector = null;
@@ -156,6 +165,19 @@ public class Box
             }
         if (parentLineConnector != null)
             lineConnectors.remove(parentLineConnector);
+    }
+    
+    public void removeLineConnector(String endClassName, LineConnectorType type)
+    {
+        LineConnector lineConnectorToRemove = null;
+        
+        for (LineConnector lineConnector: lineConnectors)
+            if (lineConnector.getEndClassObjectName().equals(endClassName)
+                    && lineConnector.isType(type))
+                lineConnectorToRemove = lineConnector;
+        
+        if (lineConnectorToRemove != null)
+            lineConnectors.remove(lineConnectorToRemove);
     }
     
     public VBox getMainVBox() 

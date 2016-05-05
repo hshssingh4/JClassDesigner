@@ -33,6 +33,22 @@ public class MethodObject
     {
         return !(type.equalsIgnoreCase("void"));
     }
+    
+    /**
+     * This method checks whether this method object has a variable
+     * with the type specified in the argument.
+     * @param type
+     * the type to check for
+     * @return 
+     * true if there is, false otherwise
+     */
+    public boolean hasArgumentOfType(String type)
+    {
+        for (ArgumentObject argument: arguments)
+            if (argument.getType().equals(type))
+                return true;
+        return false;
+    }
 
     public String getName()
     {

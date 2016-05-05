@@ -73,6 +73,38 @@ public class ClassObject
                 return true;
         return false;
     }
+    
+    /**
+     * This method basically checks if there is a variable inside this class
+     * of the type argument.
+     * @param type
+     * type to look for
+     * @return 
+     * true if present, false otherwise
+     */
+    public boolean hasVariableOfType(String type)
+    {
+        for (VariableObject variable: variables)
+            if (variable.getType().equals(type))
+                return true;
+        return false;
+    }
+    
+    /**
+     * This method basically checks if there is a method inside this class
+     * that uses the passed argument as a type.
+     * @param type
+     * type to look for
+     * @return 
+     * true if present, false otherwise
+     */
+    public boolean hasMethodWithType(String type)
+    {
+        for (MethodObject method: methods)
+            if (method.getType().equals(type) || method.hasArgumentOfType(type))
+                return true;
+        return false;
+    }
 
     public String getClassName() 
     {

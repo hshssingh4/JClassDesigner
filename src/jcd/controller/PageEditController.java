@@ -620,6 +620,15 @@ public class PageEditController
         int selectedIndex = variablesTable.getSelectionModel().getSelectedIndex();
         variablesTable.getItems().remove(selectedIndex);
         selectedObject.getBox().getVariablesVBox().getChildren().remove(selectedIndex);
+        
+        // Also remove any line connectors if necessary
+        if (dataManager.containsClassObject(variable.getType()) &&
+                !selectedObject.hasVariableOfType(variable.getType()))
+            selectedObject.getBox().removeLineConnector(variable.getType(), 
+                    LineConnectorType.DIAMOND);
+        
+        workspace.reloadWorkspace();
+        app.getGUI().updateToolbarControls(false);
     }
     
     /**
@@ -773,6 +782,26 @@ public class PageEditController
         int selectedIndex = methodsTable.getSelectionModel().getSelectedIndex();
         methodsTable.getItems().remove(selectedIndex);
         selectedObject.getBox().getMethodsVBox().getChildren().remove(selectedIndex);
+        
+        // Also remove all the line connectors that came along with it
+        ArrayList<String> list = new ArrayList<>();
+
+        if (dataManager.containsClassObject(method.getType())) {
+            list.add(method.getType());
+        }
+
+        for (ArgumentObject arg : method.getArguments())
+            if (dataManager.containsClassObject(arg.getType()))
+                list.add(arg.getType());
+
+        if (!list.isEmpty())
+            for (String name: list)
+                if (!selectedObject.hasMethodWithType(name))
+                    selectedObject.getBox().removeLineConnector(name, 
+                    LineConnectorType.ARROW);
+        
+        workspace.reloadWorkspace();
+        app.getGUI().updateToolbarControls(false);
     }
     
     private Text getMethodTextField(MethodObject method)
