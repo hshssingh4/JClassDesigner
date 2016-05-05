@@ -6,6 +6,8 @@
 package jcd.controller;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.TableView;
@@ -126,15 +128,14 @@ public class PageEditController
     /**
      * Handles the request for adding the class object. It first initializes a class
      * object and then puts it on the canvas.
+     * @param className
+     * the name for this class
      */
-    public void handleAddClassRequest() 
+    public void handleAddClassRequest(String className) 
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         Pane canvas = workspace.getCanvas();
          
-        int randomInt = (int) (Math.random() * 100);
-        String randomClassNameString = "DummyClass" + randomInt;
-        
         // Initialize the box
         // x and y values where the box will be origined
         int x = (int)(Math.random() * (canvas.getWidth() - (int)(DEFAULT_WIDTH)));
@@ -142,7 +143,7 @@ public class PageEditController
         
         // Now initialize the class object
         ClassObject obj = new ClassObject();
-        obj.setClassName(randomClassNameString);
+        obj.setClassName(className);
         obj.setBox(new Box(x, y));
         obj.setPackageName(null);
         obj.setParentName(null);
@@ -455,7 +456,7 @@ public class PageEditController
         
         selectedObject.getVariables().add(variable);
         addVariableToTableView(variable);
-        
+
         // Work has been edited!
         app.getGUI().updateToolbarControls(false);
     }
@@ -786,9 +787,8 @@ public class PageEditController
         // Also remove all the line connectors that came along with it
         ArrayList<String> list = new ArrayList<>();
 
-        if (dataManager.containsClassObject(method.getType())) {
+        if (dataManager.containsClassObject(method.getType()))
             list.add(method.getType());
-        }
 
         for (ArgumentObject arg : method.getArguments())
             if (dataManager.containsClassObject(arg.getType()))

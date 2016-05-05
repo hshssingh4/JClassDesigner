@@ -246,11 +246,31 @@ public class MethodDialog extends Stage
                 Workspace workspace = (Workspace) app.getWorkspaceComponent();
                 if (method == null)
                 {
+                     // Now check if a class object needs to be added
+                    ArrayList<String> typesList = new ArrayList<>();
+                    typesList.add(newMethod.getType());
+                    for (ArgumentObject arg: newMethod.getArguments())
+                        typesList.add(arg.getType());
+                    
+                    for (String type : typesList) 
+                    {
+                        // First check if a class needs to be added
+                        boolean apiClass = dataManager.checkIfFromApi(type);
+                        boolean primitive = dataManager.isPrimitive(type);
+                        boolean localClass = dataManager.containsClassObject(type);
+
+                        if (!apiClass && !primitive && !localClass) 
+                            workspace.getPageEditController().handleAddClassRequest(type);
+                    }
+                    
+                    workspace.setSelectedObject(classObject);
+                    
                     workspace.getPageEditController().handleAddMethodRequest(newMethod);
                     workspace.getPageEditController().handleAddMethodTextFieldRequest(newMethod);
                     
                     // NOW IN ORDER TO RENDER LINES, GET ALL THE LOCAL RELATIVES
                     ArrayList<ClassObject> list = new ArrayList<>();
+                    
                     
                     if (dataManager.containsClassObject(newMethod.getType()))
                         list.add(dataManager.fetchClassObject(newMethod.getType()));
@@ -258,6 +278,7 @@ public class MethodDialog extends Stage
                     for (ArgumentObject arg: newMethod.getArguments())
                         if (dataManager.containsClassObject(arg.getType()))
                             list.add(dataManager.fetchClassObject(arg.getType()));
+                    
                     for (ClassObject obj: list)
                         workspace.getLineEditController().handleAddLineConnector(
                                 classObject.getBox(), obj.getBox(), obj.getClassName(),

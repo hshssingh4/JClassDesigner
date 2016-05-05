@@ -209,6 +209,15 @@ public class VariableDialog extends Stage
                 Workspace workspace = (Workspace) app.getWorkspaceComponent();
                 if (variable == null)
                 {
+                    // First check if a class needs to be added
+                    boolean apiClass = dataManager.checkIfFromApi(newVariable.getType());
+                    boolean primitive = dataManager.isPrimitive(newVariable.getType());
+                    boolean localClass = dataManager.containsClassObject(newVariable.getType());
+
+                    if (!apiClass && !primitive && !localClass)
+                        workspace.getPageEditController().handleAddClassRequest(newVariable.getType());
+                    
+                    workspace.setSelectedObject(classObject);
                     workspace.getPageEditController().handleAddVariableRequest(newVariable);
                     workspace.getPageEditController().handleAddVariableTextFieldRequest(newVariable);
                     

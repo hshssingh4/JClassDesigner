@@ -6,11 +6,8 @@
 package jcd.controller;
 
 import java.util.ArrayList;
-import java.util.List;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -20,17 +17,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import jcd.JClassDesigner;
-import jcd.Shapes.Triangle;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
-import jcd.data.LineConnector;
-import jcd.data.LineConnectorType;
 import jcd.gui.Workspace;
-import saf.ui.AppMessageDialogSingleton;
 
 /**
  * This class handles all the activity (user interactions) with the

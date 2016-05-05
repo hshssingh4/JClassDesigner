@@ -6,9 +6,18 @@
 package jcd.data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import javafx.scene.shape.Line;
 import static jcd.data.JClassDesignerMode.GRID_DEFAULT_MODE;
+import static jcd.file.FileManager.BOOLEAN;
+import static jcd.file.FileManager.BYTE;
+import static jcd.file.FileManager.CHAR;
+import static jcd.file.FileManager.DOUBLE;
+import static jcd.file.FileManager.FALSE;
+import static jcd.file.FileManager.FLOAT;
+import static jcd.file.FileManager.INT;
+import static jcd.file.FileManager.LONG;
+import static jcd.file.FileManager.SHORT;
+import static jcd.file.FileManager.ZERO;
 import jcd.gui.Workspace;
 import saf.AppTemplate;
 import saf.components.AppDataComponent;
@@ -109,6 +118,20 @@ public class DataManager implements AppDataComponent
             if (c.equals(className, packageName))
                     return false;
         return true;
+    }
+    
+    public boolean checkIfFromApi(String className)
+    {
+        Package[] packages = Package.getPackages();
+        for (Package p : packages) 
+        {
+            try {
+                if (Class.forName(p.getName() + "." + className) != null)
+                    return true;
+            } catch (ClassNotFoundException ex) {}
+        }
+        
+        return false;
     }
     
     /**
@@ -328,6 +351,37 @@ public class DataManager implements AppDataComponent
     {
         ClassObject obj = fetchClassObject(lineConnector.getEndClassObjectName());
         return obj.getBox();
+    }
+    
+    /**
+     * This helper returns true if returnType is primitive.
+     * @param returnType
+     * @return 
+     * true if primitive, false otherwise
+     */
+    public boolean isPrimitive(String returnType)
+    {
+        switch (returnType)
+        {
+            case INT:
+                return true;
+            case DOUBLE:
+                return true;
+            case LONG:
+                return true;
+            case BYTE:
+                return true;
+            case CHAR:
+                return true;
+            case SHORT:
+                return true;
+            case FLOAT:
+                return true;
+            case BOOLEAN:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public ArrayList<ClassObject> getClassesList() 

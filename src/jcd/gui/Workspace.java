@@ -493,7 +493,9 @@ public class Workspace extends AppWorkspaceComponent
             pageEditController.handleResizeButtonRequest();
         });
         addClassButton.setOnAction(e -> {
-            pageEditController.handleAddClassRequest();
+            int randomInt = (int) (Math.random() * 100);
+            String randomClassNameString = "DummyClass" + randomInt;
+            pageEditController.handleAddClassRequest(randomClassNameString);
         });
         addInterfaceButton.setOnAction(e -> {
             pageEditController.handleAddInterfaceRequest();
