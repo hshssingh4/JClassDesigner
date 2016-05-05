@@ -32,6 +32,14 @@ public class FileManager implements AppFileComponent
     public static final String JSON_METHODS_ARRAY = "methods";
     public static final String JSON_JAVA_API_PACKAGES_ARRAY = "java_api_packages";
     public static final String JSON_LINE_CONNECTORS_ARRAY = "line_connectors";
+    public static final String JSON_LINES_ARRAY = "lines";
+    public static final String JSON_LINE_STROKE_WIDTH = "line_stroke_width";
+    public static final String JSON_FROM_BOX_CLASS = "from_box_class_name";
+    public static final String JSON_TO_BOX_CLASS = "to_box_class_name";
+    public static final String JSON_LINE_CONNECTOR_TYPE = "line_connector_type";
+    public static final String JSON_LINE_CONNECTOR_SHAPE = "line_connector_shape";
+    public static final String JSON_LINE_CONNECTOR_END_CLASS_NAME = 
+            "line_connector_end_class_name";
     public static final String JSON_ARGUMENTS_ARRAY = "arguments";
     public static final String JSON_NAME = "name";
     public static final String JSON_TYPE = "type";
@@ -52,6 +60,21 @@ public class FileManager implements AppFileComponent
     public static final String JSON_START_Y = "start_y";
     public static final String JSON_END_X = "end_x";
     public static final String JSON_END_Y = "end_y";
+    public static final String JSON_RECT_X = "rect_x";
+    public static final String JSON_RECT_Y = "rect_y";
+    public static final String JSON_RECT_WIDTH = "rect_width";
+    public static final String JSON_RECT_HEIGHT = "rect_height";
+    public static final String JSON_RECT_STROKE_COLOR = "rect_stroke_color";
+    public static final String JSON_RECT_STROKE_WIDTH = "rect_stroke_width";
+    public static final String JSON_RECT_FILL_COLOR = "rect_fill_color";
+    public static final String JSON_RECT_ROTATE_DEGREES = "rect_rotate_degrees";
+    public static final String JSON_TRIANGLE_X = "triangle_x";
+    public static final String JSON_TRIANGLE_Y = "triangle_y";
+    public static final String JSON_TRIANGLE_HEIGHT = "triangle_height";
+    public static final String JSON_TRIANGLE_STROKE_COLOR = "triangle_stroke_color";
+    public static final String JSON_TRIANGLE_STROKE_WIDTH = "triangle_stroke_width";
+    public static final String JSON_TRIANGLE_FILL_COLOR = "triangle_fill_color";
+    
     
     // CONSTANTS FOR FILE EXPORTING
     public static final String PACKAGE = "package";

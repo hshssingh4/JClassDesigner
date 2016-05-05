@@ -9,18 +9,23 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import jcd.Shapes.Triangle;
 import jcd.data.ArgumentObject;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerMode;
 import jcd.data.LineConnector;
+import jcd.data.LineConnectorType;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import saf.components.AppDataComponent;
@@ -123,7 +128,6 @@ public class FileLoader
         ArrayList<MethodObject> methods = loadMethods(jsoClass);
         ArrayList<String> javaApiPackages = loadJavaApiPackages(jsoClass);
         Box box = loadBoxObject(jsoClass);
-        ArrayList<LineConnector> lineConnectors = loadLineConnectors(jsoClass);
         
         classObject = new ClassObject();
         classObject.setClassName(className);
@@ -282,6 +286,7 @@ public class FileLoader
         box.getClassVBox().getChildren().addAll(loadClassTextFields(jsoBox));
         box.getVariablesVBox().getChildren().addAll(loadVariablesTextFields(jsoBox));
         box.getMethodsVBox().getChildren().addAll(loadMethodsTextFields(jsoBox));
+        box.getLineConnectors().addAll(loadLineConnectors(jsoBox));
         
         return box;
     }
@@ -370,38 +375,101 @@ public class FileLoader
         return methodsTextFields;
     }
     
-    private ArrayList<LineConnector> loadLineConnectors(JsonObject jsoClass)
+    private ArrayList<LineConnector> loadLineConnectors(JsonObject jsoBox)
     {
         ArrayList<LineConnector> lineConnectors = new ArrayList<>();
         
-        JsonArray lineConnectorsJsonArray = jsoClass.getJsonArray(JSON_LINE_CONNECTORS_ARRAY);
+        JsonArray lineConnectorsJsonArray = jsoBox.getJsonArray(JSON_LINE_CONNECTORS_ARRAY);
         
         for (int i = 0; i < lineConnectorsJsonArray.size(); i++)
         {
-            LineConnector lineConnector = loadLineConnector(lineConnectorsJsonArray.getJsonArray(i));
+            LineConnector lineConnector = loadLineConnector(lineConnectorsJsonArray.getJsonObject(i));
             lineConnectors.add(lineConnector);
         }
         
         return lineConnectors;
     }
     
-    private LineConnector loadLineConnector(JsonArray jsoLineConnector)
+    private LineConnector loadLineConnector(JsonObject jsoLineConnector)
     {
         LineConnector lineConnector = new LineConnector();
+        ArrayList<Line> lines = new ArrayList<>();
         
-        for (int i = 0; i < jsoLineConnector.size(); i++)
-        {
-            Line line = new Line();
-            JsonObject jsoLine = jsoLineConnector.getJsonObject(i);
-            
-            line.setStartX(jsoLine.getInt(JSON_START_X));
-            line.setStartY(jsoLine.getInt(JSON_START_Y));
-            line.setEndX(jsoLine.getInt(JSON_END_X));
-            line.setEndY(jsoLine.getInt(JSON_END_Y));
-            
-            lineConnector.getLines().add(line);
-        }
+        JsonArray linesJsonArray = jsoLineConnector.getJsonArray(JSON_LINES_ARRAY);
+        for (int i = 0; i < linesJsonArray.size(); i++)
+            lines.add(loadLine(linesJsonArray.getJsonObject(i)));
         
+        lineConnector.setLines(lines);
+        lineConnector.setType(LineConnectorType.valueOf(
+                jsoLineConnector.getString(JSON_LINE_CONNECTOR_TYPE)));
+        lineConnector.setEndClassObjectName(jsoLineConnector.getString(
+                JSON_LINE_CONNECTOR_END_CLASS_NAME));
+        lineConnector.setShape(loadLineConnectorShape(jsoLineConnector));
         return lineConnector;
+    }
+    
+    private Line loadLine(JsonObject jsoLine)
+    {
+        Line line = new Line();
+
+        line.setStartX(jsoLine.getInt(JSON_START_X));
+        line.setStartY(jsoLine.getInt(JSON_START_Y));
+        line.setEndX(jsoLine.getInt(JSON_END_X));
+        line.setEndY(jsoLine.getInt(JSON_END_Y));
+        line.setStrokeWidth(jsoLine.getJsonNumber(
+                JSON_LINE_STROKE_WIDTH).doubleValue());
+
+        return line;
+    }
+    
+    private Shape loadLineConnectorShape(JsonObject jsoLineConnector)
+    {
+        Shape shape = null;
+        switch (LineConnectorType.valueOf(
+                jsoLineConnector.getString(JSON_LINE_CONNECTOR_TYPE)))
+        {
+            case DIAMOND:
+                shape = loadRectangle(jsoLineConnector.getJsonObject(JSON_LINE_CONNECTOR_SHAPE));
+                break;
+            case TRIANGLE:
+                shape = loadTriangle(jsoLineConnector.getJsonObject(JSON_LINE_CONNECTOR_SHAPE));
+                break;
+            case ARROW:
+                shape = loadTriangle(jsoLineConnector.getJsonObject(JSON_LINE_CONNECTOR_SHAPE));
+                break;
+            default:
+                break;
+        }
+        return shape;
+    }
+    
+    private Rectangle loadRectangle(JsonObject jsoRectangle)
+    {
+        Rectangle rect = new Rectangle();
+        
+        rect.setX(jsoRectangle.getJsonNumber(JSON_RECT_X).doubleValue());
+        rect.setY(jsoRectangle.getJsonNumber(JSON_RECT_Y).doubleValue());
+        rect.setWidth(jsoRectangle.getJsonNumber(JSON_RECT_WIDTH).doubleValue());
+        rect.setHeight(jsoRectangle.getJsonNumber(JSON_RECT_HEIGHT).doubleValue());
+        rect.setStroke(Color.valueOf(jsoRectangle.getString(JSON_RECT_STROKE_COLOR)));
+        rect.setStrokeWidth(jsoRectangle.getJsonNumber(JSON_RECT_STROKE_WIDTH).doubleValue());
+        rect.setFill(Color.valueOf(jsoRectangle.getString(JSON_RECT_FILL_COLOR)));
+        rect.setRotate(jsoRectangle.getJsonNumber(JSON_RECT_ROTATE_DEGREES).doubleValue());
+        
+        return rect;
+    }
+    
+    private Triangle loadTriangle(JsonObject jsoTriangle)
+    {
+        Triangle triangle = new Triangle();
+        
+        triangle.setHeight(jsoTriangle.getJsonNumber(JSON_TRIANGLE_HEIGHT).doubleValue());
+        triangle.setX(jsoTriangle.getJsonNumber(JSON_TRIANGLE_X).doubleValue());
+        triangle.setY(jsoTriangle.getJsonNumber(JSON_TRIANGLE_Y).doubleValue());
+        triangle.setStroke(Color.valueOf(jsoTriangle.getString(JSON_TRIANGLE_STROKE_COLOR)));
+        triangle.setStrokeWidth(jsoTriangle.getJsonNumber(JSON_TRIANGLE_STROKE_WIDTH).doubleValue());
+        triangle.setFill(Color.valueOf(jsoTriangle.getString(JSON_TRIANGLE_FILL_COLOR)));
+        
+        return triangle;
     }
 }

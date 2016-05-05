@@ -6,9 +6,7 @@
 package jcd.controller;
 
 import java.util.ArrayList;
-import java.util.List;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.effect.BlurType;
@@ -37,6 +35,7 @@ public class LineEditController
     /* This offset if for the extra space that we need to show for the
     scroll pane */
     private static final double SIDE = 10.0;
+    private static final double OFFSET = 5.0;
     private static final String MERGE_LINE_TITLE = "Merge Error";
     private static final String MERGE_LINE_ERROR = "Please make sure consecutive"
             + " lines are selected!";
@@ -80,10 +79,13 @@ public class LineEditController
      * add a line from this box
      * @param toBox
      * add a line to this box
+     * @param endClassObjectName
+     * the class object where this line ends
      * @param type
      * Line Connector Type (diamond/triangle/arrow)
      */
-    public void handleAddLineConnector(Box fromBox, Box toBox, LineConnectorType type) 
+    public void handleAddLineConnector(Box fromBox, Box toBox,
+            String endClassObjectName, LineConnectorType type) 
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         Pane canvas = workspace.getCanvas();
@@ -131,8 +133,7 @@ public class LineEditController
         // Now initialize the line connector
         LineConnector lineConnector = new LineConnector();
         lineConnector.setLines(lines);
-        lineConnector.setFromBox(fromBox);
-        lineConnector.setToBox(toBox);
+        lineConnector.setEndClassObjectName(endClassObjectName);
         switch (type) 
         {
             case DIAMOND:
@@ -211,7 +212,9 @@ public class LineEditController
      */
     private Triangle addArrowTriangle(Line line) 
     {
-        Triangle triangle = new Triangle(line.getEndX() + SIDE, line.getEndY(), SIDE);
+        double x = line.getEndX() + SIDE;
+        double y = line.getEndY();
+        Triangle triangle = new Triangle(x, y, SIDE);
         triangle.setFill(Color.TRANSPARENT);
         triangle.setStroke(Color.BLACK);
         triangle.setStrokeWidth(2);
@@ -242,43 +245,13 @@ public class LineEditController
     private void bindTrianglePoints(Triangle triangle, Line line)
     {
         line.endXProperty().addListener(e -> {
-            triangle.getPoints().setAll(fetchShiftedTrianglePoints(line).getValue());
+            triangle.setX(line.getEndX() + SIDE);
+            triangle.setY(line.getEndY());
         });
         line.endYProperty().addListener(e -> {
-            triangle.getPoints().setAll(fetchShiftedTrianglePoints(line).getValue());
+            triangle.setX(line.getEndX() + SIDE);
+            triangle.setY(line.getEndY());
         });
-    }
-    
-    /**
-     * This method returns the new set of points for a shifted triangle.
-     * @param line
-     * the line to be used for shifting triangle
-     * @return 
-     * the new set of polygon points
-     */
-    private ObjectBinding<List<Double>> fetchShiftedTrianglePoints(Line line)
-    {
-        return new ObjectBinding<List<Double>>() {
-            @Override
-            protected List<Double> computeValue() 
-            {
-                double x = line.getEndX() + SIDE;
-                double y = line.getEndY();
-                double height = SIDE;
-                
-                List<Double> list = new ArrayList<>();
-                list.add(x);
-                list.add(y);
-
-                list.add(x - height);
-                list.add(y - height);
-
-                list.add(x - height);
-                list.add(y + height);
-
-                return list;
-            }
-        };
     }
     
     /**
@@ -309,8 +282,10 @@ public class LineEditController
         }
         
         LineConnector lineConnector = dataManager.fetchLineConnector(line);
-        VBox fromMainVBox = lineConnector.getFromBox().getMainVBox();
-        VBox toMainVBox = lineConnector.getToBox().getMainVBox();
+        Box fromBox = dataManager.getFromBox(lineConnector);
+        VBox fromMainVBox = fromBox.getMainVBox();
+        Box toBox = dataManager.getToBox(lineConnector);
+        VBox toMainVBox = toBox.getMainVBox();
         
         originalX = x;
         originalY = y;
@@ -605,9 +580,8 @@ public class LineEditController
     private void moveFromBoxLine(LineConnector lineConnector, double offsetX)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        VBox fromMainVBox = lineConnector.getFromBox().getMainVBox();
+        VBox fromMainVBox = dataManager.getFromBox(lineConnector).getMainVBox();
         Line line = workspace.getSelectedLine();
-        int OFFSET = 5;
         double leftBoundary = fromMainVBox.getTranslateX() + OFFSET;
         double rightBoundary = fromMainVBox.getTranslateX() + fromMainVBox.getWidth() - OFFSET;
         DoubleBinding newProperty = originalSpecialStartXProperty.add(offsetX);
@@ -619,9 +593,8 @@ public class LineEditController
     private void moveToBoxLine(LineConnector lineConnector, double offsetY)
     {
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
-        VBox toMainVBox = lineConnector.getToBox().getMainVBox();
+        VBox toMainVBox = dataManager.getToBox(lineConnector).getMainVBox();
         Line line = workspace.getSelectedLine();
-        int OFFSET = 5;
         double topBoundary = toMainVBox.getTranslateY() + OFFSET;
         double bottomBoundary = toMainVBox.getTranslateY() + toMainVBox.getHeight() - OFFSET;
         DoubleBinding newProperty = originalSpecialEndYProperty.add(offsetY);

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -22,6 +23,7 @@ import javax.json.JsonObject;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
+import jcd.Shapes.Triangle;
 import jcd.data.ArgumentObject;
 import jcd.data.Box;
 import jcd.data.ClassObject;
@@ -263,6 +265,7 @@ public class FileSaver
                 .add(JSON_CLASS_TEXT_FIELDS, buildClassTextFieldsJsonArray(box))
                 .add(JSON_VARIABLES_TEXT_FIELDS, buildVariablesTextFieldsJsonArray(box))
                 .add(JSON_METHODS_TEXT_FIELDS, buildMethodsTextFieldsJsonArray(box))
+                .add(JSON_LINE_CONNECTORS_ARRAY, buildLineConnectorsJsonArray(box.getLineConnectors()))
 		.build();
         
         return jso;
@@ -346,34 +349,99 @@ public class FileSaver
 	return jA;
     }
     
-    /*private JsonArray buildLineConnectorsJsonArray(ArrayList<LineConnector> lineConnectors)
+    private JsonArray buildLineConnectorsJsonArray(ArrayList<LineConnector> lineConnectors)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         
         for (LineConnector lineConnector: lineConnectors)
-            arrayBuilder.add(buildLineConnectorJsonArray(lineConnector));
+            arrayBuilder.add(buildLineConnectorJsonObject(lineConnector));
         
             
         JsonArray jA = arrayBuilder.build();
 	return jA;
     }
     
-    private JsonArray buildLineConnectorJsonArray(LineConnector lineConnector)
+    private JsonObject buildLineConnectorJsonObject(LineConnector lineConnector)
+    {
+        JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_LINES_ARRAY, buildLinesJsonArray(lineConnector.getLines()))
+                .add(JSON_LINE_CONNECTOR_SHAPE, buildLineConnectorShapeJsonObject(lineConnector))
+                .add(JSON_LINE_CONNECTOR_TYPE, lineConnector.getType().toString())
+                .add(JSON_LINE_CONNECTOR_END_CLASS_NAME, lineConnector.getEndClassObjectName())
+		.build();
+        
+        return jso;
+    }
+    
+    private JsonArray buildLinesJsonArray(ArrayList<Line> lines)
     {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         
-        for (Line line: lineConnector.getLines())
+        for (Line line: lines)
         {
             JsonObject jso = Json.createObjectBuilder()
                 .add(JSON_START_X, line.getStartX())
                 .add(JSON_START_Y, line.getStartY())
                 .add(JSON_END_X, line.getEndX())
                 .add(JSON_END_Y, line.getEndY())
+                .add(JSON_LINE_STROKE_WIDTH, line.getStrokeWidth())
 		.build();
             arrayBuilder.add(jso);
         }
         
         JsonArray jA = arrayBuilder.build();
 	return jA;
-    }*/
+    }
+    
+    private JsonObject buildLineConnectorShapeJsonObject(LineConnector lineConnector)
+    {
+        JsonObject jso = null;
+        switch (lineConnector.getType())
+        {
+            case DIAMOND:
+                jso = buildRectangleJsonObject((Rectangle) lineConnector.getShape());
+                break;
+            case TRIANGLE:
+                jso = buildTriangleJsonObject((Triangle) lineConnector.getShape());
+                break;
+            case ARROW:
+                jso = buildTriangleJsonObject((Triangle) lineConnector.getShape());
+                break;
+            default:
+                break;
+        }
+        
+        return jso;
+    }
+
+    private JsonObject buildRectangleJsonObject(Rectangle rectangle) 
+    {
+        JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_RECT_X, rectangle.getX())
+                .add(JSON_RECT_Y, rectangle.getY())
+                .add(JSON_RECT_WIDTH, rectangle.getWidth())
+                .add(JSON_RECT_HEIGHT, rectangle.getHeight())
+                .add(JSON_RECT_HEIGHT, rectangle.getHeight())
+                .add(JSON_RECT_STROKE_COLOR, rectangle.getStroke().toString())
+                .add(JSON_RECT_STROKE_WIDTH, rectangle.getStrokeWidth())
+                .add(JSON_RECT_FILL_COLOR, rectangle.getFill().toString())
+                .add(JSON_RECT_ROTATE_DEGREES, rectangle.getRotate())
+                .build();
+        
+        return jso;
+    }
+
+    private JsonObject buildTriangleJsonObject(Triangle triangle)
+    {
+        JsonObject jso = Json.createObjectBuilder()
+                .add(JSON_TRIANGLE_X, triangle.getX())
+                .add(JSON_TRIANGLE_Y, triangle.getY())
+                .add(JSON_TRIANGLE_HEIGHT, triangle.getHeight())
+                .add(JSON_TRIANGLE_STROKE_COLOR, triangle.getStroke().toString())
+                .add(JSON_TRIANGLE_STROKE_WIDTH, triangle.getStrokeWidth())
+                .add(JSON_TRIANGLE_FILL_COLOR, triangle.getFill().toString())
+                .build();
+        
+        return jso;
+    }
 }

@@ -18,8 +18,7 @@ public class LineConnector
     private ArrayList<Line> lines;
     private Shape shape;
     private LineConnectorType type;
-    private Box fromBox;
-    private Box toBox;
+    private String endClassObjectName;
     
     public LineConnector() {}
     
@@ -65,23 +64,12 @@ public class LineConnector
         this.type = type;
     }
 
-    public Box getFromBox()
-    {
-        return fromBox;
+    public String getEndClassObjectName() {
+        return endClassObjectName;
     }
 
-    public void setFromBox(Box fromBox) 
+    public void setEndClassObjectName(String endClassObjectName) 
     {
-        this.fromBox = fromBox;
-    }
-
-    public Box getToBox() 
-    {
-        return toBox;
-    }
-
-    public void setToBox(Box toBox) 
-    {
-        this.toBox = toBox;
+        this.endClassObjectName = endClassObjectName;
     }
 }

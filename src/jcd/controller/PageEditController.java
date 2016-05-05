@@ -347,7 +347,7 @@ public class PageEditController
                         parentName);
                 selectedObject.getBox().removeParentLineConnector();
                 workspace.getLineEditController().handleAddLineConnector(selectedObject.getBox(),
-                        localClassObject.getBox(), LineConnectorType.TRIANGLE);
+                        localClassObject.getBox(), parentName, LineConnectorType.TRIANGLE);
         }
         selectedObject.setParentName(parentName);
         workspace.reloadWorkspace();

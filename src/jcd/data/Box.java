@@ -96,12 +96,7 @@ public class Box
     
     public boolean containsLineConnector(LineConnector lineConnector)
     {
-        for (LineConnector lc: lineConnectors)
-            if (lc.getFromBox() == lineConnector.getFromBox() &&
-                    lc.getToBox() == lineConnector.getToBox() && 
-                    lc.getType() == lineConnector.getType())
-                return true;
-        return false;
+        return lineConnectors.contains(lineConnector);
     }
     
     

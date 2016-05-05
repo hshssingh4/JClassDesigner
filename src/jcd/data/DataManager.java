@@ -308,12 +308,26 @@ public class DataManager implements AppDataComponent
         for (ClassObject classObject: classesList)
         {
             for (LineConnector lineConnector: classObject.getBox().getLineConnectors())
-                if (lineConnector.getToBox() == obj.getBox())
+                if (obj.getBox().containsLineConnector(lineConnector))
                     toRemoveList.add(lineConnector);
             
             classObject.getBox().getLineConnectors().removeAll(toRemoveList);
         }
         
+    }
+    
+    public Box getFromBox(LineConnector lineConnector)
+    {
+        for (ClassObject classObject: classesList)
+            if (classObject.getBox().containsLineConnector(lineConnector))
+                return classObject.getBox();
+        return null;
+    }
+    
+    public Box getToBox(LineConnector lineConnector)
+    {
+        ClassObject obj = fetchClassObject(lineConnector.getEndClassObjectName());
+        return obj.getBox();
     }
 
     public ArrayList<ClassObject> getClassesList() 

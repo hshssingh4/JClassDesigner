@@ -215,7 +215,8 @@ public class VariableDialog extends Stage
                     if (dataManager.containsClassObject(newVariable.getType()))
                         workspace.getLineEditController().handleAddLineConnector(
                                 classObject.getBox(), dataManager.fetchClassObject(
-                                        newVariable.getType()).getBox(), LineConnectorType.DIAMOND);
+                                        newVariable.getType()).getBox(), newVariable.getType(),
+                                        LineConnectorType.DIAMOND);
                 }
                 else
                 {
