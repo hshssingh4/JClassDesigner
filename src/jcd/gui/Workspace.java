@@ -5,7 +5,6 @@
  */
 package jcd.gui;
 
-import javafx.scene.input.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import javafx.geometry.HPos;
@@ -67,6 +66,7 @@ import static jcd.PropertyType.ZOOM_IN_TOOLTIP;
 import static jcd.PropertyType.ZOOM_OUT_ICON;
 import static jcd.PropertyType.ZOOM_OUT_TOOLTIP;
 import jcd.controller.CanvasEditController;
+import jcd.controller.LineEditController;
 import jcd.controller.PageEditController;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
@@ -74,6 +74,7 @@ import static jcd.data.JClassDesignerMode.GRID_DEFAULT_MODE;
 import static jcd.data.JClassDesignerMode.GRID_RENDER_MODE;
 import static jcd.data.JClassDesignerMode.GRID_RENDER_SNAP_MODE;
 import jcd.data.JClassDesignerState;
+import jcd.data.LineConnector;
 import jcd.data.LineConnectorType;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
@@ -167,6 +168,7 @@ public class Workspace extends AppWorkspaceComponent
     // HERE IS THE CONTROLLER
     PageEditController pageEditController;
     CanvasEditController canvasEditController;
+    LineEditController lineEditController;
     DataManager dataManager;
     
     /**
@@ -186,6 +188,7 @@ public class Workspace extends AppWorkspaceComponent
 	gui = app.getGUI();
         pageEditController = new PageEditController((JClassDesigner) app);
         canvasEditController = new CanvasEditController((JClassDesigner) app);
+        lineEditController = new LineEditController((JClassDesigner) app);
         dataManager = (DataManager) app.getDataComponent();
         
         // NOW INITIALIZE EVERYTHING ONE BY ONE
@@ -551,6 +554,8 @@ public class Workspace extends AppWorkspaceComponent
             parentClassComboBox.getItems().clear();
             parentClassTextField.clear();
             pageEditController.handleParentClassRequest(null);
+            selectedObject.getBox().removeParentLineConnector();
+            reloadWorkspace();
         });
         localParentClassRadioButton.setOnAction(e -> {
             parentClassComboBox.setDisable(false);
@@ -570,13 +575,7 @@ public class Workspace extends AppWorkspaceComponent
         });
         parentClassComboBox.setOnAction(e -> {
             if (parentClassComboBox.getValue() != null)
-            {
                 pageEditController.handleParentClassRequest(parentClassComboBox.getValue());
-                canvasEditController.handleAddLineConnector(selectedObject.getBox(),
-                        dataManager.fetchClassObject(parentClassComboBox.getValue()).getBox(), 
-                        LineConnectorType.TRIANGLE);
-            }
-            
         });
         parentClassTextField.textProperty().addListener((observable, oldClassName, newParentName) -> {
             if (!newParentName.isEmpty())
@@ -677,22 +676,23 @@ public class Workspace extends AppWorkspaceComponent
             boolean isControlDown = e.isControlDown();
             if (e.getTarget() instanceof Line && !isControlDown)
             {
-                    canvasEditController.handleLineSelectionRequest((Line) e.getTarget(), e.getX(), e.getY());
+                    lineEditController.handleLineSelectionRequest((Line) e.getTarget(), e.getX(), e.getY());
                     canvas.setOnMouseDragged(e1 -> {
-                        canvasEditController.handleMoveLineRequest(e1.getX(), e1.getY());
+                        lineEditController.handleMoveLineRequest(e1.getX(), e1.getY());
                     });
             }
             else if (e.getTarget() instanceof Line && isControlDown)
-                canvasEditController.handleDoubleLineSelectionRequest((Line) e.getTarget());
+                lineEditController.handleDoubleLineSelectionRequest((Line) e.getTarget());
             else
-                canvasEditController.handleLineSelectionRequest(null, e.getX(), e.getY());
+                lineEditController.handleDeselectLinesRequest();
          });
+        
         app.getGUI().getPrimaryScene().setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.S && selectedLine != null)
-                canvasEditController.handleLineSplitRequest();
+            if (e.getCode() == KeyCode.S && selectedLine != null && selectedLine2 == null)
+                lineEditController.handleSplitLineRequest();
             
             if (e.getCode() == KeyCode.M && selectedLine != null && selectedLine2 != null)
-                canvasEditController.handleMergeLinesRequest();
+                lineEditController.handleMergeLinesRequest();
         });
     }
     
@@ -793,7 +793,7 @@ public class Workspace extends AppWorkspaceComponent
      */
     private void loadCanvasSettings()
     {
-        /*canvas.getChildren().clear();
+        canvas.getChildren().clear();
         
         // NOW CHECK THE GRID RENDER AND GRID SNAP
         if (dataManager.isInMode(GRID_RENDER_MODE))
@@ -809,7 +809,15 @@ public class Workspace extends AppWorkspaceComponent
         
         // Then add all the boxes to the canvas
         for (ClassObject classObject: dataManager.getClassesList())
-            canvas.getChildren().add(classObject.getBox().getMainVBox());*/
+            canvas.getChildren().add(classObject.getBox().getMainVBox());
+        
+        // Then add all the lines to the canvas
+        for (ClassObject classObject: dataManager.getClassesList())
+            for (LineConnector lineConnector: classObject.getBox().getLineConnectors())
+            {
+                canvas.getChildren().addAll(lineConnector.getLines());
+                canvas.getChildren().add(lineConnector.getShape());
+            }
     }
     
     /**
@@ -1134,6 +1142,11 @@ public class Workspace extends AppWorkspaceComponent
     public PageEditController getPageEditController() 
     {
         return pageEditController;
+    }
+
+    public LineEditController getLineEditController() 
+    {
+        return lineEditController;
     }
 
     public TableView getVariablesTableView() 

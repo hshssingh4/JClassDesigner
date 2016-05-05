@@ -149,6 +149,20 @@ public class Box
         return mainVBox.getTranslateY() + (mainVBox.getHeight() / 2);
     }
     
+    public void removeParentLineConnector()
+    {
+        LineConnector parentLineConnector = null;
+        
+        for (LineConnector lineConnector: lineConnectors)
+            if (lineConnector.isType(LineConnectorType.TRIANGLE))
+            {
+                parentLineConnector = lineConnector;
+                break;
+            }
+        if (parentLineConnector != null)
+            lineConnectors.remove(parentLineConnector);
+    }
+    
     public VBox getMainVBox() 
     {
         return mainVBox;

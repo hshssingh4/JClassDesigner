@@ -259,7 +259,7 @@ public class MethodDialog extends Stage
                         if (dataManager.containsClassObject(arg.getType()))
                             list.add(dataManager.fetchClassObject(arg.getType()));
                     for (ClassObject obj: list)
-                        workspace.getCanvasEditController().handleAddLineConnector(
+                        workspace.getLineEditController().handleAddLineConnector(
                                 classObject.getBox(), obj.getBox(), LineConnectorType.ARROW);
                 }
                 else

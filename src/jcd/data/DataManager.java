@@ -77,7 +77,7 @@ public class DataManager implements AppDataComponent
         //hashClasses.remove(obj.getClassName());
         classesList.remove(obj);
     }
-
+    
     /**
      * Checks whether a class object is in the data manager basically.
      * @param obj
@@ -295,6 +295,25 @@ public class DataManager implements AppDataComponent
         }
         
         return null;
+    }
+    
+    /**
+     * This method removes all the lines to this class object from the data manager.
+     * @param obj 
+     * the object to be removed
+     */
+    public void removeLineConnectors(ClassObject obj)
+    {
+        ArrayList<LineConnector> toRemoveList = new ArrayList<>();
+        for (ClassObject classObject: classesList)
+        {
+            for (LineConnector lineConnector: classObject.getBox().getLineConnectors())
+                if (lineConnector.getToBox() == obj.getBox())
+                    toRemoveList.add(lineConnector);
+            
+            classObject.getBox().getLineConnectors().removeAll(toRemoveList);
+        }
+        
     }
 
     public ArrayList<ClassObject> getClassesList() 

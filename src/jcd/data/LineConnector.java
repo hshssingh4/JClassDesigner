@@ -22,6 +22,18 @@ public class LineConnector
     private Box toBox;
     
     public LineConnector() {}
+    
+    /**
+     * Check whether this line connector is of argument value's type.
+     * @param type
+     * the type to check for
+     * @return 
+     * true if matched, false otherwise
+     */
+    public boolean isType(LineConnectorType type)
+    {
+        return this.type == type;
+    }
 
     public ArrayList<Line> getLines() 
     {

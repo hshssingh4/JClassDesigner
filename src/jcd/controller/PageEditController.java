@@ -19,6 +19,7 @@ import static jcd.data.Box.DEFAULT_WIDTH;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
 import jcd.data.JClassDesignerState;
+import jcd.data.LineConnectorType;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import jcd.gui.ApiInterfacesDialog;
@@ -261,6 +262,7 @@ public class PageEditController
         
         if (selection != null && selection.equals(AppYesNoCancelDialogSingleton.YES))
         {
+            dataManager.removeLineConnectors(workspace.getSelectedObject());
             dataManager.removeClassObject(workspace.getSelectedObject());
             workspace.setSelectedObject(null);
         }
@@ -339,8 +341,15 @@ public class PageEditController
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         ClassObject selectedObject = workspace.getSelectedObject();
         
+        if (parentName != null && !parentName.equals(selectedObject.getParentName()))
+        {
+            ClassObject localClassObject = dataManager.fetchClassObject(
+                        parentName);
+                selectedObject.getBox().removeParentLineConnector();
+                workspace.getLineEditController().handleAddLineConnector(selectedObject.getBox(),
+                        localClassObject.getBox(), LineConnectorType.TRIANGLE);
+        }
         selectedObject.setParentName(parentName);
-        
         workspace.reloadWorkspace();
         
         // Work has been edited!
