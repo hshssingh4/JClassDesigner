@@ -7,17 +7,17 @@ package jcd.data;
 
 import java.util.ArrayList;
 import javafx.scene.shape.Line;
+import jcd.UndoRedo.RedoManager;
+import jcd.UndoRedo.UndoManager;
 import static jcd.data.JClassDesignerMode.GRID_DEFAULT_MODE;
 import static jcd.file.FileManager.BOOLEAN;
 import static jcd.file.FileManager.BYTE;
 import static jcd.file.FileManager.CHAR;
 import static jcd.file.FileManager.DOUBLE;
-import static jcd.file.FileManager.FALSE;
 import static jcd.file.FileManager.FLOAT;
 import static jcd.file.FileManager.INT;
 import static jcd.file.FileManager.LONG;
 import static jcd.file.FileManager.SHORT;
-import static jcd.file.FileManager.ZERO;
 import jcd.gui.Workspace;
 import saf.AppTemplate;
 import saf.components.AppDataComponent;
@@ -455,5 +455,29 @@ public class DataManager implements AppDataComponent
         mode = GRID_DEFAULT_MODE;
         canvasZoomScaleX = 1;
         canvasZoomScaleY = 1;
+        undoManager().clearStacks();
+        redoManager().clearStacks();
+    }
+    
+    /**
+     * Helper method to get the undoManager quickly.
+     * @return 
+     * the undo manager
+     */
+    private UndoManager undoManager()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        return workspace.getUndoManager();
+    }
+    
+    /**
+     * Helper method to get the redoManager quickly.
+     * @return 
+     * the redo manager
+     */
+    private RedoManager redoManager()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        return workspace.getRedoManager();
     }
 }

@@ -164,6 +164,17 @@ public class UndoManager
     }
     
     /**
+     * This method clears all the stacks in this redo manager.
+     */
+    public void clearStacks()
+    {
+        undoStack.clear();
+        selectedObjectStack.clear();
+        locationStack.clear();
+        sizeStack.clear();
+    }
+    
+    /**
      * This method get the last action performed by the used and is
      * responsible for calling the correct method to undo the last change.
      * @param commandToUndo 
@@ -195,6 +206,12 @@ public class UndoManager
                 break;
             case SIZE_BOX:
                 resize();
+                break;
+            case GRID_SNAP:
+                unsnap();
+                break;
+            case GRID_UNSNAP:
+                snap();
                 break;
             default:
                 break;
@@ -275,9 +292,43 @@ public class UndoManager
         workspace().reloadWorkspace();
     }
     
-    
+    private void unsnap()
+    {
+        dataManager.setMode(JClassDesignerMode.GRID_RENDER_MODE);
+        for (int i = dataManager.getClassesList().size() - 1; i >= 0; i--) 
+        {
+            ClassObject classObject = dataManager.getClassesList().get(i);
+            ArrayList<Double> points = popLocation();
+            VBox mainVBox = classObject.getBox().getMainVBox();
+            ArrayList<Double> location = new ArrayList<>();
+            location.add(mainVBox.getTranslateX());
+            location.add(mainVBox.getTranslateY());
+            redoManager().pushLocation(location);
 
-    
+            mainVBox.setTranslateX(points.get(0));
+            mainVBox.setTranslateY(points.get(1));
+        }
+            workspace().reloadWorkspace();
+    }
+
+    private void snap()
+    {
+        dataManager.setMode(JClassDesignerMode.GRID_RENDER_SNAP_MODE);
+        for (int i = dataManager.getClassesList().size() - 1; i >= 0; i--) 
+        {
+            ClassObject classObject = dataManager.getClassesList().get(i);
+            ArrayList<Double> points = popLocation();
+            VBox mainVBox = classObject.getBox().getMainVBox();
+            ArrayList<Double> location = new ArrayList<>();
+            location.add(mainVBox.getTranslateX());
+            location.add(mainVBox.getTranslateY());
+            redoManager().pushLocation(location);
+
+            mainVBox.setTranslateX(points.get(0));
+            mainVBox.setTranslateY(points.get(1));
+        }
+            workspace().reloadWorkspace();
+    }
     
     
     
@@ -309,6 +360,10 @@ public class UndoManager
                 return Command.MOVE_BOX;
             case SIZE_BOX:
                 return Command.SIZE_BOX;
+            case GRID_SNAP:
+                return Command.GRID_UNSNAP;
+            case GRID_UNSNAP:
+                return Command.GRID_SNAP;
             default: 
                 return null;
         }

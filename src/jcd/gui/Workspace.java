@@ -558,11 +558,35 @@ public class Workspace extends AppWorkspaceComponent
         gridSnapCheckBox.setOnAction(e -> {
             if (gridSnapCheckBox.isSelected())
             {
+                undoManager.push(Command.GRID_SNAP);
+                for (ClassObject object: dataManager.getClassesList())
+                {
+                    VBox mainVBox = object.getBox().getMainVBox();
+                    ArrayList<Double> location = new ArrayList<>();
+                    location.add(mainVBox.getTranslateX());
+                    location.add(mainVBox.getTranslateY());
+                    undoManager.pushLocation(location);
+                }
+                redoManager.clearStacks();
+                
                 dataManager.setMode(GRID_RENDER_SNAP_MODE);
                 canvasEditController.handleSnapRequest();
             }
             else
+            {
+                undoManager.push(Command.GRID_UNSNAP);
+                for (ClassObject object: dataManager.getClassesList())
+                {
+                    VBox mainVBox = object.getBox().getMainVBox();
+                    ArrayList<Double> location = new ArrayList<>();
+                    location.add(mainVBox.getTranslateX());
+                    location.add(mainVBox.getTranslateY());
+                    undoManager.pushLocation(location);
+                }
+                redoManager.clearStacks();
+                
                 dataManager.setMode(GRID_RENDER_MODE);
+            }
         });
     }
     

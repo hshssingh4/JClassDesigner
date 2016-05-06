@@ -20,6 +20,9 @@ public enum Command
     GRID_RENDER,
     GRID_UNRENDER,
     
+    GRID_SNAP,
+    GRID_UNSNAP,
+    
     MOVE_BOX,
     
     SIZE_BOX

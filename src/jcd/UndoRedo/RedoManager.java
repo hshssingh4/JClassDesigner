@@ -207,6 +207,12 @@ public class RedoManager
             case SIZE_BOX:
                 resize();
                 break;
+            case GRID_SNAP:
+                unsnap();
+                break;
+            case GRID_UNSNAP:
+                snap();
+                break;
             default:
                 break;
         }
@@ -284,6 +290,42 @@ public class RedoManager
         variablesVBox.setMinHeight(oldSize.get(3));
         methodsVBox.setMinHeight(oldSize.get(4));
         workspace().reloadWorkspace();
+    }
+    
+    private void unsnap()
+    {
+        dataManager.setMode(JClassDesignerMode.GRID_RENDER_MODE);
+        for (ClassObject classObject: dataManager.getClassesList()) 
+        {
+            ArrayList<Double> points = popLocation();
+            VBox mainVBox = classObject.getBox().getMainVBox();
+            ArrayList<Double> location = new ArrayList<>();
+            location.add(mainVBox.getTranslateX());
+            location.add(mainVBox.getTranslateY());
+            undoManager().pushLocation(location);
+
+            mainVBox.setTranslateX(points.get(0));
+            mainVBox.setTranslateY(points.get(1));
+        }
+            workspace().reloadWorkspace();
+    }
+
+    private void snap()
+    {
+        dataManager.setMode(JClassDesignerMode.GRID_RENDER_SNAP_MODE);
+        for (ClassObject classObject: dataManager.getClassesList()) 
+        {
+            ArrayList<Double> points = popLocation();
+            VBox mainVBox = classObject.getBox().getMainVBox();
+            ArrayList<Double> location = new ArrayList<>();
+            location.add(mainVBox.getTranslateX());
+            location.add(mainVBox.getTranslateY());
+            undoManager().pushLocation(location);
+
+            mainVBox.setTranslateX(points.get(0));
+            mainVBox.setTranslateY(points.get(1));
+        }
+            workspace().reloadWorkspace();
     }
     
     
