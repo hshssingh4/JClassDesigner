@@ -5,7 +5,9 @@
  */
 package jcd.UndoRedo;
 
+import java.util.ArrayList;
 import java.util.Stack;
+import javafx.scene.layout.VBox;
 import jcd.JClassDesigner;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
@@ -24,6 +26,7 @@ public class RedoManager
     
     Stack<String> redoStack;
     Stack<ClassObject> selectedObjectStack;
+    Stack<ArrayList<Double>> locationStack;
     
     // HERE'S THE FULL APP, WHICH GIVES US ACCESS TO OTHER STUFF
     JClassDesigner app;
@@ -43,6 +46,7 @@ public class RedoManager
         // Also init the undo stack
         redoStack = new Stack();
         selectedObjectStack = new Stack();
+        locationStack = new Stack();
     }
     
     /**
@@ -63,6 +67,17 @@ public class RedoManager
     public void pushClassObject(ClassObject selectedObject)
     {
         selectedObjectStack.push(selectedObject);
+    }
+    
+    /**
+     * This method pushes on to the stack the last translates of the box before being
+     * moved.
+     * @param location
+     * the old location before moving
+     */
+    public void pushLocation(ArrayList<Double> location)
+    {
+        locationStack.push(location);
     }
     
     /**
@@ -96,6 +111,18 @@ public class RedoManager
     }
     
     /**
+     * This method pops off the last pushed location from the undo stack.
+     * @return 
+     * the command popped off in form of a string
+     */
+    public ArrayList<Double> popLocation()
+    {
+        if (!locationStack.isEmpty())
+            return locationStack.pop();
+        return null;
+    }
+    
+    /**
      * This method gets called when redo button is clicked.
      */
     public void redo()
@@ -109,6 +136,16 @@ public class RedoManager
             AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
             dialog.show(REDO_ERROR_TITLE, REDO_ERROR_MESSAGE);
         }
+    }
+    
+    /**
+     * This method clears all the stacks in this redo manager.
+     */
+    public void clearStacks()
+    {
+        redoStack.clear();
+        selectedObjectStack.clear();
+        locationStack.clear();
     }
     
     /**
@@ -137,6 +174,9 @@ public class RedoManager
                 break;
             case GRID_UNRENDER:
                 gridRender();
+                break;
+            case MOVE_BOX:
+                relocate();
                 break;
             default:
                 break;
@@ -179,6 +219,23 @@ public class RedoManager
         workspace().reloadWorkspace();
     }
     
+     private void relocate()
+    {
+        ArrayList<Double> points = popLocation();
+        VBox mainVBox = workspace().getSelectedObject().getBox().getMainVBox();
+        ArrayList<Double> location = new ArrayList<>();
+        location.add(mainVBox.getTranslateX());
+        location.add(mainVBox.getTranslateY());
+        undoManager().pushLocation(location);
+        
+        mainVBox.setTranslateX(points.get(0));
+        mainVBox.setTranslateY(points.get(1));
+        workspace().reloadWorkspace();
+    }
+    
+    
+    
+    
     /**
      * Helper method to get the undoManager quickly.
      * @return 
@@ -208,5 +265,10 @@ public class RedoManager
     public Stack<ClassObject> getSelectedObjectStack() 
     {
         return selectedObjectStack;
+    }
+    
+    public Stack<ArrayList<Double>> getLocationStack() 
+    {
+        return locationStack;
     }
 }

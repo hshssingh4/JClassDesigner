@@ -18,5 +18,7 @@ public enum Command
     ZOOM_OUT,
     
     GRID_RENDER,
-    GRID_UNRENDER
+    GRID_UNRENDER,
+    
+    MOVE_BOX
 }

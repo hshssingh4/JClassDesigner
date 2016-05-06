@@ -164,8 +164,7 @@ public class PageEditController
             
             undoManager().push(Command.ADD_CLASS_OBJECT);
             undoManager().pushClassObject(obj);
-            redoManager().getRedoStack().clear();
-            redoManager().getSelectedObjectStack().clear();
+            redoManager().clearStacks();
         }
         
         
@@ -215,8 +214,7 @@ public class PageEditController
             
             undoManager().push(Command.ADD_CLASS_OBJECT);
             undoManager().pushClassObject(obj);
-            redoManager().getRedoStack().clear();
-            redoManager().getSelectedObjectStack().clear();
+            redoManager().clearStacks();
         }
         
         workspace.reloadWorkspace();
@@ -277,8 +275,7 @@ public class PageEditController
             ClassObject selectedObject = workspace.getSelectedObject();
             undoManager().push(Command.REMOVE_CLASS_OBJECT);
             undoManager().pushClassObject(selectedObject);
-            redoManager().getRedoStack().clear();
-            redoManager().getSelectedObjectStack().clear();
+            redoManager().clearStacks();
             
             dataManager.removeLineConnectors(selectedObject);
             dataManager.removeClassObject(selectedObject);

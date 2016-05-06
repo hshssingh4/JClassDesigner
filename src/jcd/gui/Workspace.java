@@ -529,14 +529,12 @@ public class Workspace extends AppWorkspaceComponent
     {
         zoomInButton.setOnAction(e -> {
             undoManager.push(Command.ZOOM_IN);
-            redoManager.getRedoStack().clear();
-            redoManager.getSelectedObjectStack().clear();
+            redoManager.clearStacks();
             canvasEditController.handleZoomInRequest();
         });
         zoomOutButton.setOnAction(e -> {
             undoManager.push(Command.ZOOM_OUT);
             redoManager.getRedoStack().clear();
-            redoManager.getSelectedObjectStack().clear();
             canvasEditController.handleZoomOutRequest();
         });
         defaultZoomButton.setOnAction(e -> {
@@ -546,15 +544,13 @@ public class Workspace extends AppWorkspaceComponent
             if (gridRenderCheckBox.isSelected())
             {
                 undoManager.push(Command.GRID_RENDER);
-                redoManager.getRedoStack().clear();
-                redoManager.getSelectedObjectStack().clear();
+                redoManager.clearStacks();
                 dataManager.setMode(GRID_RENDER_MODE);
             }
             else
             {
                 undoManager.push(Command.GRID_UNRENDER);
-                redoManager.getRedoStack().clear();
-                redoManager.getSelectedObjectStack().clear();
+                redoManager.clearStacks();
                 dataManager.setMode(GRID_DEFAULT_MODE);
             }
             reloadWorkspace();
@@ -672,7 +668,17 @@ public class Workspace extends AppWorkspaceComponent
             if (dataManager.isInState(JClassDesignerState.SELECTING_SHAPE))
             {
                 if (e.getClickCount() == 1)
+                {
+                    VBox mainVBox = selectedObject.getBox().getMainVBox();
+                    ArrayList<Double> location = new ArrayList<>();
+                    location.add(mainVBox.getTranslateX());
+                    location.add(mainVBox.getTranslateY());
+                    undoManager.push(Command.MOVE_BOX);
+                    undoManager.pushLocation(location);
+                    // Don't clear redo stacks here
+                    
                     canvasEditController.handleSelectionRequest(e.getX(), e.getY());
+                }
                 if (e.getClickCount() == 2)
                 {
                     canvasEditController.handleSelectionRequest(e.getX(), e.getY());

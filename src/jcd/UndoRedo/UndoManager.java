@@ -5,7 +5,9 @@
  */
 package jcd.UndoRedo;
 
+import java.util.ArrayList;
 import java.util.Stack;
+import javafx.scene.layout.VBox;
 import jcd.JClassDesigner;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
@@ -24,6 +26,7 @@ public class UndoManager
     
     Stack<String> undoStack;
     Stack<ClassObject> selectedObjectStack;
+    Stack<ArrayList<Double>> locationStack;
     
     // HERE'S THE FULL APP, WHICH GIVES US ACCESS TO OTHER STUFF
     JClassDesigner app;
@@ -43,6 +46,7 @@ public class UndoManager
         // Also init the undo stack
         undoStack = new Stack();
         selectedObjectStack = new Stack();
+        locationStack = new Stack();
     }
     
     /**
@@ -64,6 +68,17 @@ public class UndoManager
     {
         selectedObjectStack.push(selectedObject);
     } 
+    
+    /**
+     * This method pushes on to the stack the last translates of the box before being
+     * moved.
+     * @param location
+     * the old location before moving
+     */
+    public void pushLocation(ArrayList<Double> location)
+    {
+        locationStack.push(location);
+    }
     
     /**
      * This method pops off the last pushed operation from the undo stack.
@@ -92,6 +107,18 @@ public class UndoManager
             redoManager().pushClassObject(selectedObjectStack.peek());
             return selectedObjectStack.pop();
         }
+        return null;
+    }
+    
+    /**
+     * This method pops off the last pushed location from the undo stack.
+     * @return 
+     * the command popped off in form of a string
+     */
+    public ArrayList<Double> popLocation()
+    {
+        if (!locationStack.isEmpty())
+            return locationStack.pop();
         return null;
     }
     
@@ -138,6 +165,9 @@ public class UndoManager
             case GRID_UNRENDER:
                 gridRender();
                 break;
+            case MOVE_BOX:
+                relocate();
+                break;
             default:
                 break;
         }
@@ -179,11 +209,23 @@ public class UndoManager
         workspace().reloadWorkspace();
     }
     
+    private void relocate()
+    {
+        ArrayList<Double> points = popLocation();
+        VBox mainVBox = workspace().getSelectedObject().getBox().getMainVBox();
+        ArrayList<Double> location = new ArrayList<>();
+        location.add(mainVBox.getTranslateX());
+        location.add(mainVBox.getTranslateY());
+        redoManager().pushLocation(location);
+        
+        mainVBox.setTranslateX(points.get(0));
+        mainVBox.setTranslateY(points.get(1));
+        workspace().reloadWorkspace();
+    }
     
     
     
-    
-    
+
     
     
     
@@ -212,6 +254,8 @@ public class UndoManager
                 return Command.GRID_UNRENDER;
             case GRID_UNRENDER:
                 return Command.GRID_RENDER;
+            case MOVE_BOX:
+                return Command.MOVE_BOX;
             default: 
                 return null;
         }
@@ -246,5 +290,10 @@ public class UndoManager
     public Stack<ClassObject> getSelectedObjectStack() 
     {
         return selectedObjectStack;
+    }
+
+    public Stack<ArrayList<Double>> getLocationStack() 
+    {
+        return locationStack;
     }
 }
