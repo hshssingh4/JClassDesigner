@@ -6,14 +6,15 @@
 package jcd.controller;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import jcd.JClassDesigner;
+import jcd.UndoRedo.Command;
+import jcd.UndoRedo.RedoManager;
+import jcd.UndoRedo.UndoManager;
 import jcd.data.ArgumentObject;
 import jcd.data.Box;
 import static jcd.data.Box.DEFAULT_HEIGHT;
@@ -66,7 +67,6 @@ public class PageEditController
     double originalSceneX, originalSceneY;
     double originalTranslateX, originalTranslateY;
     CanvasEditController canavasEditController;
-    
     // HERE'S THE FULL APP, WHICH GIVES US ACCESS TO OTHER STUFF
     JClassDesigner app;
     DataManager dataManager;
@@ -161,7 +161,13 @@ public class PageEditController
             // AND SELECT IT
             dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
             workspace.getCanvasEditController().handleSelectionRequest(obj);
+            
+            undoManager().push(Command.ADD_CLASS_OBJECT);
+            undoManager().pushClassObject(obj);
+            redoManager().getRedoStack().clear();
+            redoManager().getSelectedObjectStack().clear();
         }
+        
         
         workspace.reloadWorkspace();
         
@@ -206,6 +212,11 @@ public class PageEditController
             // AND SELECT IT
             dataManager.setState(JClassDesignerState.SELECTING_SHAPE);
             workspace.getCanvasEditController().handleSelectionRequest(obj);
+            
+            undoManager().push(Command.ADD_CLASS_OBJECT);
+            undoManager().pushClassObject(obj);
+            redoManager().getRedoStack().clear();
+            redoManager().getSelectedObjectStack().clear();
         }
         
         workspace.reloadWorkspace();
@@ -263,8 +274,14 @@ public class PageEditController
         
         if (selection != null && selection.equals(AppYesNoCancelDialogSingleton.YES))
         {
-            dataManager.removeLineConnectors(workspace.getSelectedObject());
-            dataManager.removeClassObject(workspace.getSelectedObject());
+            ClassObject selectedObject = workspace.getSelectedObject();
+            undoManager().push(Command.REMOVE_CLASS_OBJECT);
+            undoManager().pushClassObject(selectedObject);
+            redoManager().getRedoStack().clear();
+            redoManager().getSelectedObjectStack().clear();
+            
+            dataManager.removeLineConnectors(selectedObject);
+            dataManager.removeClassObject(selectedObject);
             workspace.setSelectedObject(null);
         }
         
@@ -869,5 +886,27 @@ public class PageEditController
         
         return new MethodObjectModel(name, type, scope,
                 isStatic, isFinal, isAbstract);
+    }
+    
+    /**
+     * Helper method to get the undoManager quickly.
+     * @return 
+     * the undo manager
+     */
+    private UndoManager undoManager()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        return workspace.getUndoManager();
+    }
+    
+    /**
+     * Helper method to get the redoManager quickly.
+     * @return 
+     * the redo manager
+     */
+    private RedoManager redoManager()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        return workspace.getRedoManager();
     }
 }

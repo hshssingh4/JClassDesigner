@@ -65,6 +65,9 @@ import static jcd.PropertyType.ZOOM_IN_ICON;
 import static jcd.PropertyType.ZOOM_IN_TOOLTIP;
 import static jcd.PropertyType.ZOOM_OUT_ICON;
 import static jcd.PropertyType.ZOOM_OUT_TOOLTIP;
+import jcd.UndoRedo.Command;
+import jcd.UndoRedo.RedoManager;
+import jcd.UndoRedo.UndoManager;
 import jcd.controller.CanvasEditController;
 import jcd.controller.LineEditController;
 import jcd.controller.PageEditController;
@@ -171,6 +174,10 @@ public class Workspace extends AppWorkspaceComponent
     LineEditController lineEditController;
     DataManager dataManager;
     
+    // Here are the undo and redo manager
+    UndoManager undoManager;
+    RedoManager redoManager;
+    
     /**
      * This is the constructor that gets called for the SAF and its job is to
      * construct the workspace for this application.
@@ -190,6 +197,10 @@ public class Workspace extends AppWorkspaceComponent
         canvasEditController = new CanvasEditController((JClassDesigner) app);
         lineEditController = new LineEditController((JClassDesigner) app);
         dataManager = (DataManager) app.getDataComponent();
+        
+        // INIT THE UNDO AND REDO MANAGER
+        undoManager = new UndoManager((JClassDesigner) app);
+        redoManager = new RedoManager((JClassDesigner) app);
         
         // NOW INITIALIZE EVERYTHING ONE BY ONE
         initEditToolbar();
@@ -502,6 +513,12 @@ public class Workspace extends AppWorkspaceComponent
         });
         removeButton.setOnAction(e -> {
             pageEditController.handleRemoveClassObjectRequest();
+        });
+        undoButton.setOnAction(e -> {
+            undoManager.undo();
+        });
+        redoButton.setOnAction(e -> {
+            redoManager.redo();
         });
     }
     
@@ -970,6 +987,17 @@ public class Workspace extends AppWorkspaceComponent
         for (Node b: viewToolbarPane.getChildren())
             b.setDisable(false);
         
+        // Now check whether undo/redo needs to enabled.
+        if (undoManager.getUndoStack().isEmpty())
+            undoButton.setDisable(true);
+        else
+            undoButton.setDisable(false);
+        
+        if(redoManager.getRedoStack().isEmpty())
+            redoButton.setDisable(true);
+        else
+            redoButton.setDisable(false);
+        
         // Now enable/disable controls in the component toolbar.
         if (selectedObject != null)
         {
@@ -1159,5 +1187,15 @@ public class Workspace extends AppWorkspaceComponent
     public TableView getMethodsTableView() 
     {
         return methodsTableView;
+    }
+
+    public UndoManager getUndoManager() 
+    {
+        return undoManager;
+    }
+
+    public RedoManager getRedoManager() 
+    {
+        return redoManager;
     }
 }
