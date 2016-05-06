@@ -244,7 +244,7 @@ public class JavaExporter
         variableLine += SPACE + variable.getType();
         variableLine += SPACE + variable.getName();
         if (variable.isFinalType())
-            variableLine += SPACE + EQUALS + SPACE + NULL;
+            variableLine += SPACE + EQUALS + SPACE + fetchReturnValue(variable.getType());
         variableLine += SEMI_COLON;
         
         pw.println(variableLine);

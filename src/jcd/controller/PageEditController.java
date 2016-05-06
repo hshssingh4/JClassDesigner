@@ -277,7 +277,7 @@ public class PageEditController
             undoManager().pushClassObject(selectedObject);
             redoManager().clearStacks();
             
-            dataManager.removeLineConnectors(selectedObject);
+            dataManager.removeLineConnectorsToThisObject(selectedObject);
             dataManager.removeClassObject(selectedObject);
             workspace.setSelectedObject(null);
         }

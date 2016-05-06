@@ -693,13 +693,16 @@ public class Workspace extends AppWorkspaceComponent
             {
                 if (e.getClickCount() == 1)
                 {
-                    VBox mainVBox = selectedObject.getBox().getMainVBox();
-                    ArrayList<Double> location = new ArrayList<>();
-                    location.add(mainVBox.getTranslateX());
-                    location.add(mainVBox.getTranslateY());
-                    undoManager.push(Command.MOVE_BOX);
-                    undoManager.pushLocation(location);
-                    redoManager.clearStacks();
+                    if (selectedObject != null) 
+                    {
+                        VBox mainVBox = selectedObject.getBox().getMainVBox();
+                        ArrayList<Double> location = new ArrayList<>();
+                        location.add(mainVBox.getTranslateX());
+                        location.add(mainVBox.getTranslateY());
+                        undoManager.push(Command.MOVE_BOX);
+                        undoManager.pushLocation(location);
+                        redoManager.clearStacks();
+                    }
                     
                     canvasEditController.handleSelectionRequest(e.getX(), e.getY());
                 }

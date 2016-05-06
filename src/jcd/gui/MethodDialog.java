@@ -257,9 +257,10 @@ public class MethodDialog extends Stage
                         // First check if a class needs to be added
                         boolean apiClass = dataManager.checkIfFromApi(type);
                         boolean primitive = dataManager.isPrimitive(type);
+                        boolean isVoid = type.equals("void");
                         boolean localClass = dataManager.containsClassObject(type);
 
-                        if (!apiClass && !primitive && !localClass) 
+                        if (!apiClass && !primitive && !localClass && !isVoid) 
                             workspace.getPageEditController().handleAddClassRequest(type);
                     }
                     

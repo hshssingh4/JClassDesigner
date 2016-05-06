@@ -325,13 +325,13 @@ public class DataManager implements AppDataComponent
      * @param obj 
      * the object to be removed
      */
-    public void removeLineConnectors(ClassObject obj)
+    public void removeLineConnectorsToThisObject(ClassObject obj)
     {
         ArrayList<LineConnector> toRemoveList = new ArrayList<>();
         for (ClassObject classObject: classesList)
         {
             for (LineConnector lineConnector: classObject.getBox().getLineConnectors())
-                if (obj.getBox().containsLineConnector(lineConnector))
+                if (lineConnector.getEndClassObjectName().equals(obj.getClassName()))
                     toRemoveList.add(lineConnector);
             
             classObject.getBox().getLineConnectors().removeAll(toRemoveList);

@@ -5,16 +5,16 @@
     "grid_mode":"GRID_DEFAULT_MODE",
     "classes":[
         {
-            "class_name":"DummyClass29",
-            "package_name":"null",
-            "parent_name":"a",
+            "class_name":"Snake",
+            "package_name":"test.classes",
+            "parent_name":"SnakeHead",
             "is_interface":false,
             "interface_names":[
             ],
             "variables":[
                 {
-                    "name":"x",
-                    "type":"a",
+                    "name":"circle",
+                    "type":"Circle[]",
                     "scope":"private",
                     "is_static":false,
                     "is_final":false
@@ -22,8 +22,8 @@
             ],
             "methods":[
                 {
-                    "name":"x",
-                    "type":"a",
+                    "name":"hehe",
+                    "type":"Stage",
                     "scope":"private",
                     "is_static":false,
                     "is_final":false,
@@ -33,27 +33,28 @@
                 }
             ],
             "java_api_packages":[
+                "javafx.stage.Stage"
             ],
             "box":{
-                "translate_x":192.0,
-                "translate_y":365.0,
+                "translate_x":115.0,
+                "translate_y":406.0,
                 "class_text_fields":[
                     {
-                        "text":"DummyClass29",
+                        "text":"Snake",
                         "style_class":"subheading_label",
                         "underlined":false
                     }
                 ],
                 "variables_text_fields":[
                     {
-                        "text":"- x: a",
+                        "text":"- circle: Circle[]",
                         "style_class":"text_label",
                         "underlined":false
                     }
                 ],
                 "methods_text_fields":[
                     {
-                        "text":"- x(): a",
+                        "text":"- hehe(): Stage",
                         "style_class":"text_label",
                         "underlined":false
                     }
@@ -62,58 +63,65 @@
                     {
                         "lines":[
                             {
-                                "start_x":282.0,
-                                "start_y":365.0,
-                                "end_x":282.0,
-                                "end_y":191.0,
+                                "start_x":205.0,
+                                "start_y":406.0,
+                                "end_x":205.0,
+                                "end_y":216.0,
                                 "line_stroke_width":3.0
                             },
                             {
-                                "start_x":282.0,
-                                "start_y":191.0,
-                                "end_x":437.5,
-                                "end_y":174.0,
+                                "start_x":205.0,
+                                "start_y":216.0,
+                                "end_x":307.0,
+                                "end_y":217.0,
                                 "line_stroke_width":3.0
                             },
                             {
-                                "start_x":437.5,
-                                "start_y":174.0,
-                                "end_x":657.0,
-                                "end_y":440.0,
+                                "start_x":307.0,
+                                "start_y":217.0,
+                                "end_x":307.0,
+                                "end_y":275.0,
+                                "line_stroke_width":3.0
+                            },
+                            {
+                                "start_x":307.0,
+                                "start_y":275.0,
+                                "end_x":328.0,
+                                "end_y":275.0,
                                 "line_stroke_width":3.0
                             }
                         ],
                         "line_connector_shape":{
-                            "triangle_x":667.0,
-                            "triangle_y":440.0,
+                            "triangle_x":338.0,
+                            "triangle_y":275.0,
                             "triangle_height":10.0,
                             "triangle_stroke_color":"0x000000ff",
                             "triangle_stroke_width":2.0,
                             "triangle_fill_color":"0x000000ff"
                         },
                         "line_connector_type":"TRIANGLE",
-                        "line_connector_end_class_name":"a"
+                        "line_connector_end_class_name":"SnakeHead"
                     },
                     {
                         "lines":[
                             {
-                                "start_x":325.0,
-                                "start_y":355.0,
-                                "end_x":428.0,
-                                "end_y":262.0,
+                                "start_x":205.0,
+                                "start_y":396.0,
+                                "end_x":206.0,
+                                "end_y":333.0,
                                 "line_stroke_width":3.0
                             },
                             {
-                                "start_x":428.0,
-                                "start_y":262.0,
-                                "end_x":667.0,
-                                "end_y":513.0,
+                                "start_x":206.0,
+                                "start_y":333.0,
+                                "end_x":628.0,
+                                "end_y":351.0,
                                 "line_stroke_width":3.0
                             }
                         ],
                         "line_connector_shape":{
-                            "rect_x":320.0,
-                            "rect_y":355.0,
+                            "rect_x":200.0,
+                            "rect_y":396.0,
                             "rect_width":10.0,
                             "rect_height":10.0,
                             "rect_stroke_color":"0x000000ff",
@@ -122,65 +130,168 @@
                             "rect_rotate_degrees":45.0
                         },
                         "line_connector_type":"DIAMOND",
-                        "line_connector_end_class_name":"a"
-                    },
-                    {
-                        "lines":[
-                            {
-                                "start_x":357.0,
-                                "start_y":365.0,
-                                "end_x":450.0,
-                                "end_y":345.0,
-                                "line_stroke_width":3.0
-                            },
-                            {
-                                "start_x":450.0,
-                                "start_y":345.0,
-                                "end_x":657.0,
-                                "end_y":511.0,
-                                "line_stroke_width":3.0
-                            }
-                        ],
-                        "line_connector_shape":{
-                            "triangle_x":667.0,
-                            "triangle_y":511.0,
-                            "triangle_height":10.0,
-                            "triangle_stroke_color":"0x000000ff",
-                            "triangle_stroke_width":2.0,
-                            "triangle_fill_color":"0x00000000"
-                        },
-                        "line_connector_type":"ARROW",
-                        "line_connector_end_class_name":"a"
+                        "line_connector_end_class_name":"Circle[]"
                     }
                 ]
             }
         },
         {
-            "class_name":"a",
-            "package_name":"null",
+            "class_name":"SnakInterface",
+            "package_name":"test.interfaces",
             "parent_name":"null",
-            "is_interface":false,
+            "is_interface":true,
             "interface_names":[
             ],
             "variables":[
+                {
+                    "name":"x",
+                    "type":"int",
+                    "scope":"private",
+                    "is_static":true,
+                    "is_final":true
+                },
+                {
+                    "name":"y",
+                    "type":"int",
+                    "scope":"private",
+                    "is_static":true,
+                    "is_final":true
+                }
             ],
             "methods":[
+                {
+                    "name":"changeLocation",
+                    "type":"boolean",
+                    "scope":"private",
+                    "is_static":false,
+                    "is_final":false,
+                    "is_abstract":false,
+                    "arguments":[
+                        {
+                            "name":"newX",
+                            "type":"int"
+                        },
+                        {
+                            "name":"newY",
+                            "type":"int"
+                        }
+                    ]
+                }
             ],
             "java_api_packages":[
             ],
             "box":{
-                "translate_x":667.0,
-                "translate_y":429.0,
+                "translate_x":406.0,
+                "translate_y":451.0,
                 "class_text_fields":[
                     {
-                        "text":"a",
+                        "text":"SnakInterface",
+                        "style_class":"subheading_label",
+                        "underlined":false
+                    },
+                    {
+                        "text":"<<interface>>",
+                        "style_class":"text_label",
+                        "underlined":false
+                    }
+                ],
+                "variables_text_fields":[
+                    {
+                        "text":"- x: int",
+                        "style_class":"text_label",
+                        "underlined":true
+                    },
+                    {
+                        "text":"- y: int",
+                        "style_class":"text_label",
+                        "underlined":true
+                    }
+                ],
+                "methods_text_fields":[
+                    {
+                        "text":"- changeLocation(newX: int, newY: int): boolean",
+                        "style_class":"text_label",
+                        "underlined":false
+                    }
+                ],
+                "line_connectors":[
+                ]
+            }
+        },
+        {
+            "class_name":"SnakeHead",
+            "package_name":"test.classes",
+            "parent_name":"null",
+            "is_interface":false,
+            "interface_names":[
+                "SnakInterface"
+            ],
+            "variables":[
+                {
+                    "name":"currentX",
+                    "type":"int",
+                    "scope":"private",
+                    "is_static":false,
+                    "is_final":false
+                },
+                {
+                    "name":"currentY",
+                    "type":"int",
+                    "scope":"private",
+                    "is_static":false,
+                    "is_final":false
+                }
+            ],
+            "methods":[
+                {
+                    "name":"changeLocation",
+                    "type":"boolean",
+                    "scope":"private",
+                    "is_static":false,
+                    "is_final":false,
+                    "is_abstract":false,
+                    "arguments":[
+                        {
+                            "name":"newX",
+                            "type":"int"
+                        },
+                        {
+                            "name":"newY",
+                            "type":"int"
+                        }
+                    ]
+                }
+            ],
+            "java_api_packages":[
+            ],
+            "box":{
+                "translate_x":338.0,
+                "translate_y":223.0,
+                "class_text_fields":[
+                    {
+                        "text":"SnakeHead",
                         "style_class":"subheading_label",
                         "underlined":false
                     }
                 ],
                 "variables_text_fields":[
+                    {
+                        "text":"- currentX: int",
+                        "style_class":"text_label",
+                        "underlined":false
+                    },
+                    {
+                        "text":"- currentY: int",
+                        "style_class":"text_label",
+                        "underlined":false
+                    }
                 ],
                 "methods_text_fields":[
+                    {
+                        "text":"- changeLocation(newX: int, newY: int): boolean",
+                        "style_class":"text_label",
+                        "underlined":false
+                    }
                 ],
                 "line_connectors":[
                 ]
