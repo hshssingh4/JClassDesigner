@@ -9,6 +9,7 @@ import java.util.Stack;
 import jcd.JClassDesigner;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
+import jcd.data.JClassDesignerMode;
 import jcd.gui.Workspace;
 import saf.ui.AppMessageDialogSingleton;
 
@@ -102,9 +103,7 @@ public class UndoManager
         String actionToUndo = pop();
         
         if (actionToUndo != null)
-        {
             performAction(Command.valueOf(actionToUndo));
-        }
         else
         {
             AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
@@ -127,6 +126,18 @@ public class UndoManager
             case REMOVE_CLASS_OBJECT:
                 addClassObject();
                 break;
+            case ZOOM_IN:
+                zoomOut();
+                break;
+            case ZOOM_OUT:
+                zoomIn();
+                break;
+            case GRID_RENDER:
+                gridUnrender();
+                break;
+            case GRID_UNRENDER:
+                gridRender();
+                break;
             default:
                 break;
         }
@@ -134,17 +145,40 @@ public class UndoManager
     
     private void removeClassObject()
     {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
         dataManager.removeClassObject(popClassObject());
-        workspace.reloadWorkspace();
+        workspace().reloadWorkspace();
     }
     
     private void addClassObject()
     {
-        Workspace workspace = (Workspace) app.getWorkspaceComponent();
         dataManager.addClassObject(popClassObject());
-        workspace.reloadWorkspace();
+        workspace().reloadWorkspace();
     }
+    
+    private void zoomOut()
+    {
+        workspace().getCanvasEditController().handleZoomOutRequest();
+        workspace().reloadWorkspace();
+    }
+    
+    private void zoomIn()
+    {
+        workspace().getCanvasEditController().handleZoomInRequest();
+        workspace().reloadWorkspace();
+    }
+    
+    private void gridUnrender()
+    {
+        dataManager.setMode(JClassDesignerMode.GRID_DEFAULT_MODE);
+        workspace().reloadWorkspace();
+    }
+    
+    private void gridRender()
+    {
+        dataManager.setMode(JClassDesignerMode.GRID_RENDER_MODE);
+        workspace().reloadWorkspace();
+    }
+    
     
     
     
@@ -170,6 +204,14 @@ public class UndoManager
                 return Command.REMOVE_CLASS_OBJECT;
             case REMOVE_CLASS_OBJECT:
                 return Command.ADD_CLASS_OBJECT;
+            case ZOOM_IN:
+                return Command.ZOOM_OUT;
+            case ZOOM_OUT:
+                return Command.ZOOM_IN;
+            case GRID_RENDER:
+                return Command.GRID_UNRENDER;
+            case GRID_UNRENDER:
+                return Command.GRID_RENDER;
             default: 
                 return null;
         }
@@ -185,9 +227,24 @@ public class UndoManager
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         return workspace.getRedoManager();
     }
+    
+    /**
+     * Helper method to get the workspace faster;
+     * @return 
+     * the workspace
+     */
+    private Workspace workspace()
+    {
+        return (Workspace) app.getWorkspaceComponent();
+    }
 
     public Stack<String> getUndoStack() 
     {
         return undoStack;
+    }
+
+    public Stack<ClassObject> getSelectedObjectStack() 
+    {
+        return selectedObjectStack;
     }
 }

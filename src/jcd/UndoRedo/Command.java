@@ -12,5 +12,11 @@ package jcd.UndoRedo;
 public enum Command 
 {
     ADD_CLASS_OBJECT,
-    REMOVE_CLASS_OBJECT
+    REMOVE_CLASS_OBJECT,
+    
+    ZOOM_IN,
+    ZOOM_OUT,
+    
+    GRID_RENDER,
+    GRID_UNRENDER
 }

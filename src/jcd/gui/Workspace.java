@@ -528,9 +528,15 @@ public class Workspace extends AppWorkspaceComponent
     private void initViewToolbarHandlers()
     {
         zoomInButton.setOnAction(e -> {
+            undoManager.push(Command.ZOOM_IN);
+            redoManager.getRedoStack().clear();
+            redoManager.getSelectedObjectStack().clear();
             canvasEditController.handleZoomInRequest();
         });
         zoomOutButton.setOnAction(e -> {
+            undoManager.push(Command.ZOOM_OUT);
+            redoManager.getRedoStack().clear();
+            redoManager.getSelectedObjectStack().clear();
             canvasEditController.handleZoomOutRequest();
         });
         defaultZoomButton.setOnAction(e -> {
@@ -538,9 +544,19 @@ public class Workspace extends AppWorkspaceComponent
         });
         gridRenderCheckBox.setOnAction(e -> {
             if (gridRenderCheckBox.isSelected())
+            {
+                undoManager.push(Command.GRID_RENDER);
+                redoManager.getRedoStack().clear();
+                redoManager.getSelectedObjectStack().clear();
                 dataManager.setMode(GRID_RENDER_MODE);
+            }
             else
+            {
+                undoManager.push(Command.GRID_UNRENDER);
+                redoManager.getRedoStack().clear();
+                redoManager.getSelectedObjectStack().clear();
                 dataManager.setMode(GRID_DEFAULT_MODE);
+            }
             reloadWorkspace();
         });
         gridSnapCheckBox.setOnAction(e -> {
@@ -712,6 +728,11 @@ public class Workspace extends AppWorkspaceComponent
             
             if (e.getCode() == KeyCode.M && selectedLine != null && selectedLine2 != null)
                 lineEditController.handleMergeLinesRequest();
+            
+            if (e.getCode() == KeyCode.Z && e.isControlDown())
+                undoManager.undo();
+            if(e.getCode() == KeyCode.Y && e.isControlDown())
+                redoManager.redo();
         });
     }
     

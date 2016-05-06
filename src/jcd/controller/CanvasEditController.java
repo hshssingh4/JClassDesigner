@@ -18,6 +18,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import jcd.JClassDesigner;
+import jcd.UndoRedo.Command;
+import jcd.UndoRedo.RedoManager;
+import jcd.UndoRedo.UndoManager;
 import jcd.data.Box;
 import jcd.data.ClassObject;
 import jcd.data.DataManager;
@@ -251,7 +254,7 @@ public class CanvasEditController
      * This method helps in zooming in the workspace currently being worked on.
      */
     public void handleZoomInRequest()
-    {
+    {  
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         Pane canvas = workspace.getCanvas();
 
@@ -593,5 +596,27 @@ public class CanvasEditController
         workspace.reloadWorkspace();
         // Work has been edited!
         app.getGUI().updateToolbarControls(false);
+    }
+    
+    /**
+     * Helper method to get the undoManager quickly.
+     * @return 
+     * the undo manager
+     */
+    private UndoManager undoManager()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        return workspace.getUndoManager();
+    }
+    
+    /**
+     * Helper method to get the redoManager quickly.
+     * @return 
+     * the redo manager
+     */
+    private RedoManager redoManager()
+    {
+        Workspace workspace = (Workspace) app.getWorkspaceComponent();
+        return workspace.getRedoManager();
     }
 }
