@@ -5,14 +5,12 @@
 */
 package test.classes;
 
-import javafx.stage.Stage;
 
-public class Snake extends SnakeHead
+public class MyChildClass extends MyParentClass
 {
-    private Circle[] circle;
+    private int x;
 
-    private Stage hehe()
+    public void initStyle()
     {
-        return null;
     }
 }

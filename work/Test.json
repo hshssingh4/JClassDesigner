@@ -1,30 +1,64 @@
 
 {
-    "canvas_zoom_scale_x":1.0,
-    "canvas_zoom_scale_y":1.0,
+    "canvas_zoom_scale_x":1.0000000000000002,
+    "canvas_zoom_scale_y":1.0000000000000002,
     "grid_mode":"GRID_DEFAULT_MODE",
     "classes":[
         {
-            "class_name":"Snake",
+            "class_name":"MyParentClass",
             "package_name":"test.classes",
-            "parent_name":"SnakeHead",
+            "parent_name":"null",
             "is_interface":false,
             "interface_names":[
+                "MyInterface",
+                "Comparable"
             ],
             "variables":[
                 {
-                    "name":"circle",
-                    "type":"Circle[]",
-                    "scope":"private",
+                    "name":"x",
+                    "type":"int",
+                    "scope":"protected",
                     "is_static":false,
                     "is_final":false
                 }
             ],
             "methods":[
                 {
-                    "name":"hehe",
-                    "type":"Stage",
-                    "scope":"private",
+                    "name":"compareTo",
+                    "type":"int",
+                    "scope":"public",
+                    "is_static":false,
+                    "is_final":false,
+                    "is_abstract":false,
+                    "arguments":[
+                        {
+                            "name":"o",
+                            "type":"Object"
+                        }
+                    ]
+                },
+                {
+                    "name":"areEqual",
+                    "type":"boolean",
+                    "scope":"public",
+                    "is_static":false,
+                    "is_final":false,
+                    "is_abstract":false,
+                    "arguments":[
+                        {
+                            "name":"x",
+                            "type":"int"
+                        },
+                        {
+                            "name":"y",
+                            "type":"int"
+                        }
+                    ]
+                },
+                {
+                    "name":"getString",
+                    "type":"String",
+                    "scope":"public",
                     "is_static":false,
                     "is_final":false,
                     "is_abstract":false,
@@ -33,110 +67,48 @@
                 }
             ],
             "java_api_packages":[
-                "javafx.stage.Stage"
+                "java.lang.Comparable"
             ],
             "box":{
-                "translate_x":115.0,
-                "translate_y":406.0,
+                "translate_x":679.0000000000001,
+                "translate_y":536.0,
                 "class_text_fields":[
                     {
-                        "text":"Snake",
+                        "text":"MyParentClass",
                         "style_class":"subheading_label",
                         "underlined":false
                     }
                 ],
                 "variables_text_fields":[
                     {
-                        "text":"- circle: Circle[]",
+                        "text":"# x: int",
                         "style_class":"text_label",
                         "underlined":false
                     }
                 ],
                 "methods_text_fields":[
                     {
-                        "text":"- hehe(): Stage",
+                        "text":"+ compareTo(o: Object): int",
+                        "style_class":"text_label",
+                        "underlined":false
+                    },
+                    {
+                        "text":"+ areEqual(x: int, y: int): boolean",
+                        "style_class":"text_label",
+                        "underlined":false
+                    },
+                    {
+                        "text":"+ getString(): String",
                         "style_class":"text_label",
                         "underlined":false
                     }
                 ],
                 "line_connectors":[
-                    {
-                        "lines":[
-                            {
-                                "start_x":205.0,
-                                "start_y":406.0,
-                                "end_x":205.0,
-                                "end_y":216.0,
-                                "line_stroke_width":3.0
-                            },
-                            {
-                                "start_x":205.0,
-                                "start_y":216.0,
-                                "end_x":307.0,
-                                "end_y":217.0,
-                                "line_stroke_width":3.0
-                            },
-                            {
-                                "start_x":307.0,
-                                "start_y":217.0,
-                                "end_x":307.0,
-                                "end_y":275.0,
-                                "line_stroke_width":3.0
-                            },
-                            {
-                                "start_x":307.0,
-                                "start_y":275.0,
-                                "end_x":328.0,
-                                "end_y":275.0,
-                                "line_stroke_width":3.0
-                            }
-                        ],
-                        "line_connector_shape":{
-                            "triangle_x":338.0,
-                            "triangle_y":275.0,
-                            "triangle_height":10.0,
-                            "triangle_stroke_color":"0x000000ff",
-                            "triangle_stroke_width":2.0,
-                            "triangle_fill_color":"0x000000ff"
-                        },
-                        "line_connector_type":"TRIANGLE",
-                        "line_connector_end_class_name":"SnakeHead"
-                    },
-                    {
-                        "lines":[
-                            {
-                                "start_x":205.0,
-                                "start_y":396.0,
-                                "end_x":206.0,
-                                "end_y":333.0,
-                                "line_stroke_width":3.0
-                            },
-                            {
-                                "start_x":206.0,
-                                "start_y":333.0,
-                                "end_x":628.0,
-                                "end_y":351.0,
-                                "line_stroke_width":3.0
-                            }
-                        ],
-                        "line_connector_shape":{
-                            "rect_x":200.0,
-                            "rect_y":396.0,
-                            "rect_width":10.0,
-                            "rect_height":10.0,
-                            "rect_stroke_color":"0x000000ff",
-                            "rect_stroke_width":3.0,
-                            "rect_fill_color":"0x00000000",
-                            "rect_rotate_degrees":45.0
-                        },
-                        "line_connector_type":"DIAMOND",
-                        "line_connector_end_class_name":"Circle[]"
-                    }
                 ]
             }
         },
         {
-            "class_name":"SnakInterface",
+            "class_name":"MyInterface",
             "package_name":"test.interfaces",
             "parent_name":"null",
             "is_interface":true,
@@ -144,35 +116,28 @@
             ],
             "variables":[
                 {
-                    "name":"x",
-                    "type":"int",
-                    "scope":"private",
-                    "is_static":true,
-                    "is_final":true
-                },
-                {
-                    "name":"y",
-                    "type":"int",
-                    "scope":"private",
+                    "name":"HEHE",
+                    "type":"String",
+                    "scope":"protected",
                     "is_static":true,
                     "is_final":true
                 }
             ],
             "methods":[
                 {
-                    "name":"changeLocation",
+                    "name":"areEqual",
                     "type":"boolean",
-                    "scope":"private",
+                    "scope":"public",
                     "is_static":false,
                     "is_final":false,
                     "is_abstract":false,
                     "arguments":[
                         {
-                            "name":"newX",
+                            "name":"x",
                             "type":"int"
                         },
                         {
-                            "name":"newY",
+                            "name":"y",
                             "type":"int"
                         }
                     ]
@@ -181,11 +146,11 @@
             "java_api_packages":[
             ],
             "box":{
-                "translate_x":406.0,
-                "translate_y":451.0,
+                "translate_x":652.0,
+                "translate_y":161.99999999999994,
                 "class_text_fields":[
                     {
-                        "text":"SnakInterface",
+                        "text":"MyInterface",
                         "style_class":"subheading_label",
                         "underlined":false
                     },
@@ -197,19 +162,14 @@
                 ],
                 "variables_text_fields":[
                     {
-                        "text":"- x: int",
-                        "style_class":"text_label",
-                        "underlined":true
-                    },
-                    {
-                        "text":"- y: int",
+                        "text":"# HEHE: String",
                         "style_class":"text_label",
                         "underlined":true
                     }
                 ],
                 "methods_text_fields":[
                     {
-                        "text":"- changeLocation(newX: int, newY: int): boolean",
+                        "text":"+ areEqual(x: int, y: int): boolean",
                         "style_class":"text_label",
                         "underlined":false
                     }
@@ -219,23 +179,15 @@
             }
         },
         {
-            "class_name":"SnakeHead",
+            "class_name":"MyChildClass",
             "package_name":"test.classes",
-            "parent_name":"null",
+            "parent_name":"MyParentClass",
             "is_interface":false,
             "interface_names":[
-                "SnakInterface"
             ],
             "variables":[
                 {
-                    "name":"currentX",
-                    "type":"int",
-                    "scope":"private",
-                    "is_static":false,
-                    "is_final":false
-                },
-                {
-                    "name":"currentY",
+                    "name":"x",
                     "type":"int",
                     "scope":"private",
                     "is_static":false,
@@ -244,56 +196,85 @@
             ],
             "methods":[
                 {
-                    "name":"changeLocation",
-                    "type":"boolean",
-                    "scope":"private",
+                    "name":"initStyle",
+                    "type":"void",
+                    "scope":"public",
                     "is_static":false,
                     "is_final":false,
                     "is_abstract":false,
                     "arguments":[
-                        {
-                            "name":"newX",
-                            "type":"int"
-                        },
-                        {
-                            "name":"newY",
-                            "type":"int"
-                        }
                     ]
                 }
             ],
             "java_api_packages":[
             ],
             "box":{
-                "translate_x":338.0,
-                "translate_y":223.0,
+                "translate_x":194.0,
+                "translate_y":406.0,
                 "class_text_fields":[
                     {
-                        "text":"SnakeHead",
+                        "text":"MyChildClass",
                         "style_class":"subheading_label",
                         "underlined":false
                     }
                 ],
                 "variables_text_fields":[
                     {
-                        "text":"- currentX: int",
-                        "style_class":"text_label",
-                        "underlined":false
-                    },
-                    {
-                        "text":"- currentY: int",
+                        "text":"- x: int",
                         "style_class":"text_label",
                         "underlined":false
                     }
                 ],
                 "methods_text_fields":[
                     {
-                        "text":"- changeLocation(newX: int, newY: int): boolean",
+                        "text":"+ initStyle(): void",
                         "style_class":"text_label",
                         "underlined":false
                     }
                 ],
                 "line_connectors":[
+                    {
+                        "lines":[
+                            {
+                                "start_x":367.0,
+                                "start_y":406.0,
+                                "end_x":366.0,
+                                "end_y":367.0,
+                                "line_stroke_width":3.0
+                            },
+                            {
+                                "start_x":366.0,
+                                "start_y":367.0,
+                                "end_x":630.0,
+                                "end_y":371.0,
+                                "line_stroke_width":3.0
+                            },
+                            {
+                                "start_x":630.0,
+                                "start_y":371.0,
+                                "end_x":637.0,
+                                "end_y":564.5,
+                                "line_stroke_width":3.0
+                            },
+                            {
+                                "start_x":637.0,
+                                "start_y":564.5,
+                                "end_x":669.0000000000001,
+                                "end_y":563.0,
+                                "line_stroke_width":3.0
+                            }
+                        ],
+                        "line_connector_shape":{
+                            "triangle_x":679.0000000000001,
+                            "triangle_y":563.0,
+                            "triangle_height":10.0,
+                            "triangle_stroke_color":"0x000000ff",
+                            "triangle_stroke_width":2.0,
+                            "triangle_fill_color":"0x000000ff"
+                        },
+                        "line_connector_type":"TRIANGLE",
+                        "line_connector_end_class_name":"MyParentClass"
+                    }
                 ]
             }
         }

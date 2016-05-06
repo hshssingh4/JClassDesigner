@@ -356,13 +356,14 @@ public class PageEditController
         Workspace workspace = (Workspace) app.getWorkspaceComponent();
         ClassObject selectedObject = workspace.getSelectedObject();
         
-        if (parentName != null && !parentName.equals(selectedObject.getParentName()))
+        if (parentName != null && !parentName.equals(selectedObject.getParentName()) &&
+                dataManager.containsClassObject(parentName)) 
         {
             ClassObject localClassObject = dataManager.fetchClassObject(
-                        parentName);
-                selectedObject.getBox().removeParentLineConnector();
-                workspace.getLineEditController().handleAddLineConnector(selectedObject.getBox(),
-                        localClassObject.getBox(), parentName, LineConnectorType.TRIANGLE);
+                    parentName);
+            selectedObject.getBox().removeParentLineConnector();
+            workspace.getLineEditController().handleAddLineConnector(selectedObject.getBox(),
+                    localClassObject.getBox(), parentName, LineConnectorType.TRIANGLE);
         }
         selectedObject.setParentName(parentName);
         workspace.reloadWorkspace();

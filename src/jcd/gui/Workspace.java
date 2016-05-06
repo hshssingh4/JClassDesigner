@@ -78,7 +78,6 @@ import static jcd.data.JClassDesignerMode.GRID_RENDER_MODE;
 import static jcd.data.JClassDesignerMode.GRID_RENDER_SNAP_MODE;
 import jcd.data.JClassDesignerState;
 import jcd.data.LineConnector;
-import jcd.data.LineConnectorType;
 import jcd.data.MethodObject;
 import jcd.data.VariableObject;
 import saf.AppTemplate;
@@ -95,7 +94,7 @@ public class Workspace extends AppWorkspaceComponent
 {
     // HERE'S THE APP
     AppTemplate app;
-    
+
     // IT KNOWS THE GUI IT IS PLACED INSIDE
     AppGUI gui;
     
@@ -1265,5 +1264,10 @@ public class Workspace extends AppWorkspaceComponent
     public RedoManager getRedoManager() 
     {
         return redoManager;
+    }
+
+    public RadioButton getLocalParentClassRadioButton() 
+    {
+        return localParentClassRadioButton;
     }
 }

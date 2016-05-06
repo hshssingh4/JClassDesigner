@@ -204,10 +204,20 @@ public class JavaExporter
         // Now check if it has any parents
         if (classObject.getParentName() != null)
             classNameLine += SPACE + EXTENDS + SPACE + classObject.getParentName();
+        
         // And now if it has implements any interfaces
         if (!classObject.getInterfaceNames().isEmpty())
-            for (String interfaceName: classObject.getInterfaceNames())
-                classNameLine += SPACE + IMPLEMENTS + SPACE + interfaceName;
+        {
+            classNameLine += SPACE + IMPLEMENTS;
+            // Now print out the the first interface name
+            classNameLine += SPACE + classObject.getInterfaceNames().get(0);
+            // Then the rest separated by commas
+            for (int i = 1; i < classObject.getInterfaceNames().size(); i++)
+            {
+                String interfaceName = classObject.getInterfaceNames().get(i);
+                classNameLine += COMMA + SPACE + interfaceName;
+            }
+        }
         
         pw.println(classNameLine);
     }
