@@ -675,7 +675,7 @@ public class Workspace extends AppWorkspaceComponent
                     location.add(mainVBox.getTranslateY());
                     undoManager.push(Command.MOVE_BOX);
                     undoManager.pushLocation(location);
-                    // Don't clear redo stacks here
+                    redoManager.clearStacks();
                     
                     canvasEditController.handleSelectionRequest(e.getX(), e.getY());
                 }
@@ -692,6 +692,20 @@ public class Workspace extends AppWorkspaceComponent
             }
             else if (dataManager.isInState(JClassDesignerState.RESIZING_SHAPE))
             {
+                VBox mainVBox = selectedObject.getBox().getMainVBox();
+                VBox classVBox = selectedObject.getBox().getClassVBox();
+                VBox variableVBox = selectedObject.getBox().getVariablesVBox();
+                VBox methodVBox = selectedObject.getBox().getMethodsVBox();
+                ArrayList<Double> size = new ArrayList<>();
+                size.add(mainVBox.getHeight());
+                size.add(mainVBox.getWidth());
+                size.add(classVBox.getHeight());
+                size.add(variableVBox.getHeight());
+                size.add(methodVBox.getHeight());
+                undoManager.push(Command.SIZE_BOX);
+                undoManager.pushSize(size);
+                redoManager.clearStacks();
+
                 Scene scene = app.getGUI().getPrimaryScene();
                 Cursor cursor = scene.getCursor();
                 

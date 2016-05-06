@@ -20,5 +20,7 @@ public enum Command
     GRID_RENDER,
     GRID_UNRENDER,
     
-    MOVE_BOX
+    MOVE_BOX,
+    
+    SIZE_BOX
 }

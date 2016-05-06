@@ -27,6 +27,7 @@ public class RedoManager
     Stack<String> redoStack;
     Stack<ClassObject> selectedObjectStack;
     Stack<ArrayList<Double>> locationStack;
+    Stack<ArrayList<Double>> sizeStack;
     
     // HERE'S THE FULL APP, WHICH GIVES US ACCESS TO OTHER STUFF
     JClassDesigner app;
@@ -47,6 +48,7 @@ public class RedoManager
         redoStack = new Stack();
         selectedObjectStack = new Stack();
         locationStack = new Stack();
+        sizeStack = new Stack();
     }
     
     /**
@@ -78,6 +80,17 @@ public class RedoManager
     public void pushLocation(ArrayList<Double> location)
     {
         locationStack.push(location);
+    }
+    
+    /**
+     * This method pushes on to the stack the last size of the box before being
+     * changes.
+     * @param size
+     * the old size before moving
+     */
+    public void pushSize(ArrayList<Double> size)
+    {
+        sizeStack.push(size);
     }
     
     /**
@@ -123,6 +136,18 @@ public class RedoManager
     }
     
     /**
+     * This method pops off the last pushed size from the undo stack.
+     * @return 
+     * the old size
+     */
+    public ArrayList<Double> popSize()
+    {
+        if (!sizeStack.isEmpty())
+            return sizeStack.pop();
+        return null;
+    }
+    
+    /**
      * This method gets called when redo button is clicked.
      */
     public void redo()
@@ -146,6 +171,7 @@ public class RedoManager
         redoStack.clear();
         selectedObjectStack.clear();
         locationStack.clear();
+        sizeStack.clear();
     }
     
     /**
@@ -177,6 +203,9 @@ public class RedoManager
                 break;
             case MOVE_BOX:
                 relocate();
+                break;
+            case SIZE_BOX:
+                resize();
                 break;
             default:
                 break;
@@ -233,7 +262,29 @@ public class RedoManager
         workspace().reloadWorkspace();
     }
     
-    
+    private void resize()
+    {
+        ArrayList<Double> oldSize = popSize();
+        ClassObject selectedObject = workspace().getSelectedObject();
+        VBox mainVBox = selectedObject.getBox().getMainVBox();
+        VBox classVBox = selectedObject.getBox().getClassVBox();
+        VBox variablesVBox = selectedObject.getBox().getVariablesVBox();
+        VBox methodsVBox = selectedObject.getBox().getMethodsVBox();
+        ArrayList<Double> size = new ArrayList<>();
+        size.add(mainVBox.getHeight());
+        size.add(mainVBox.getWidth());
+        size.add(classVBox.getHeight());
+        size.add(variablesVBox.getHeight());
+        size.add(methodsVBox.getHeight());
+        undoManager().pushSize(size);
+        
+        mainVBox.setMinHeight(oldSize.get(0));
+        mainVBox.setMinWidth(oldSize.get(1));
+        classVBox.setMinHeight(oldSize.get(2));
+        variablesVBox.setMinHeight(oldSize.get(3));
+        methodsVBox.setMinHeight(oldSize.get(4));
+        workspace().reloadWorkspace();
+    }
     
     
     /**
@@ -270,5 +321,10 @@ public class RedoManager
     public Stack<ArrayList<Double>> getLocationStack() 
     {
         return locationStack;
+    }
+    
+    public Stack<ArrayList<Double>> getSizeStack() 
+    {
+        return sizeStack;
     }
 }
